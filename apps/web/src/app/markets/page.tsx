@@ -5,15 +5,17 @@ import { Badge } from '@/components/ui/badge';
 import { SparklineMini } from '@/components/charts/SparklineMini';
 import { CreateMarketDialog } from '@/components/CreateMarketDialog';
 import { TradeDialog } from '@/components/TradeDialog';
+import { ResolutionPanel } from '@/components/ResolutionPanel';
 import { isDemo } from '@/lib/demoFlags';
 import marketsData from '@/mocks/fixtures/markets.json';
 import { useStore } from '@/lib/store';
-import { useState, useEffect } from 'react';
-import { Sparkles, TrendingUp } from 'lucide-react';
+import { useState } from 'react';
+import { Sparkles, TrendingUp, Clock } from 'lucide-react';
 
 export default function Markets() {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [selectedMarket, setSelectedMarket] = useState<any>(null);
+  const [selectedForResolution, setSelectedForResolution] = useState<any>(null);
   const { markets: userMarkets } = useStore();
   const demo = isDemo();
 
@@ -25,7 +27,7 @@ export default function Markets() {
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-4xl font-bold gradient-text mb-2">Prediction Markets</h1>
-            <p className="text-slate-400">AI-verified markets with real-time data</p>
+            <p className="text-slate-400">AI-verified markets with optimistic resolution</p>
           </div>
           <Button onClick={() => setShowCreateDialog(true)}>
             <Sparkles className="w-4 h-4 mr-2" />
@@ -40,17 +42,27 @@ export default function Markets() {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <CardTitle className="text-xl mb-2">{market.question}</CardTitle>
-                    {market.aiVerified && (
-                      <Badge variant="success" className="mb-2">
-                        <Sparkles className="w-3 h-3 mr-1" />
-                        AI Verified {market.aiConfidence ? `(${(market.aiConfidence * 100).toFixed(0)}%)` : ''}
-                      </Badge>
-                    )}
+                    <div className="flex gap-2 flex-wrap">
+                      {market.aiVerified && (
+                        <Badge variant="success">
+                          <Sparkles className="w-3 h-3 mr-1" />
+                          AI Verified {market.aiConfidence ? `(${(market.aiConfidence * 100).toFixed(0)}%)` : ''}
+                        </Badge>
+                      )}
+                      {market.resolutionProposal && (
+                        <Badge variant="warning">
+                          <Clock className="w-3 h-3 mr-1" />
+                          Resolution Pending
+                        </Badge>
+                      )}
+                      <Badge>{market.status}</Badge>
+                      {market.category && <Badge variant="default">{market.category}</Badge>}
+                    </div>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-4">
                   <div className="flex-1 grid grid-cols-2 gap-6">
                     <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
                       <p className="text-sm text-slate-400 mb-1">YES Price</p>
@@ -70,22 +82,32 @@ export default function Markets() {
                     <SparklineMini data={market.sparkline} color="#10b981" />
                   </div>
                   
-                  <div className="text-right">
-                    <div className="text-sm text-slate-400 mb-1">Volume</div>
-                    <div className="font-bold text-slate-100 mb-3">
-                      ${(market.totalVolume / 1000).toFixed(1)}K
+                  <div className="text-right space-y-2">
+                    <div>
+                      <div className="text-sm text-slate-400">Volume</div>
+                      <div className="font-bold text-slate-100">
+                        ${(market.totalVolume / 1000).toFixed(1)}K
+                      </div>
                     </div>
-                    <Button onClick={() => setSelectedMarket(market)}>
+                    <Button onClick={() => setSelectedMarket(market)} size="sm">
                       <TrendingUp className="w-4 h-4 mr-2" />
                       Trade
                     </Button>
+                    {market.status !== 'resolved' && (
+                      <Button 
+                        onClick={() => setSelectedForResolution(market)} 
+                        variant="outline" 
+                        size="sm"
+                        className="w-full"
+                      >
+                        Resolve
+                      </Button>
+                    )}
                   </div>
                 </div>
                 
-                <div className="flex gap-4 mt-4 text-sm text-slate-400">
+                <div className="flex gap-4 text-sm text-slate-400">
                   <span>Ends: {market.endDate}</span>
-                  <Badge>{market.status}</Badge>
-                  {market.category && <Badge variant="default">{market.category}</Badge>}
                 </div>
               </CardContent>
             </Card>
@@ -113,6 +135,21 @@ export default function Markets() {
           market={selectedMarket} 
           onClose={() => setSelectedMarket(null)} 
         />
+      )}
+
+      {selectedForResolution && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="max-w-lg w-full">
+            <ResolutionPanel market={selectedForResolution} />
+            <Button 
+              onClick={() => setSelectedForResolution(null)}
+              variant="outline"
+              className="w-full mt-4"
+            >
+              Close
+            </Button>
+          </div>
+        </div>
       )}
     </main>
   );

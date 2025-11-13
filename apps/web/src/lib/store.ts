@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface Market {
   id: string;
@@ -13,6 +14,13 @@ interface Market {
   category?: string;
   aiVerified?: boolean;
   aiConfidence?: number;
+  resolutionProposal?: {
+    outcome: boolean;
+    proposedAt: string;
+    proposer: string;
+    challengeDeadline: string;
+    challenged: boolean;
+  };
 }
 
 interface Trade {
@@ -21,22 +29,117 @@ interface Trade {
   amount: number;
   side: 'yes' | 'no';
   timestamp: string;
+  user: string;
+  prediction: number;
+}
+
+interface UserReputation {
+  address: string;
+  brierScore: number;
+  elo: number;
+  accuracy: number;
+  totalVolume: number;
+  totalTrades: number;
+  reputationScore: number;
+  predictions: Trade[];
 }
 
 interface Store {
   markets: Market[];
   trades: Trade[];
+  userReputations: Record<string, UserReputation>;
+  
   addMarket: (market: Market) => void;
   addTrade: (trade: Trade) => void;
   updateMarket: (id: string, updates: Partial<Market>) => void;
+  proposeResolution: (marketId: string, outcome: boolean, proposer: string) => void;
+  challengeResolution: (marketId: string) => void;
+  updateUserReputation: (address: string, trade: Trade, outcome?: boolean) => void;
+  getUserReputation: (address: string) => UserReputation | undefined;
 }
 
-export const useStore = create<Store>((set) => ({
-  markets: [],
-  trades: [],
-  addMarket: (market) => set((state) => ({ markets: [...state.markets, market] })),
-  addTrade: (trade) => set((state) => ({ trades: [...state.trades, trade] })),
-  updateMarket: (id, updates) => set((state) => ({
-    markets: state.markets.map(m => m.id === id ? { ...m, ...updates } : m)
-  })),
-}));
+export const useStore = create<Store>()(
+  persist(
+    (set, get) => ({
+      markets: [],
+      trades: [],
+      userReputations: {},
+      
+      addMarket: (market) => set((state) => ({ 
+        markets: [...state.markets, market] 
+      })),
+      
+      addTrade: (trade) => set((state) => ({ 
+        trades: [...state.trades, trade] 
+      })),
+      
+      updateMarket: (id, updates) => set((state) => ({
+        markets: state.markets.map(m => m.id === id ? { ...m, ...updates } : m)
+      })),
+      
+      proposeResolution: (marketId, outcome, proposer) => set((state) => ({
+        markets: state.markets.map(m => 
+          m.id === marketId 
+            ? {
+                ...m,
+                resolutionProposal: {
+                  outcome,
+                  proposedAt: new Date().toISOString(),
+                  proposer,
+                  challengeDeadline: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24h
+                  challenged: false,
+                }
+              }
+            : m
+        )
+      })),
+      
+      challengeResolution: (marketId) => set((state) => ({
+        markets: state.markets.map(m =>
+          m.id === marketId && m.resolutionProposal
+            ? {
+                ...m,
+                resolutionProposal: {
+                  ...m.resolutionProposal,
+                  challenged: true,
+                }
+              }
+            : m
+        )
+      })),
+      
+      updateUserReputation: (address, trade, outcome) => set((state) => {
+        const current = state.userReputations[address] || {
+          address,
+          brierScore: 0,
+          elo: 1500,
+          accuracy: 0,
+          totalVolume: 0,
+          totalTrades: 0,
+          reputationScore: 50,
+          predictions: [],
+        };
+        
+        const newPredictions = [...current.predictions, trade];
+        const totalVolume = current.totalVolume + trade.amount;
+        
+        return {
+          userReputations: {
+            ...state.userReputations,
+            [address]: {
+              ...current,
+              totalVolume,
+              totalTrades: current.totalTrades + 1,
+              predictions: newPredictions,
+            }
+          }
+        };
+      }),
+      
+      getUserReputation: (address) => get().userReputations[address],
+    }),
+    {
+      name: 'seerhive-storage',
+    }
+  )
+);

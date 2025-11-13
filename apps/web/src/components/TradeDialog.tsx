@@ -2,6 +2,10 @@
 import { useState } from 'react';
 import { Button } from './ui/button';
 import { useStore } from '@/lib/store';
+import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { parseEther } from 'viem';
+import { PREDICTION_MARKET_ADDRESS, PREDICTION_MARKET_ABI } from '@/lib/contracts';
+import { isDemo } from '@/lib/demoFlags';
 import { X, TrendingUp, TrendingDown } from 'lucide-react';
 
 interface TradeDialogProps {
@@ -13,12 +17,36 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
   const [side, setSide] = useState<'yes' | 'no'>('yes');
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
-  const { addTrade, updateMarket } = useStore();
+  const { addTrade, updateMarket, updateUserReputation } = useStore();
+  const { address } = useAccount();
+  const demo = isDemo();
+
+  const { writeContract, data: hash } = useWriteContract();
+  const { isLoading: isConfirming } = useWaitForTransactionReceipt({ hash });
 
   const handleTrade = async () => {
     if (!amount || parseFloat(amount) <= 0) return;
 
     setLoading(true);
+
+    if (!demo && address) {
+      // On-chain trade
+      try {
+        writeContract({
+          address: PREDICTION_MARKET_ADDRESS as `0x${string}`,
+          abi: PREDICTION_MARKET_ABI,
+          functionName: 'buyShares',
+          args: [BigInt(market.id), side === 'yes'],
+          value: parseEther(amount),
+        });
+      } catch (error) {
+        console.error('Trade failed:', error);
+        setLoading(false);
+        return;
+      }
+    }
+
+    // Demo or after on-chain success
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     const trade = {
@@ -27,9 +55,15 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
       amount: parseFloat(amount),
       side,
       timestamp: new Date().toISOString(),
+      user: address || 'demo-user',
+      prediction: side === 'yes' ? market.yesPrice : market.noPrice,
     };
 
     addTrade(trade);
+    
+    if (address) {
+      updateUserReputation(address, trade);
+    }
 
     // Update market prices
     const newVolume = market.totalVolume + parseFloat(amount);
@@ -43,6 +77,7 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
       noPrice: side === 'no'
         ? Math.min(0.99, market.noPrice + priceChange)
         : Math.max(0.01, market.noPrice - priceChange),
+      sparkline: [...market.sparkline, { value: side === 'yes' ? market.yesPrice + priceChange : market.yesPrice - priceChange }].slice(-10),
     });
 
     setLoading(false);
@@ -98,14 +133,15 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
 
         <div className="mb-4">
           <label className="block text-sm font-medium text-slate-300 mb-2">
-            Amount (USD)
+            Amount ({demo ? 'USD' : 'BNB'})
           </label>
           <input
             type="number"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            placeholder="100"
-            min="1"
+            placeholder={demo ? "100" : "0.1"}
+            min="0.01"
+            step="0.01"
             className="w-full px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 focus:border-green-500 focus:outline-none"
           />
         </div>
@@ -114,12 +150,18 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
           <div className="bg-slate-900/50 rounded-lg p-3 mb-4 space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-slate-400">You pay</span>
-              <span className="text-slate-100 font-medium">${amount}</span>
+              <span className="text-slate-100 font-medium">{amount} {demo ? 'USD' : 'BNB'}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-slate-400">Potential return</span>
               <span className="text-green-400 font-medium">
-                ${(parseFloat(amount) / (side === 'yes' ? market.yesPrice : market.noPrice)).toFixed(2)}
+                {(parseFloat(amount) / (side === 'yes' ? market.yesPrice : market.noPrice)).toFixed(2)} {demo ? 'USD' : 'BNB'}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-400">Implied probability</span>
+              <span className="text-slate-300">
+                {((side === 'yes' ? market.yesPrice : market.noPrice) * 100).toFixed(1)}%
               </span>
             </div>
           </div>
@@ -128,10 +170,10 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
         <div className="flex gap-3">
           <Button 
             onClick={handleTrade} 
-            disabled={loading || !amount || parseFloat(amount) <= 0}
+            disabled={loading || isConfirming || !amount || parseFloat(amount) <= 0}
             className="flex-1"
           >
-            {loading ? 'Processing...' : `Buy ${side.toUpperCase()}`}
+            {loading || isConfirming ? 'Processing...' : `Buy ${side.toUpperCase()}`}
           </Button>
           <Button variant="outline" onClick={onClose}>
             Cancel
