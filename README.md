@@ -2,6 +2,37 @@
 
 AI-assisted prediction markets on BNB Chain with gasless transactions, copy trading, and governance.
 
+**Deployed Contract:** [0xc6Dd26D3eE0F58fAb15Dc87bEe3A66896B6D4127](https://testnet.bscscan.com/address/0xc6Dd26D3eE0F58fAb15Dc87bEe3A66896B6D4127) (BNB Testnet)
+
+## 👨‍⚖️ Judge Quick Start (≤10 minutes)
+
+```bash
+# 1. Clone and install
+git clone https://github.com/abeachmad/seerhive.git
+cd seerhive
+pnpm install
+
+# 2. Configure environment
+cp apps/web/.env.example apps/web/.env.local
+# Add your Particle/Pimlico keys (or use demo mode)
+
+# 3. Start development
+pnpm dev
+# Open http://localhost:3000
+
+# 4. Test gasless transaction
+# - Connect wallet (MetaMask on BNB Testnet)
+# - Go to /markets → Create Market or Trade
+# - Enable "Use Gasless Transaction" toggle
+# - Submit → Check console for "Gasless sponsored: particle"
+# - Verify tx on BSCScan (no gas paid by user)
+
+# 5. Test paymaster API
+./scripts/test-sponsor.sh
+```
+
+**Demo Mode (No Wallet):** Set `NEXT_PUBLIC_DEMO=1` in `.env.local` to test all features with mock data.
+
 ## 🚀 Quick Start
 
 ```bash
@@ -44,14 +75,29 @@ SeerHive implements Account Abstraction with **Particle Network** as primary pay
 
 ### Architecture
 
-```
-Frontend (wagmi/viem)
-  ↓ POST /api/aa/sponsor
-Next.js API Route
-  ↓ Try Particle first
-Particle Paymaster ✅
-  ↓ On failure (rate limit/rejection)
-Pimlico Paymaster (fallback) ✅
+```mermaid
+sequenceDiagram
+    participant User as User (Wallet)
+    participant FE as Frontend (wagmi)
+    participant API as /api/aa/sponsor
+    participant Particle as Particle Paymaster
+    participant Pimlico as Pimlico Paymaster
+    participant Bundler as ERC-4337 Bundler
+    participant Chain as BNB Testnet
+
+    User->>FE: Buy Shares (gasless)
+    FE->>API: POST UserOperation
+    API->>Particle: pm_sponsorUserOperation
+    alt Particle Success
+        Particle-->>API: paymasterAndData + gas limits
+    else Particle Failed (rate limit/reject)
+        API->>Pimlico: pm_sponsorUserOperation
+        Pimlico-->>API: paymasterAndData + gas limits
+    end
+    API-->>FE: Sponsored UserOp
+    FE->>Bundler: sendUserOperation
+    Bundler->>Chain: Execute transaction
+    Chain-->>User: Tx confirmed (0 gas paid)
 ```
 
 ### Key Features
@@ -70,8 +116,45 @@ Pimlico Paymaster (fallback) ✅
 5. Returns `paymasterAndData` + gas limits to frontend
 6. Frontend submits sponsored transaction to bundler
 
-### Testing
+### Sponsor API Example
 
+**Endpoint:** `POST /api/aa/sponsor`
+
+**Request:**
+```json
+{
+  "userOp": {
+    "sender": "0xc6Dd26D3eE0F58fAb15Dc87bEe3A66896B6D4127",
+    "callData": "0x..."
+  },
+  "entryPoint": "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789",
+  "chainId": 97
+}
+```
+
+**Response (Success):**
+```json
+{
+  "paymasterAndData": "0x...",
+  "preVerificationGas": "50000",
+  "verificationGasLimit": "100000",
+  "callGasLimit": "200000",
+  "provider": "particle",
+  "latency_ms": 234
+}
+```
+
+**Response (Fallback):**
+```json
+{
+  "paymasterAndData": "0x...",
+  "provider": "pimlico",
+  "latency_ms": 456,
+  "fallback": true
+}
+```
+
+**Test:**
 ```bash
 # Test paymaster API endpoint
 ./scripts/test-sponsor.sh
@@ -104,6 +187,26 @@ cd contracts
 pnpm test
 pnpm deploy:testnet
 ```
+
+## 📸 Screenshots
+
+### Dashboard
+![Analytics Dashboard](docs/images/dashboard.png)
+*Real-time analytics with volume, markets, and agent performance*
+
+### Markets
+![Prediction Markets](docs/images/markets.png)
+*Browse and trade on prediction markets with live odds*
+
+### Gasless Trading
+![Gasless Transaction](docs/images/trade-gasless.png)
+*Zero gas fees with Particle Network sponsorship*
+
+### Governance
+![DAO Governance](docs/images/governance.png)
+*Community-driven proposals and voting*
+
+> **Note:** Screenshots will be added after UI polish. Run `pnpm dev` to see live demo.
 
 ## 📁 Project Structure
 
@@ -184,6 +287,21 @@ BSC_TESTNET_RPC=https://bsc-testnet.publicnode.com
 - Never commit `.env.local` or `.env` files
 - Paymaster keys are server-side only (no `NEXT_PUBLIC_` prefix)
 - Use separate keys for testnet and mainnet
+- Rate limiting handled by paymaster providers
+- Automatic fallback prevents service disruption
+
+### Known Limitations & Roadmap
+
+**Current Limitations:**
+- Subjective markets require manual resolution (AI oracle in progress)
+- Single contract deployment (multi-market factory planned)
+- Testnet only (mainnet deployment pending audit)
+
+**Roadmap:**
+- [ ] UMA Optimistic Oracle integration for dispute resolution
+- [ ] Multi-signature governance for critical operations
+- [ ] Cross-chain deployment (Ethereum, Polygon)
+- [ ] Mobile app with Particle social login
 
 ## 🌐 Features & Pages
 
@@ -196,13 +314,21 @@ BSC_TESTNET_RPC=https://bsc-testnet.publicnode.com
 
 ### Key Features
 
-- ✅ Gasless transactions (ERC-4337)
-- ✅ AI-powered market resolution
-- ✅ Copy trading system
-- ✅ Reputation scoring (Brier, ELO, Accuracy)
-- ✅ Optimistic resolution with 24h challenge window
-- ✅ Demo mode (no wallet required)
-- ✅ Dark theme with glassmorphism UI
+- ✅ **Gasless transactions** (ERC-4337) - Zero gas fees for users
+- ✅ **Dual paymaster** - Particle (primary) + Pimlico (fallback)
+- ✅ **AI-powered resolution** - Automated market settlement
+- ✅ **Copy trading** - Follow top traders
+- ✅ **Reputation system** - Brier score, ELO, accuracy tracking
+- ✅ **Optimistic resolution** - 24h challenge window
+- ✅ **Demo mode** - No wallet required for testing
+- ✅ **BNB Chain native** - Deployed on BNB Testnet
+
+### Why BNB Chain?
+
+- **Low gas costs** - Ideal for high-frequency prediction markets
+- **ERC-4337 support** - Native account abstraction infrastructure
+- **Fast finality** - Quick market resolution and payouts
+- **Growing DeFi ecosystem** - Integration with BNB DeFi protocols
 
 ## 🏗️ Tech Stack
 
