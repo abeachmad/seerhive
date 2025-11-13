@@ -1,12 +1,14 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
+import { Badge } from './ui/badge';
 import { useStore } from '@/lib/store';
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { parseEther } from 'viem';
 import { PREDICTION_MARKET_ADDRESS, PREDICTION_MARKET_ABI } from '@/lib/contracts';
+import { gaslessService } from '@/lib/gasless';
 import { isDemo } from '@/lib/demoFlags';
-import { X, TrendingUp, TrendingDown } from 'lucide-react';
+import { X, TrendingUp, TrendingDown, Zap } from 'lucide-react';
 
 interface TradeDialogProps {
   market: any;
@@ -17,6 +19,8 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
   const [side, setSide] = useState<'yes' | 'no'>('yes');
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
+  const [useGasless, setUseGasless] = useState(true);
+  const [gasSavings, setGasSavings] = useState('');
   const { addTrade, updateMarket, updateUserReputation } = useStore();
   const { address } = useAccount();
   const demo = isDemo();
@@ -24,21 +28,55 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
   const { writeContract, data: hash } = useWriteContract();
   const { isLoading: isConfirming } = useWaitForTransactionReceipt({ hash });
 
+  const gaslessAvailable = gaslessService.isGaslessAvailable();
+
+  useEffect(() => {
+    if (amount && parseFloat(amount) > 0) {
+      gaslessService.estimateGasSavings({
+        to: PREDICTION_MARKET_ADDRESS,
+        data: '0x',
+        value: parseEther(amount),
+      }).then(setGasSavings);
+    }
+  }, [amount]);
+
   const handleTrade = async () => {
     if (!amount || parseFloat(amount) <= 0) return;
 
     setLoading(true);
 
     if (!demo && address) {
-      // On-chain trade
       try {
-        writeContract({
-          address: PREDICTION_MARKET_ADDRESS as `0x${string}`,
-          abi: PREDICTION_MARKET_ABI,
-          functionName: 'buyShares',
-          args: [BigInt(market.id), side === 'yes'],
-          value: parseEther(amount),
-        });
+        if (useGasless && gaslessAvailable) {
+          // Gasless transaction
+          const result = await gaslessService.buySharesGasless(
+            market.id,
+            side === 'yes',
+            parseEther(amount)
+          );
+          
+          if (result.sponsored) {
+            console.log('Gasless transaction:', result.hash);
+          } else {
+            // Fallback to regular transaction
+            writeContract({
+              address: PREDICTION_MARKET_ADDRESS as `0x${string}`,
+              abi: PREDICTION_MARKET_ABI,
+              functionName: 'buyShares',
+              args: [BigInt(market.id), side === 'yes'],
+              value: parseEther(amount),
+            });
+          }
+        } else {
+          // Regular transaction with gas
+          writeContract({
+            address: PREDICTION_MARKET_ADDRESS as `0x${string}`,
+            abi: PREDICTION_MARKET_ABI,
+            functionName: 'buyShares',
+            args: [BigInt(market.id), side === 'yes'],
+            value: parseEther(amount),
+          });
+        }
       } catch (error) {
         console.error('Trade failed:', error);
         setLoading(false);
@@ -146,6 +184,28 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
           />
         </div>
 
+        {gaslessAvailable && !demo && (
+          <div className="mb-4">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={useGasless}
+                onChange={(e) => setUseGasless(e.target.checked)}
+                className="w-4 h-4"
+              />
+              <span className="text-sm text-slate-300">
+                <Zap className="w-4 h-4 inline text-yellow-400 mr-1" />
+                Use Gasless Transaction
+              </span>
+            </label>
+            {useGasless && gasSavings && (
+              <p className="text-xs text-green-400 mt-1 ml-6">
+                Save {gasSavings} in gas fees
+              </p>
+            )}
+          </div>
+        )}
+
         {amount && parseFloat(amount) > 0 && (
           <div className="bg-slate-900/50 rounded-lg p-3 mb-4 space-y-2 text-sm">
             <div className="flex justify-between">
@@ -159,9 +219,9 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-400">Implied probability</span>
-              <span className="text-slate-300">
-                {((side === 'yes' ? market.yesPrice : market.noPrice) * 100).toFixed(1)}%
+              <span className="text-slate-400">Gas fee</span>
+              <span className={useGasless && gaslessAvailable ? 'text-green-400' : 'text-slate-300'}>
+                {useGasless && gaslessAvailable ? 'FREE ⚡' : gasSavings || '~0.001 BNB'}
               </span>
             </div>
           </div>
@@ -179,6 +239,14 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
             Cancel
           </Button>
         </div>
+
+        {useGasless && gaslessAvailable && (
+          <div className="mt-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-2">
+            <p className="text-xs text-yellow-400 text-center">
+              ⚡ Gasless transaction powered by Account Abstraction
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
