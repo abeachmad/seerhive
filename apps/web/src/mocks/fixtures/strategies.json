@@ -1,0 +1,53 @@
+[
+  {
+    "id": "1",
+    "name": "Momentum Trader",
+    "trader": "0x1234...5678",
+    "roi": 45.2,
+    "totalVolume": 250000,
+    "followers": 450,
+    "winRate": 68,
+    "trades": 120,
+    "sparkline": [
+      { "value": 35 },
+      { "value": 38 },
+      { "value": 42 },
+      { "value": 44 },
+      { "value": 45.2 }
+    ]
+  },
+  {
+    "id": "2",
+    "name": "Contrarian Expert",
+    "trader": "0xabcd...efgh",
+    "roi": 32.8,
+    "totalVolume": 180000,
+    "followers": 320,
+    "winRate": 62,
+    "trades": 95,
+    "sparkline": [
+      { "value": 28 },
+      { "value": 30 },
+      { "value": 31 },
+      { "value": 32 },
+      { "value": 32.8 }
+    ]
+  },
+  {
+    "id": "3",
+    "name": "AI Predictor",
+    "trader": "0x9876...4321",
+    "roi": 58.5,
+    "totalVolume": 420000,
+    "followers": 780,
+    "winRate": 75,
+    "trades": 200,
+    "sparkline": [
+      { "value": 48 },
+      { "value": 52 },
+      { "value": 55 },
+      { "value": 57 },
+      { "value": 58.5 }
+    ]
+  }
+]

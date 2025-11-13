@@ -1,0 +1,47 @@
+[
+  {
+    "id": "1",
+    "title": "Crypto Market Prediction",
+    "category": "DeFi",
+    "participants": 1250,
+    "volume": 450000,
+    "change24h": 12.5,
+    "sparkline": [
+      { "value": 420000 },
+      { "value": 430000 },
+      { "value": 440000 },
+      { "value": 445000 },
+      { "value": 450000 }
+    ]
+  },
+  {
+    "id": "2",
+    "title": "NFT Market Trends",
+    "category": "NFT",
+    "participants": 890,
+    "volume": 320000,
+    "change24h": -5.2,
+    "sparkline": [
+      { "value": 340000 },
+      { "value": 335000 },
+      { "value": 330000 },
+      { "value": 325000 },
+      { "value": 320000 }
+    ]
+  },
+  {
+    "id": "3",
+    "title": "Gaming Token Launch",
+    "category": "Gaming",
+    "participants": 2100,
+    "volume": 580000,
+    "change24h": 25.8,
+    "sparkline": [
+      { "value": 460000 },
+      { "value": 500000 },
+      { "value": 540000 },
+      { "value": 560000 },
+      { "value": 580000 }
+    ]
+  }
+]

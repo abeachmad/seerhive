@@ -1,0 +1,21 @@
+{
+  "volumeOverTime": [
+    { "name": "Jan", "volume": 120000 },
+    { "name": "Feb", "volume": 180000 },
+    { "name": "Mar", "volume": 250000 },
+    { "name": "Apr", "volume": 320000 },
+    { "name": "May", "volume": 450000 }
+  ],
+  "marketsByCategory": [
+    { "name": "DeFi", "value": 45 },
+    { "name": "NFT", "value": 25 },
+    { "name": "Gaming", "value": 20 },
+    { "name": "Other", "value": 10 }
+  ],
+  "userGrowth": [
+    { "name": "Week 1", "users": 500 },
+    { "name": "Week 2", "users": 750 },
+    { "name": "Week 3", "users": 1200 },
+    { "name": "Week 4", "users": 1800 }
+  ]
+}
