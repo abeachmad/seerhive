@@ -6,38 +6,46 @@ import { SparklineMini } from '@/components/charts/SparklineMini';
 import { useStore } from '@/lib/store';
 import { ReputationSystem } from '@/lib/reputation';
 import strategiesData from '@/mocks/fixtures/strategies.json';
-import { Trophy, TrendingUp, Target, Users } from 'lucide-react';
+import { Trophy } from 'lucide-react';
 import { useState } from 'react';
 
 export default function CopyTrading() {
   const { userReputations } = useStore();
   const [following, setFollowing] = useState<Set<string>>(new Set());
 
-  const traders = Object.values(userReputations).map(rep => {
-    const brierScore = ReputationSystem.calculateBrierScore(rep.predictions);
-    const accuracy = ReputationSystem.calculateAccuracy(rep.predictions);
-    const pnl = ReputationSystem.calculatePnL(rep.predictions);
-    const reputationScore = ReputationSystem.calculateReputationScore(
-      brierScore,
-      accuracy,
-      rep.totalVolume,
-      0.8
-    );
-    const gaming = ReputationSystem.detectGaming(rep.predictions);
+  const traders = Object.values(userReputations)
+    .filter(rep => rep.predictions.length > 0)
+    .map(rep => {
+      const completedPredictions = rep.predictions.filter(p => p.outcome !== undefined);
+      const brierScore = completedPredictions.length > 0 
+        ? ReputationSystem.calculateBrierScore(completedPredictions as any)
+        : 1;
+      const accuracy = completedPredictions.length > 0
+        ? ReputationSystem.calculateAccuracy(completedPredictions as any)
+        : 0;
+      const pnl = completedPredictions.length > 0
+        ? ReputationSystem.calculatePnL(completedPredictions as any)
+        : 0;
+      const reputationScore = ReputationSystem.calculateReputationScore(
+        brierScore,
+        accuracy,
+        rep.totalVolume,
+        0.8
+      );
 
-    return {
-      address: rep.address,
-      brierScore,
-      accuracy,
-      pnl,
-      reputationScore,
-      totalVolume: rep.totalVolume,
-      totalTrades: rep.totalTrades,
-      elo: rep.elo,
-      isSuspicious: gaming.isSuspicious,
-      suspiciousReasons: gaming.reasons,
-    };
-  }).sort((a, b) => b.reputationScore - a.reputationScore);
+      return {
+        address: rep.address,
+        brierScore,
+        accuracy,
+        pnl,
+        reputationScore,
+        totalVolume: rep.totalVolume,
+        totalTrades: rep.totalTrades,
+        elo: rep.elo,
+        isSuspicious: false,
+        suspiciousReasons: [],
+      };
+    }).sort((a, b) => b.reputationScore - a.reputationScore);
 
   const handleFollow = (address: string) => {
     setFollowing(prev => {
@@ -130,9 +138,6 @@ export default function CopyTrading() {
                             <Badge variant="success">
                               Score: {trader.reputationScore}
                             </Badge>
-                            {trader.isSuspicious && (
-                              <Badge variant="danger">⚠️ Suspicious</Badge>
-                            )}
                           </div>
                           <div className="grid grid-cols-4 gap-4 text-sm">
                             <div>

@@ -31,6 +31,7 @@ interface Trade {
   timestamp: string;
   user: string;
   prediction: number;
+  outcome?: boolean; // Add outcome field
 }
 
 interface UserReputation {
@@ -86,7 +87,7 @@ export const useStore = create<Store>()(
                   outcome,
                   proposedAt: new Date().toISOString(),
                   proposer,
-                  challengeDeadline: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24h
+                  challengeDeadline: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
                   challenged: false,
                 }
               }
