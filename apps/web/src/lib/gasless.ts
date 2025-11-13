@@ -13,6 +13,9 @@ interface SponsorResult {
   fallback?: boolean;
 }
 
+const ENTRY_POINT = process.env.NEXT_PUBLIC_ENTRY_POINT || '0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789';
+const CHAIN_ID = Number(process.env.NEXT_PUBLIC_CHAIN_ID || 97);
+
 async function sponsorViaAPI(userOp: any, entryPoint: string, chainId: number): Promise<SponsorResult> {
   const res = await fetch('/api/aa/sponsor', {
     method: 'POST',
@@ -29,7 +32,7 @@ async function sponsorViaAPI(userOp: any, entryPoint: string, chainId: number): 
 }
 
 export class GaslessService {
-  async createMarketGasless(question: string, duration: number, entryPoint: string = '0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789'): Promise<SponsorResult> {
+  async createMarketGasless(question: string, duration: number, entryPoint: string = ENTRY_POINT): Promise<SponsorResult> {
     const data = encodeFunctionData({
       abi: PREDICTION_MARKET_ABI,
       functionName: 'createMarket',
@@ -41,10 +44,10 @@ export class GaslessService {
       callData: data,
     };
 
-    return sponsorViaAPI(userOp, entryPoint, 97);
+    return sponsorViaAPI(userOp, entryPoint, CHAIN_ID);
   }
 
-  async buySharesGasless(marketId: string, isYes: boolean, amount: bigint, entryPoint: string = '0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789'): Promise<SponsorResult> {
+  async buySharesGasless(marketId: string, isYes: boolean, amount: bigint, entryPoint: string = ENTRY_POINT): Promise<SponsorResult> {
     const data = encodeFunctionData({
       abi: PREDICTION_MARKET_ABI,
       functionName: 'buyShares',
@@ -57,14 +60,14 @@ export class GaslessService {
       value: amount.toString(),
     };
 
-    return sponsorViaAPI(userOp, entryPoint, 97);
+    return sponsorViaAPI(userOp, entryPoint, CHAIN_ID);
   }
 
   async sendGaslessTx(
     contract: string,
     method: string,
     args: readonly unknown[],
-    entryPoint: string = '0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789'
+    entryPoint: string = ENTRY_POINT
   ): Promise<SponsorResult> {
     const data = encodeFunctionData({
       abi: PREDICTION_MARKET_ABI,
@@ -77,7 +80,7 @@ export class GaslessService {
       callData: data,
     };
 
-    return sponsorViaAPI(userOp, entryPoint, 97);
+    return sponsorViaAPI(userOp, entryPoint, CHAIN_ID);
   }
 
   isGaslessAvailable(): boolean {

@@ -1,6 +1,6 @@
 # SeerHive - Social Prediction Markets
 
-AI-assisted prediction markets on BNB Chain with copy trading and governance.
+AI-assisted prediction markets on BNB Chain with gasless transactions, copy trading, and governance.
 
 ## 🚀 Quick Start
 
@@ -10,113 +10,225 @@ git clone https://github.com/abeachmad/seerhive.git
 cd seerhive
 pnpm install
 
-# Start everything (frontend + hardhat)
-./startseerhive.sh
+# Configure environment
+cp apps/web/.env.example apps/web/.env.local
+# Edit .env.local with your keys
+
+# Start development
+pnpm dev
 ```
 
-Then open http://localhost:3000/dashboard
+Then open http://localhost:3000
 
 ## 📋 Available Scripts
 
 ```bash
-./startseerhive.sh    # Start frontend + hardhat node
-./test-api.sh         # Test oracle API endpoint
-./scripts/smoke-gasless.sh  # Test gasless routing
-
-pnpm dev              # Start frontend only
+pnpm dev              # Start Next.js dev server
 pnpm build            # Build all packages
 pnpm test             # Run all tests
 pnpm lint             # Lint code
-pnpm chain            # Start hardhat node only
+
+# Testing
+./scripts/test-sponsor.sh   # Test paymaster API
+./scripts/smoke-gasless.sh  # Test gasless flow
+
+# Contracts
+cd contracts
+pnpm test             # Test smart contracts
 pnpm deploy:testnet   # Deploy to BNB Testnet
 ```
 
-## ⚡ Gasless Transactions
+## ⚡ Gasless Transactions (ERC-4337)
 
-SeerHive supports gasless transactions via **Particle Network** (primary) with automatic fallback to **Pimlico**.
+SeerHive implements Account Abstraction with **Particle Network** as primary paymaster and **Pimlico** as fallback.
 
 ### Architecture
 
-- **Server-side sponsorship**: All paymaster keys secured on backend (Next.js API routes)
-- **Particle → Pimlico fallback**: Automatic failover if primary provider rejects
-- **Zero frontend keys**: No credentials exposed to browser
+```
+Frontend (wagmi/viem)
+  ↓ POST /api/aa/sponsor
+Next.js API Route
+  ↓ Try Particle first
+Particle Paymaster ✅
+  ↓ On failure (rate limit/rejection)
+Pimlico Paymaster (fallback) ✅
+```
+
+### Key Features
+
+- **Server-side only**: All paymaster keys secured in Next.js API routes
+- **Automatic fallback**: Particle → Pimlico on rejection/rate-limit
+- **Zero frontend exposure**: No credentials in browser/client code
+- **Configurable**: EntryPoint and ChainID via environment variables
 
 ### How It Works
 
-1. Frontend calls `/api/aa/sponsor` with UserOperation
-2. Backend tries Particle paymaster first
-3. On failure (rate limit/rejection), automatically falls back to Pimlico
-4. Returns sponsored transaction data to frontend
+1. Frontend calls `gaslessService.buySharesGasless()` or `createMarketGasless()`
+2. Service constructs UserOperation and sends to `/api/aa/sponsor`
+3. Backend tries Particle paymaster with auth headers
+4. On failure, automatically falls back to Pimlico
+5. Returns `paymasterAndData` + gas limits to frontend
+6. Frontend submits sponsored transaction to bundler
 
-### Test Gasless
+### Testing
 
 ```bash
-# Test sponsor API endpoint
+# Test paymaster API endpoint
 ./scripts/test-sponsor.sh
 
-# Full gasless flow
+# Full gasless transaction flow
 ./scripts/smoke-gasless.sh
 ```
 
 ## 🧪 Testing
 
-**Frontend (DEMO mode):**
-- Visit http://localhost:3000/dashboard
-- Check tabs: Events, Markets, Agents, Analytics
-- Verify charts render correctly
-
-**API:**
+**Demo Mode (No Wallet Required):**
 ```bash
-./test-api.sh
+# Set NEXT_PUBLIC_DEMO=1 in .env.local
+pnpm dev
+# Visit http://localhost:3000
+# All features work with mock data
+```
+
+**On-Chain Mode (BNB Testnet):**
+```bash
+# Set NEXT_PUBLIC_DEMO=0 in .env.local
+# Configure paymaster keys
+pnpm dev
+# Connect wallet and test gasless transactions
 ```
 
 **Smart Contracts:**
 ```bash
 cd contracts
 pnpm test
+pnpm deploy:testnet
+```
+
+## 📁 Project Structure
+
+```
+seerhive/
+├── apps/
+│   └── web/                    # Next.js frontend
+│       ├── src/
+│       │   ├── app/            # Pages and API routes
+│       │   │   └── api/aa/sponsor/  # Paymaster API
+│       │   ├── components/     # React components
+│       │   ├── lib/            # Utilities
+│       │   │   ├── gasless.ts  # Gasless service
+│       │   │   ├── contracts.ts # Contract ABI
+│       │   │   └── paymaster/  # Paymaster adapters
+│       │   └── mocks/          # Demo data
+│       └── .env.local          # Environment config
+├── contracts/                  # Smart contracts
+│   ├── contracts/
+│   │   └── PredictionMarket.sol
+│   ├── scripts/deploy.ts
+│   └── test/
+├── scripts/                    # Test scripts
+│   ├── test-sponsor.sh
+│   └── smoke-gasless.sh
+└── docs/                       # Documentation
 ```
 
 ## 📚 Documentation
 
-- [Full Setup Guide](docs/README.md)
 - [Build Submission](docs/BUILD_SUBMISSION.md)
 - [Deployment Guide](DEPLOYMENT_GUIDE.md)
 - [Build Log](LOG_SEERHIVE.md)
 
-## 🔧 Environment
+## 🔧 Environment Configuration
 
-Copy `.env.example` to `.env.local` and configure:
+Copy `apps/web/.env.example` to `apps/web/.env.local` and configure:
+
+### Required Variables
 
 ```bash
-NEXT_PUBLIC_DEMO=1                    # 1=demo, 0=on-chain
-NEXT_PUBLIC_WC_PROJECT_ID=            # WalletConnect ID
-PRIVATE_KEY=                          # For deployment
+# Mode
+NEXT_PUBLIC_DEMO=0                    # 0=on-chain, 1=demo mode
 
-# Particle Paymaster (primary, server-side)
+# Network (BNB Testnet)
+NEXT_PUBLIC_CHAIN=bscTestnet
+NEXT_PUBLIC_CHAIN_ID=97
+NEXT_PUBLIC_RPC_URL=https://bsc-testnet.publicnode.com
+
+# Smart Contract
+NEXT_PUBLIC_CONTRACT_ADDRESS=0xYourDeployedContractAddress
+NEXT_PUBLIC_ENTRY_POINT=0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789
+
+# WalletConnect (optional)
+NEXT_PUBLIC_WC_PROJECT_ID=your_walletconnect_project_id
+```
+
+### Paymaster Configuration (Server-side Only)
+
+```bash
+# Particle Network (Primary)
 PARTICLE_PAYMASTER_URL=https://paymaster.particle.network/chain/97
 PARTICLE_PROJECT_ID=your_project_id
 PARTICLE_CLIENT_KEY=your_client_key
 
-# Pimlico Paymaster (fallback, server-side)
-PIMLICO_URL=https://api.pimlico.io/v2/97/rpc?apikey=YOUR_KEY
+# Pimlico (Fallback)
+PIMLICO_URL=https://api.pimlico.io/v2/97/rpc?apikey=YOUR_API_KEY
 ```
 
-## 🌐 Pages
+### Deployment (contracts/.env)
 
-- `/` - Homepage
-- `/dashboard` - Analytics dashboard
-- `/markets` - Prediction markets
-- `/events` - Event listings
-- `/copytrading` - Follow traders
-- `/governance` - DAO proposals
+```bash
+PRIVATE_KEY=your_deployer_private_key
+BSC_TESTNET_RPC=https://bsc-testnet.publicnode.com
+```
+
+**Security Notes:**
+- Never commit `.env.local` or `.env` files
+- Paymaster keys are server-side only (no `NEXT_PUBLIC_` prefix)
+- Use separate keys for testnet and mainnet
+
+## 🌐 Features & Pages
+
+- **`/`** - Homepage with hero and features
+- **`/dashboard`** - Analytics dashboard (volume, markets, agents)
+- **`/markets`** - Browse and trade prediction markets
+- **`/events`** - Upcoming events and markets
+- **`/copytrading`** - Follow top traders
+- **`/governance`** - DAO proposals and voting
+
+### Key Features
+
+- ✅ Gasless transactions (ERC-4337)
+- ✅ AI-powered market resolution
+- ✅ Copy trading system
+- ✅ Reputation scoring (Brier, ELO, Accuracy)
+- ✅ Optimistic resolution with 24h challenge window
+- ✅ Demo mode (no wallet required)
+- ✅ Dark theme with glassmorphism UI
 
 ## 🏗️ Tech Stack
 
-- Next.js 14, TypeScript, Tailwind CSS
-- Recharts, Zustand, wagmi, viem
-- Hardhat, Solidity, OpenZeppelin
-- Turborepo, pnpm
-- Pimlico/Particle Paymaster (ERC-4337)
+**Frontend:**
+- Next.js 14 (App Router)
+- TypeScript
+- Tailwind CSS + shadcn/ui
+- wagmi + viem (Ethereum interactions)
+- Zustand (State management)
+- Recharts (Analytics)
+
+**Smart Contracts:**
+- Solidity 0.8.x
+- Hardhat
+- OpenZeppelin
+- Deployed on BNB Testnet (Chain ID: 97)
+
+**Account Abstraction (ERC-4337):**
+- Particle Network Paymaster (Primary)
+- Pimlico Paymaster (Fallback)
+- EntryPoint v0.6.0
+
+**Infrastructure:**
+- Turborepo (Monorepo)
+- pnpm (Package manager)
+- GitHub Actions (CI/CD)
 
 ## 📄 License
 
