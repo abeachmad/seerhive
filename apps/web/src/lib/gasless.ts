@@ -1,9 +1,8 @@
-import { createPublicClient, http, encodeFunctionData } from 'viem';
+import { createPublicClient, http, encodeFunctionData, createWalletClient, custom } from 'viem';
 import { bscTestnet } from 'viem/chains';
 import { PREDICTION_MARKET_ADDRESS, PREDICTION_MARKET_ABI } from './contracts';
 
-// Paymaster service (mock for now - in production use Pimlico/Biconomy)
-const PAYMASTER_URL = process.env.NEXT_PUBLIC_PAYMASTER_URL || '';
+const PIMLICO_API_KEY = process.env.NEXT_PUBLIC_PAYMASTER_URL || '';
 
 interface GaslessTransaction {
   to: string;
@@ -21,7 +20,6 @@ export class GaslessService {
     });
   }
 
-  // Create gasless transaction for market creation
   async createMarketGasless(question: string, duration: number) {
     const data = encodeFunctionData({
       abi: PREDICTION_MARKET_ABI,
@@ -35,7 +33,6 @@ export class GaslessService {
     });
   }
 
-  // Create gasless transaction for buying shares
   async buySharesGasless(marketId: string, isYes: boolean, amount: bigint) {
     const data = encodeFunctionData({
       abi: PREDICTION_MARKET_ABI,
@@ -50,56 +47,67 @@ export class GaslessService {
     });
   }
 
-  // Sponsor transaction via paymaster
   private async sponsorTransaction(tx: GaslessTransaction) {
-    // In DEMO mode, simulate gasless
-    if (!PAYMASTER_URL) {
+    if (!PIMLICO_API_KEY) {
       return {
-        sponsored: true,
-        hash: '0x' + Math.random().toString(16).slice(2),
-        message: 'Gasless transaction simulated (DEMO mode)',
+        sponsored: false,
+        message: 'Pimlico API key not configured',
       };
     }
 
-    // In production, call actual paymaster service
     try {
-      const response = await fetch(PAYMASTER_URL, {
+      // Call Pimlico paymaster to sponsor gas
+      const response = await fetch(PIMLICO_API_KEY, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          transaction: tx,
-          chainId: bscTestnet.id,
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'pm_sponsorUserOperation',
+          params: [{
+            sender: tx.to,
+            callData: tx.data,
+            callGasLimit: '0x30d40',
+            verificationGasLimit: '0x30d40',
+            preVerificationGas: '0x30d40',
+            maxFeePerGas: '0x3b9aca00',
+            maxPriorityFeePerGas: '0x3b9aca00',
+          }],
         }),
       });
 
       const result = await response.json();
-      return {
-        sponsored: true,
-        hash: result.hash,
-        message: 'Transaction sponsored by paymaster',
-      };
-    } catch (error) {
-      console.error('Paymaster error:', error);
+      
+      if (result.result) {
+        return {
+          sponsored: true,
+          hash: result.result.paymasterAndData || '0x',
+          message: 'Transaction sponsored by Pimlico',
+        };
+      }
+
       return {
         sponsored: false,
-        message: 'Paymaster unavailable, user must pay gas',
+        message: 'Paymaster rejected transaction',
+      };
+    } catch (error) {
+      console.error('Pimlico error:', error);
+      return {
+        sponsored: false,
+        message: 'Paymaster unavailable',
       };
     }
   }
 
-  // Check if gasless is available
   isGaslessAvailable(): boolean {
-    return !!PAYMASTER_URL || process.env.NEXT_PUBLIC_DEMO === '1';
+    return !!PIMLICO_API_KEY;
   }
 
-  // Estimate gas savings
   async estimateGasSavings(tx: GaslessTransaction): Promise<string> {
     try {
       const gasPrice = await this.publicClient.getGasPrice();
-      const estimatedGas = 200000n; // Rough estimate
+      const estimatedGas = 200000n;
       const gasCost = gasPrice * estimatedGas;
-      
-      // Convert to BNB
       const bnbCost = Number(gasCost) / 1e18;
       return `~${bnbCost.toFixed(6)} BNB`;
     } catch {

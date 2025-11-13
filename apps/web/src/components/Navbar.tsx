@@ -4,11 +4,14 @@ import { usePathname } from 'next/navigation';
 import { WalletButton } from './WalletButton';
 import { Badge } from './ui/badge';
 import { isDemo } from '@/lib/demoFlags';
+import { gaslessService } from '@/lib/gasless';
 import { cn } from '@/lib/utils';
+import { Zap } from 'lucide-react';
 
 export function Navbar() {
   const pathname = usePathname();
   const demo = isDemo();
+  const gaslessAvailable = gaslessService.isGaslessAvailable();
 
   const links = [
     { href: '/', label: 'Home' },
@@ -44,8 +47,14 @@ export function Navbar() {
               ))}
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {demo && <Badge variant="warning">DEMO MODE</Badge>}
+            {gaslessAvailable && !demo && (
+              <span className="text-xs text-green-400 flex items-center gap-1">
+                <Zap className="w-3 h-3" />
+                Gas: Sponsored
+              </span>
+            )}
             <WalletButton />
           </div>
         </div>
