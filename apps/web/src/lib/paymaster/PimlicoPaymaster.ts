@@ -1,4 +1,5 @@
-import { IPaymaster, PaymasterResult, UserOperation } from './IPaymaster';
+import { IPaymaster } from './IPaymaster';
+import { PaymasterResult, UserOperation, SponsorOptions } from './types';
 import { createPublicClient, http } from 'viem';
 import { bscTestnet } from 'viem/chains';
 
@@ -7,18 +8,18 @@ export class PimlicoPaymaster implements IPaymaster {
   private publicClient;
 
   constructor() {
-    this.apiUrl = process.env.NEXT_PUBLIC_PAYMASTER_URL || '';
+    this.apiUrl = process.env.NEXT_PUBLIC_PIMLICO_URL || '';
     this.publicClient = createPublicClient({
       chain: bscTestnet,
       transport: http(),
     });
   }
 
-  async sponsorUserOperation(userOp: UserOperation): Promise<PaymasterResult> {
+  async sponsorUserOperation(userOp: UserOperation, opts?: SponsorOptions): Promise<PaymasterResult> {
     if (!this.apiUrl) {
       return {
         sponsored: false,
-        message: 'Pimlico API not configured',
+        message: 'Pimlico not configured',
         provider: 'pimlico',
       };
     }
@@ -45,6 +46,17 @@ export class PimlicoPaymaster implements IPaymaster {
 
       const result = await response.json();
       
+      if (result.error) {
+        const errorCode = result.error.code;
+        if (errorCode === 402 || errorCode === 429 || errorCode === -32500) {
+          return {
+            sponsored: false,
+            message: `Pimlico rejected: ${result.error.message}`,
+            provider: 'pimlico',
+          };
+        }
+      }
+
       if (result.result) {
         return {
           sponsored: true,

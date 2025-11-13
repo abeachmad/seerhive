@@ -1,23 +1,7 @@
-export interface PaymasterResult {
-  sponsored: boolean;
-  hash?: string;
-  message: string;
-  provider?: string;
-}
-
-export interface UserOperation {
-  sender: string;
-  callData: string;
-  callGasLimit?: string;
-  verificationGasLimit?: string;
-  preVerificationGas?: string;
-  maxFeePerGas?: string;
-  maxPriorityFeePerGas?: string;
-  value?: bigint;
-}
+import { PaymasterResult, UserOperation, SponsorOptions } from './types';
 
 export interface IPaymaster {
-  sponsorUserOperation(userOp: UserOperation): Promise<PaymasterResult>;
+  sponsorUserOperation(userOp: UserOperation, opts?: SponsorOptions): Promise<PaymasterResult>;
   isAvailable(): boolean;
   estimateGasSavings(userOp: UserOperation): Promise<string>;
   getProviderName(): string;

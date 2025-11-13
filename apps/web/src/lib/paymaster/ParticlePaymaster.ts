@@ -1,24 +1,27 @@
-import { IPaymaster, PaymasterResult, UserOperation } from './IPaymaster';
+import { IPaymaster } from './IPaymaster';
+import { PaymasterResult, UserOperation, SponsorOptions } from './types';
 import { createPublicClient, http } from 'viem';
 import { bscTestnet } from 'viem/chains';
 
 export class ParticlePaymaster implements IPaymaster {
   private apiUrl: string;
+  private apiKey: string;
   private publicClient;
 
   constructor() {
     this.apiUrl = process.env.NEXT_PUBLIC_PARTICLE_PAYMASTER_URL || '';
+    this.apiKey = process.env.NEXT_PUBLIC_PARTICLE_API_KEY || '';
     this.publicClient = createPublicClient({
       chain: bscTestnet,
       transport: http(),
     });
   }
 
-  async sponsorUserOperation(userOp: UserOperation): Promise<PaymasterResult> {
-    if (!this.apiUrl) {
+  async sponsorUserOperation(userOp: UserOperation, opts?: SponsorOptions): Promise<PaymasterResult> {
+    if (!this.apiUrl || !this.apiKey) {
       return {
         sponsored: false,
-        message: 'Particle API not configured',
+        message: 'Particle not configured',
         provider: 'particle',
       };
     }
@@ -28,7 +31,7 @@ export class ParticlePaymaster implements IPaymaster {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_PARTICLE_API_KEY || ''}`,
+          'Authorization': `Bearer ${this.apiKey}`,
         },
         body: JSON.stringify({
           method: 'particle_aa_sponsorUserOperation',
@@ -46,6 +49,17 @@ export class ParticlePaymaster implements IPaymaster {
 
       const result = await response.json();
       
+      if (result.error) {
+        const errorMsg = result.error.message || '';
+        if (errorMsg.includes('not willing') || errorMsg.includes('deposit') || errorMsg.includes('rate limit')) {
+          return {
+            sponsored: false,
+            message: `Particle rejected: ${errorMsg}`,
+            provider: 'particle',
+          };
+        }
+      }
+
       if (result.result) {
         return {
           sponsored: true,
@@ -70,7 +84,7 @@ export class ParticlePaymaster implements IPaymaster {
   }
 
   isAvailable(): boolean {
-    return !!this.apiUrl;
+    return !!this.apiUrl && !!this.apiKey;
   }
 
   async estimateGasSavings(userOp: UserOperation): Promise<string> {
