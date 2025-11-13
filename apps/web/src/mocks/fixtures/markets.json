@@ -7,6 +7,8 @@
     "noPrice": 0.35,
     "endDate": "2024-12-31",
     "status": "active",
+    "aiVerified": true,
+    "aiConfidence": 0.92,
     "sparkline": [
       { "value": 0.45 },
       { "value": 0.52 },
@@ -23,6 +25,8 @@
     "noPrice": 0.28,
     "endDate": "2024-06-30",
     "status": "active",
+    "aiVerified": true,
+    "aiConfidence": 0.88,
     "sparkline": [
       { "value": 0.68 },
       { "value": 0.70 },
@@ -39,6 +43,8 @@
     "noPrice": 0.45,
     "endDate": "2024-09-30",
     "status": "active",
+    "aiVerified": true,
+    "aiConfidence": 0.85,
     "sparkline": [
       { "value": 0.50 },
       { "value": 0.52 },
