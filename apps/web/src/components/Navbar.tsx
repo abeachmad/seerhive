@@ -12,6 +12,7 @@ export function Navbar() {
   const pathname = usePathname();
   const demo = isDemo();
   const gaslessAvailable = gaslessService.isGaslessAvailable();
+  const providerName = gaslessService.getProviderName();
 
   const links = [
     { href: '/', label: 'Home' },
@@ -52,7 +53,7 @@ export function Navbar() {
             {gaslessAvailable && !demo && (
               <span className="text-xs text-green-400 flex items-center gap-1">
                 <Zap className="w-3 h-3" />
-                Gas: Sponsored
+                Gas: Sponsored ({providerName})
               </span>
             )}
             <WalletButton />
