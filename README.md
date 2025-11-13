@@ -1,10 +1,10 @@
 # SeerHive - Social Prediction Markets
 
-AI-assisted prediction markets on BNB Chain with gasless transactions, copy trading, and governance.
+AI-assisted prediction markets on BNB Chain with **gasless transactions** (ERC-4337), copy trading, and governance.
 
 **Deployed Contract:** [0xc6Dd26D3eE0F58fAb15Dc87bEe3A66896B6D4127](https://testnet.bscscan.com/address/0xc6Dd26D3eE0F58fAb15Dc87bEe3A66896B6D4127) (BNB Testnet)
 
-## 👨‍⚖️ Judge Quick Start (≤10 minutes)
+## 👨⚖️ Judge Quick Start (≤10 minutes)
 
 ```bash
 # 1. Clone and install
@@ -32,24 +32,6 @@ pnpm dev
 ```
 
 **Demo Mode (No Wallet):** Set `NEXT_PUBLIC_DEMO=1` in `.env.local` to test all features with mock data.
-
-## 🚀 Quick Start
-
-```bash
-# Clone and install
-git clone https://github.com/abeachmad/seerhive.git
-cd seerhive
-pnpm install
-
-# Configure environment
-cp apps/web/.env.example apps/web/.env.local
-# Edit .env.local with your keys
-
-# Start development
-pnpm dev
-```
-
-Then open http://localhost:3000
 
 ## 📋 Available Scripts
 
