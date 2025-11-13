@@ -20,7 +20,6 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
   const [useGasless, setUseGasless] = useState(true);
-  const [gasSavings, setGasSavings] = useState('');
   const { addTrade, updateMarket, updateUserReputation } = useStore();
   const { address } = useAccount();
   const demo = isDemo();
@@ -30,16 +29,6 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
 
   const gaslessAvailable = gaslessService.isGaslessAvailable();
 
-  useEffect(() => {
-    if (amount && parseFloat(amount) > 0) {
-      gaslessService.estimateGasSavings({
-        to: PREDICTION_MARKET_ADDRESS,
-        data: '0x',
-        value: parseEther(amount),
-      }).then(setGasSavings);
-    }
-  }, [amount]);
-
   const handleTrade = async () => {
     if (!amount || parseFloat(amount) <= 0) return;
 
@@ -48,25 +37,14 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
     if (!demo && address) {
       try {
         if (useGasless && gaslessAvailable) {
-          // Gasless transaction
+          // Gasless transaction via backend
           const result = await gaslessService.buySharesGasless(
             market.id,
             side === 'yes',
             parseEther(amount)
           );
           
-          if (result.sponsored) {
-            console.log('Gasless transaction:', result.hash);
-          } else {
-            // Fallback to regular transaction
-            writeContract({
-              address: PREDICTION_MARKET_ADDRESS as `0x${string}`,
-              abi: PREDICTION_MARKET_ABI,
-              functionName: 'buyShares',
-              args: [BigInt(market.id), side === 'yes'],
-              value: parseEther(amount),
-            });
-          }
+          console.log('Gasless sponsored:', result.provider, result.latency_ms + 'ms');
         } else {
           // Regular transaction with gas
           writeContract({
@@ -198,9 +176,9 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
                 Use Gasless Transaction
               </span>
             </label>
-            {useGasless && gasSavings && (
+            {useGasless && (
               <p className="text-xs text-green-400 mt-1 ml-6">
-                Save {gasSavings} in gas fees
+                Save gas fees with Particle Network
               </p>
             )}
           </div>
@@ -221,7 +199,7 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
             <div className="flex justify-between">
               <span className="text-slate-400">Gas fee</span>
               <span className={useGasless && gaslessAvailable ? 'text-green-400' : 'text-slate-300'}>
-                {useGasless && gaslessAvailable ? 'FREE ⚡' : gasSavings || '~0.001 BNB'}
+                {useGasless && gaslessAvailable ? 'FREE ⚡' : '~0.001 BNB'}
               </span>
             </div>
           </div>

@@ -1,82 +1,91 @@
 import { encodeFunctionData } from 'viem';
 import { PREDICTION_MARKET_ADDRESS, PREDICTION_MARKET_ABI } from './contracts';
-import { MultiProviderRouter } from './paymaster/MultiProviderRouter';
-import { SponsorOptions, PaymasterResult } from './paymaster/types';
 
-export type { PaymasterProvider, RoutingMode } from './paymaster/types';
+export type PaymasterProvider = 'particle' | 'pimlico';
 
-interface GaslessTransaction {
-  to: string;
-  data: string;
-  value?: bigint;
+interface SponsorResult {
+  paymasterAndData: string;
+  preVerificationGas: string;
+  verificationGasLimit: string;
+  callGasLimit: string;
+  provider?: string;
+  latency_ms?: number;
+  fallback?: boolean;
+}
+
+async function sponsorViaAPI(userOp: any, entryPoint: string, chainId: number): Promise<SponsorResult> {
+  const res = await fetch('/api/aa/sponsor', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userOp, entryPoint, chainId }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || 'Sponsor failed');
+  }
+
+  return res.json();
 }
 
 export class GaslessService {
-  private router: MultiProviderRouter;
-
-  constructor() {
-    this.router = new MultiProviderRouter();
-  }
-
-  async createMarketGasless(question: string, duration: number, opts?: SponsorOptions): Promise<PaymasterResult> {
+  async createMarketGasless(question: string, duration: number, entryPoint: string = '0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789'): Promise<SponsorResult> {
     const data = encodeFunctionData({
       abi: PREDICTION_MARKET_ABI,
       functionName: 'createMarket',
       args: [question, BigInt(duration)],
     });
 
-    return this.router.sponsorUserOperation({
+    const userOp = {
       sender: PREDICTION_MARKET_ADDRESS,
       callData: data,
-    }, opts);
+    };
+
+    return sponsorViaAPI(userOp, entryPoint, 97);
   }
 
-  async buySharesGasless(marketId: string, isYes: boolean, amount: bigint, opts?: SponsorOptions): Promise<PaymasterResult> {
+  async buySharesGasless(marketId: string, isYes: boolean, amount: bigint, entryPoint: string = '0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789'): Promise<SponsorResult> {
     const data = encodeFunctionData({
       abi: PREDICTION_MARKET_ABI,
       functionName: 'buyShares',
       args: [BigInt(marketId), isYes],
     });
 
-    return this.router.sponsorUserOperation({
+    const userOp = {
       sender: PREDICTION_MARKET_ADDRESS,
       callData: data,
-      value: amount,
-    }, opts);
+      value: amount.toString(),
+    };
+
+    return sponsorViaAPI(userOp, entryPoint, 97);
   }
 
   async sendGaslessTx(
     contract: string,
     method: string,
     args: readonly unknown[],
-    opts?: SponsorOptions
-  ): Promise<PaymasterResult> {
+    entryPoint: string = '0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789'
+  ): Promise<SponsorResult> {
     const data = encodeFunctionData({
       abi: PREDICTION_MARKET_ABI,
       functionName: method as any,
       args: args as any,
     });
 
-    return this.router.sponsorUserOperation({
+    const userOp = {
       sender: contract,
       callData: data,
-    }, opts);
+    };
+
+    return sponsorViaAPI(userOp, entryPoint, 97);
   }
 
   isGaslessAvailable(): boolean {
-    return this.router.isAvailable();
-  }
-
-  async estimateGasSavings(tx: GaslessTransaction): Promise<string> {
-    return this.router.estimateGasSavings({
-      sender: tx.to,
-      callData: tx.data,
-      value: tx.value,
-    });
+    return true;
   }
 
   getProviderName(): string {
-    return this.router.getProviderName();
+    return 'particle';
   }
 }
 

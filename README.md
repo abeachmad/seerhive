@@ -33,35 +33,28 @@ pnpm deploy:testnet   # Deploy to BNB Testnet
 
 ## ⚡ Gasless Transactions
 
-SeerHive supports gasless transactions via multiple paymaster providers with automatic fallback.
+SeerHive supports gasless transactions via **Particle Network** (primary) with automatic fallback to **Pimlico**.
 
-### Switch Providers
+### Architecture
 
-Edit `apps/web/.env.local`:
-
-```bash
-# Force Pimlico (testnet default)
-NEXT_PUBLIC_PAYMASTER_ROUTING=pimlico
-
-# Force Particle (mainnet/social)
-NEXT_PUBLIC_PAYMASTER_ROUTING=particle
-
-# Auto fallback (Pimlico → Particle)
-NEXT_PUBLIC_PAYMASTER_ROUTING=auto
-
-# A/B test (deterministic by address)
-NEXT_PUBLIC_PAYMASTER_ROUTING=abtest
-```
+- **Server-side sponsorship**: All paymaster keys secured on backend (Next.js API routes)
+- **Particle → Pimlico fallback**: Automatic failover if primary provider rejects
+- **Zero frontend keys**: No credentials exposed to browser
 
 ### How It Works
 
-- **One UO = One Paymaster**: Each UserOperation is sponsored by exactly one provider
-- **Fallback on Rejection**: In `auto` mode, if primary rejects (402/429/rate limit), tries secondary
-- **No Double Submit**: Guard ensures only one actual transaction is sent
+1. Frontend calls `/api/aa/sponsor` with UserOperation
+2. Backend tries Particle paymaster first
+3. On failure (rate limit/rejection), automatically falls back to Pimlico
+4. Returns sponsored transaction data to frontend
 
 ### Test Gasless
 
 ```bash
+# Test sponsor API endpoint
+./scripts/test-sponsor.sh
+
+# Full gasless flow
 ./scripts/smoke-gasless.sh
 ```
 
@@ -92,13 +85,20 @@ pnpm test
 
 ## 🔧 Environment
 
-Copy `.env.example` to `.env` and configure:
+Copy `.env.example` to `.env.local` and configure:
 
 ```bash
 NEXT_PUBLIC_DEMO=1                    # 1=demo, 0=on-chain
 NEXT_PUBLIC_WC_PROJECT_ID=            # WalletConnect ID
 PRIVATE_KEY=                          # For deployment
-NEXT_PUBLIC_PAYMASTER_ROUTING=auto    # Gasless routing mode
+
+# Particle Paymaster (primary, server-side)
+PARTICLE_PAYMASTER_URL=https://paymaster.particle.network/chain/97
+PARTICLE_PROJECT_ID=your_project_id
+PARTICLE_CLIENT_KEY=your_client_key
+
+# Pimlico Paymaster (fallback, server-side)
+PIMLICO_URL=https://api.pimlico.io/v2/97/rpc?apikey=YOUR_KEY
 ```
 
 ## 🌐 Pages
