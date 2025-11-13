@@ -1,0 +1,25 @@
+{
+  "name": "seerhive",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "contracts"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "chain": "cd contracts && pnpm hardhat node",
+    "deploy:testnet": "cd contracts && pnpm hardhat run scripts/deploy.ts --network bscTestnet"
+  },
+  "devDependencies": {
+    "turbo": "^1.10.16",
+    "@types/node": "^20.8.0",
+    "typescript": "^5.2.2",
+    "prettier": "^3.0.3",
+    "eslint": "^8.51.0"
+  },
+  "packageManager": "pnpm@10.20.0"
+}
