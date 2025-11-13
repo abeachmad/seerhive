@@ -7,19 +7,22 @@ import { CreateMarketDialog } from '@/components/CreateMarketDialog';
 import { TradeDialog } from '@/components/TradeDialog';
 import { ResolutionPanel } from '@/components/ResolutionPanel';
 import { isDemo } from '@/lib/demoFlags';
-import marketsData from '@/mocks/fixtures/markets.json';
+import marketsDataRaw from '@/mocks/fixtures/markets.json';
 import { useStore } from '@/lib/store';
 import { useState } from 'react';
 import { Sparkles, TrendingUp, Clock } from 'lucide-react';
+import type { Market } from '@/types/market';
+
+const marketsData = marketsDataRaw as Market[];
 
 export default function Markets() {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [selectedMarket, setSelectedMarket] = useState<any>(null);
-  const [selectedForResolution, setSelectedForResolution] = useState<any>(null);
+  const [selectedMarket, setSelectedMarket] = useState<Market | null>(null);
+  const [selectedForResolution, setSelectedForResolution] = useState<Market | null>(null);
   const { markets: userMarkets } = useStore();
   const demo = isDemo();
 
-  const allMarkets = [...marketsData, ...userMarkets];
+  const allMarkets: Market[] = [...marketsData, ...userMarkets];
 
   return (
     <main className="min-h-screen p-8">
