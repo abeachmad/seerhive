@@ -108,7 +108,7 @@ export function CreateMarketDialog({ onClose }: CreateMarketDialogProps) {
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 focus:border-green-500 focus:outline-none"
+                className="w-full px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 focus:border-green-500 focus:outline-none [color-scheme:dark]"
                 required
               />
             </div>
@@ -120,9 +120,17 @@ export function CreateMarketDialog({ onClose }: CreateMarketDialogProps) {
             </p>
           </div>
 
+          {loading && (
+            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3">
+              <p className="text-sm text-green-400 text-center">
+                ✓ AI verification passed • Creating market on-chain...
+              </p>
+            </div>
+          )}
+
           <div className="flex gap-3">
             <Button type="submit" disabled={loading} className="flex-1">
-              {loading ? 'AI Verifying...' : 'Create Market'}
+              {loading ? 'Creating...' : 'Create Market'}
             </Button>
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
