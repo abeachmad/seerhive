@@ -3,10 +3,10 @@ import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { useStore } from '@/lib/store';
-import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { parseEther } from 'viem';
+import { useAccount, useWallets } from '@particle-network/connectkit';
+import { useSmartAccount } from '@particle-network/connectkit';
+import { parseEther, encodeFunctionData } from 'viem';
 import { PREDICTION_MARKET_ADDRESS, PREDICTION_MARKET_ABI } from '@/lib/contracts';
-import { gaslessService } from '@/lib/gasless';
 import { isDemo } from '@/lib/demoFlags';
 import { X, TrendingUp, TrendingDown, Zap } from 'lucide-react';
 
@@ -19,15 +19,21 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
   const [side, setSide] = useState<'yes' | 'no'>('yes');
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
-  const [useGasless, setUseGasless] = useState(true);
+  const [useGasless, setUseGasless] = useState(false);
+  const [smartAccountAddress, setSmartAccountAddress] = useState<string>('');
   const { addTrade, updateMarket, updateUserReputation } = useStore();
   const { address } = useAccount();
+  const smartAccount = useSmartAccount();
+  const [primaryWallet] = useWallets();
   const demo = isDemo();
 
-  const { writeContract, data: hash } = useWriteContract();
-  const { isLoading: isConfirming } = useWaitForTransactionReceipt({ hash });
+  const gaslessAvailable = !!smartAccount;
 
-  const gaslessAvailable = gaslessService.isGaslessAvailable();
+  useEffect(() => {
+    if (smartAccount) {
+      smartAccount.getAddress().then(setSmartAccountAddress).catch(console.error);
+    }
+  }, [smartAccount]);
 
   const handleTrade = async () => {
     if (!amount || parseFloat(amount) <= 0) return;
@@ -36,34 +42,58 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
 
     if (!demo && address) {
       try {
-        if (useGasless && gaslessAvailable) {
-          // Gasless transaction via backend
-          const result = await gaslessService.buySharesGasless(
-            market.id,
-            side === 'yes',
-            parseEther(amount)
-          );
+        if (useGasless && gaslessAvailable && smartAccount) {
+          const tx = {
+            to: PREDICTION_MARKET_ADDRESS,
+            value: parseEther(amount).toString(),
+            data: encodeFunctionData({
+              abi: PREDICTION_MARKET_ABI,
+              functionName: 'buyShares',
+              args: [BigInt(market.id), side === 'yes'],
+            }),
+          };
+
+          const feeQuotes = await smartAccount.getFeeQuotes(tx);
+          const gaslessQuote = feeQuotes?.verifyingPaymasterGasless;
           
-          console.log('Gasless sponsored:', result.provider, result.latency_ms + 'ms');
-        } else {
-          // Regular transaction with gas
-          writeContract({
-            address: PREDICTION_MARKET_ADDRESS as `0x${string}`,
-            abi: PREDICTION_MARKET_ABI,
-            functionName: 'buyShares',
-            args: [BigInt(market.id), side === 'yes'],
-            value: parseEther(amount),
+          if (!gaslessQuote) {
+            throw new Error('Gasless transaction not available');
+          }
+
+          const hash = await smartAccount.sendUserOperation({
+            userOp: gaslessQuote.userOp,
+            userOpHash: gaslessQuote.userOpHash,
           });
+          
+          console.log('Gasless tx:', hash);
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        } else {
+          // Regular transaction with gas via wallet client
+          const walletClient = primaryWallet.getWalletClient();
+          const txHash = await walletClient.sendTransaction({
+            to: PREDICTION_MARKET_ADDRESS as `0x${string}`,
+            value: parseEther(amount),
+            data: encodeFunctionData({
+              abi: PREDICTION_MARKET_ABI,
+              functionName: 'buyShares',
+              args: [BigInt(market.id), side === 'yes'],
+            }),
+            chain: { id: 97 },
+            account: address as `0x${string}`,
+          });
+          console.log('Regular tx:', txHash);
+          await new Promise(resolve => setTimeout(resolve, 2000));
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Trade failed:', error);
+        alert(`Transaction failed: ${error.message || 'Unknown error'}`);
         setLoading(false);
         return;
       }
+    } else {
+      // Demo mode
+      await new Promise(resolve => setTimeout(resolve, 1000));
     }
-
-    // Demo or after on-chain success
-    await new Promise(resolve => setTimeout(resolve, 1000));
 
     const trade = {
       id: Date.now().toString(),
@@ -176,10 +206,10 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
                 Use Gasless Transaction
               </span>
             </label>
-            {useGasless && (
-              <p className="text-xs text-green-400 mt-1 ml-6">
-                Save gas fees with Particle Network
-              </p>
+            {useGasless && smartAccountAddress && (
+              <div className="mt-2 ml-6 p-2 bg-green-500/10 border border-green-500/30 rounded text-xs">
+                <p className="text-green-400 font-medium">⚡ Gasless - Sponsored by Particle Paymaster</p>
+              </div>
             )}
           </div>
         )}
@@ -208,23 +238,17 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
         <div className="flex gap-3">
           <Button 
             onClick={handleTrade} 
-            disabled={loading || isConfirming || !amount || parseFloat(amount) <= 0}
+            disabled={loading || !amount || parseFloat(amount) <= 0}
             className="flex-1"
           >
-            {loading || isConfirming ? 'Processing...' : `Buy ${side.toUpperCase()}`}
+            {loading ? 'Processing...' : `Buy ${side.toUpperCase()}`}
           </Button>
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
         </div>
 
-        {useGasless && gaslessAvailable && (
-          <div className="mt-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-2">
-            <p className="text-xs text-yellow-400 text-center">
-              ⚡ Gasless transaction powered by Account Abstraction
-            </p>
-          </div>
-        )}
+
       </div>
     </div>
   );

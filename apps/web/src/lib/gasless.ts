@@ -47,7 +47,7 @@ export class GaslessService {
     return sponsorViaAPI(userOp, entryPoint, CHAIN_ID);
   }
 
-  async buySharesGasless(marketId: string, isYes: boolean, amount: bigint, entryPoint: string = ENTRY_POINT): Promise<SponsorResult> {
+  async buySharesGasless(marketId: string, isYes: boolean, amount: bigint, sender: string, entryPoint: string = ENTRY_POINT): Promise<SponsorResult> {
     const data = encodeFunctionData({
       abi: PREDICTION_MARKET_ABI,
       functionName: 'buyShares',
@@ -55,9 +55,17 @@ export class GaslessService {
     });
 
     const userOp = {
-      sender: PREDICTION_MARKET_ADDRESS,
+      sender,
+      nonce: '0x0',
+      initCode: '0x',
       callData: data,
-      value: amount.toString(),
+      callGasLimit: '0x0',
+      verificationGasLimit: '0x0',
+      preVerificationGas: '0x0',
+      maxFeePerGas: '0x0',
+      maxPriorityFeePerGas: '0x0',
+      paymasterAndData: '0x',
+      signature: '0x',
     };
 
     return sponsorViaAPI(userOp, entryPoint, CHAIN_ID);
