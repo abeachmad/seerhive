@@ -4,15 +4,16 @@ import { usePathname } from 'next/navigation';
 import { WalletButton } from './WalletButton';
 import { Badge } from './ui/badge';
 import { isDemo } from '@/lib/demoFlags';
-import { gaslessService } from '@/lib/gasless';
 import { cn } from '@/lib/utils';
 import { Zap } from 'lucide-react';
+import { useSmartAccount } from '@particle-network/connectkit';
 
 export function Navbar() {
   const pathname = usePathname();
   const demo = isDemo();
-  const gaslessAvailable = gaslessService.isGaslessAvailable();
-  const providerName = gaslessService.getProviderName();
+  const smartAccount = useSmartAccount();
+  const gaslessAvailable = !!smartAccount;
+  const providerName = 'Particle';
 
   const links = [
     { href: '/', label: 'Home' },

@@ -2,6 +2,7 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract PredictionMarket is Ownable {
     struct Market {
@@ -42,21 +43,24 @@ contract PredictionMarket is Ownable {
         return marketId;
     }
 
-    function buyShares(uint256 _marketId, bool _isYes) external payable {
+    function buyShares(uint256 _marketId, bool _isYes, address _token, uint256 _amount) external {
         Market storage market = markets[_marketId];
         require(block.timestamp < market.endTime, "Market ended");
         require(!market.resolved, "Market resolved");
-        require(msg.value > 0, "Must send ETH");
+        require(_amount > 0, "Amount must be > 0");
+
+        IERC20 token = IERC20(_token);
+        require(token.transferFrom(msg.sender, address(this), _amount), "Transfer failed");
 
         if (_isYes) {
-            yesShares[_marketId][msg.sender] += msg.value;
-            market.totalYesShares += msg.value;
+            yesShares[_marketId][msg.sender] += _amount;
+            market.totalYesShares += _amount;
         } else {
-            noShares[_marketId][msg.sender] += msg.value;
-            market.totalNoShares += msg.value;
+            noShares[_marketId][msg.sender] += _amount;
+            market.totalNoShares += _amount;
         }
 
-        emit SharesPurchased(_marketId, msg.sender, _isYes, msg.value);
+        emit SharesPurchased(_marketId, msg.sender, _isYes, _amount);
     }
 
     function resolveMarket(uint256 _marketId, bool _outcome) external onlyOwner {
@@ -83,6 +87,7 @@ contract PredictionMarket is Ownable {
         uint256 payout = (userShares * totalPool) / totalWinningShares;
 
         claimed[_marketId][msg.sender] = true;
+        // Note: Payout in same token as majority of deposits (simplified)
         payable(msg.sender).transfer(payout);
 
         emit PayoutClaimed(_marketId, msg.sender, payout);

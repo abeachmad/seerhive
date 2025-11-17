@@ -7,6 +7,20 @@ export const PREDICTION_MARKET_ABI = [
     "type": "constructor"
   },
   {
+    "inputs": [
+      {"internalType": "address", "name": "owner", "type": "address"}
+    ],
+    "name": "OwnableInvalidOwner",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {"internalType": "address", "name": "account", "type": "address"}
+    ],
+    "name": "OwnableUnauthorizedAccount",
+    "type": "error"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {"indexed": true, "internalType": "uint256", "name": "marketId", "type": "uint256"},
@@ -49,11 +63,13 @@ export const PREDICTION_MARKET_ABI = [
   {
     "inputs": [
       {"internalType": "uint256", "name": "_marketId", "type": "uint256"},
-      {"internalType": "bool", "name": "_isYes", "type": "bool"}
+      {"internalType": "bool", "name": "_isYes", "type": "bool"},
+      {"internalType": "address", "name": "_token", "type": "address"},
+      {"internalType": "uint256", "name": "_amount", "type": "uint256"}
     ],
     "name": "buyShares",
     "outputs": [],
-    "stateMutability": "payable",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
