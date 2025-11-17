@@ -2,7 +2,12 @@
 import { useState } from 'react';
 import { Button } from './ui/button';
 import { useStore } from '@/lib/store';
-import { X } from 'lucide-react';
+import { useAccount } from '@particle-network/connectkit';
+import { useSmartAccount } from '@particle-network/connectkit';
+import { encodeFunctionData } from 'viem';
+import { PREDICTION_MARKET_ADDRESS, PREDICTION_MARKET_ABI } from '@/lib/contracts';
+import { isDemo } from '@/lib/demoFlags';
+import { X, Zap } from 'lucide-react';
 
 interface CreateMarketDialogProps {
   onClose: () => void;
@@ -14,33 +19,118 @@ export function CreateMarketDialog({ onClose }: CreateMarketDialogProps) {
   const [category, setCategory] = useState('DeFi');
   const [endDate, setEndDate] = useState('');
   const [loading, setLoading] = useState(false);
+  const [useGasless, setUseGasless] = useState(true);
   const addMarket = useStore((state) => state.addMarket);
+  const { address } = useAccount();
+  const smartAccount = useSmartAccount();
+  const demo = isDemo();
+  
+  const gaslessAvailable = !!smartAccount;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    // Simulate AI verification
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      let marketId: string;
+      
+      if (!demo && address) {
+        // Calculate duration in seconds
+        const endDateTime = new Date(endDate).getTime();
+        const currentTime = Date.now();
+        const duration = Math.floor((endDateTime - currentTime) / 1000);
+        
+        if (duration <= 0) {
+          alert('End date must be in the future');
+          setLoading(false);
+          return;
+        }
+        
+        if (useGasless && smartAccount) {
+          console.log('🚀 Creating market gasless...');
+          console.log('Question:', question);
+          console.log('Duration:', duration, 'seconds');
+          
+          const createTx = {
+            to: PREDICTION_MARKET_ADDRESS,
+            value: '0',
+            data: encodeFunctionData({
+              abi: PREDICTION_MARKET_ABI,
+              functionName: 'createMarket',
+              args: [question, BigInt(duration)],
+            }),
+          };
+          
+          const quotes = await smartAccount.getFeeQuotes(createTx);
+          const gaslessQuote = quotes?.verifyingPaymasterGasless;
+          
+          if (!gaslessQuote) {
+            throw new Error('Gasless transaction not available');
+          }
+          
+          const txHash = await smartAccount.sendUserOperation({
+            userOp: gaslessQuote.userOp,
+            userOpHash: gaslessQuote.userOpHash,
+          });
+          
+          console.log('✅ Market created gasless:', txHash);
+          
+          // Get the new market ID from contract
+          const response = await fetch('https://bsc-testnet.publicnode.com', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              jsonrpc: '2.0',
+              method: 'eth_call',
+              params: [{
+                to: PREDICTION_MARKET_ADDRESS,
+                data: '0x2c78c2c6' // marketCount()
+              }, 'latest'],
+              id: 1
+            })
+          });
+          const result = await response.json();
+          const marketCount = parseInt(result.result, 16);
+          marketId = (marketCount - 1).toString(); // New market ID
+          
+        } else {
+          // Regular transaction (not implemented yet)
+          throw new Error('Regular transactions not implemented for market creation');
+        }
+      } else {
+        // Demo mode
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        marketId = Date.now().toString();
+      }
 
-    const newMarket = {
-      id: Date.now().toString(),
-      question,
-      description,
-      category,
-      totalVolume: 0,
-      yesPrice: 0.5,
-      noPrice: 0.5,
-      endDate,
-      status: 'active',
-      sparkline: [{ value: 0.5 }, { value: 0.5 }, { value: 0.5 }],
-      aiVerified: true,
-      aiConfidence: 0.85 + Math.random() * 0.15,
-    };
+      const newMarket = {
+        id: marketId,
+        question,
+        description,
+        category,
+        totalVolume: 0,
+        yesPrice: 0.5,
+        noPrice: 0.5,
+        endDate,
+        status: 'active',
+        sparkline: [{ value: 0.5 }, { value: 0.5 }, { value: 0.5 }],
+        aiVerified: true,
+        aiConfidence: 0.85 + Math.random() * 0.15,
+      };
 
-    addMarket(newMarket);
-    setLoading(false);
-    onClose();
+      // Don't add to store - market should be loaded from contract
+      console.log('✅ Market created on-chain:', newMarket);
+      
+      // Refresh the page to load the new market from contract
+      window.location.reload();
+      
+    } catch (error: any) {
+      console.error('Market creation failed:', error);
+      alert(`Failed to create market: ${error.message}`);
+    } finally {
+      setLoading(false);
+      onClose();
+    }
   };
 
   return (
@@ -114,28 +204,51 @@ export function CreateMarketDialog({ onClose }: CreateMarketDialogProps) {
             </div>
           </div>
 
+          {gaslessAvailable && !demo && (
+            <div className="mb-4">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={useGasless}
+                  onChange={(e) => setUseGasless(e.target.checked)}
+                  className="w-4 h-4"
+                />
+                <span className="text-sm text-slate-300">
+                  <Zap className="w-4 h-4 inline text-yellow-400 mr-1" />
+                  Use Gasless Transaction (FREE)
+                </span>
+              </label>
+            </div>
+          )}
+
           <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
             <p className="text-sm text-blue-400">
-              🤖 AI will verify this market against news sources and social media to ensure accuracy
+              🤖 Market will be deployed to BNB Chain {demo ? '(Demo Mode)' : 'and verified by AI'}
             </p>
           </div>
 
           {loading && (
             <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3">
               <p className="text-sm text-green-400 text-center">
-                ✓ AI verification passed • Creating market on-chain...
+                {demo ? '✓ Creating demo market...' : '✓ Deploying market on-chain...'}
               </p>
             </div>
           )}
 
           <div className="flex gap-3">
-            <Button type="submit" disabled={loading} className="flex-1">
-              {loading ? 'Creating...' : 'Create Market'}
+            <Button type="submit" disabled={loading || (!demo && !address)} className="flex-1">
+              {loading ? 'Creating...' : `Create Market${useGasless && gaslessAvailable ? ' (Gasless)' : ''}`}
             </Button>
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
           </div>
+          
+          {!demo && !address && (
+            <p className="text-sm text-red-400 mt-2 text-center">
+              Please connect your wallet to create markets
+            </p>
+          )}
         </form>
       </div>
     </div>

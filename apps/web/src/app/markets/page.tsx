@@ -9,22 +9,119 @@ import { ResolutionPanel } from '@/components/ResolutionPanel';
 import { SharesBalance } from '@/components/SharesBalance';
 import { ContractDebug } from '@/components/ContractDebug';
 import { isDemo } from '@/lib/demoFlags';
-import marketsDataRaw from '@/mocks/fixtures/markets.json';
+import { PREDICTION_MARKET_ADDRESS, PREDICTION_MARKET_ABI } from '@/lib/contracts';
 import { useStore } from '@/lib/store';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Sparkles, TrendingUp, Clock } from 'lucide-react';
 import type { Market } from '@/types/market';
-
-const marketsData = marketsDataRaw as Market[];
 
 export default function Markets() {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [selectedMarket, setSelectedMarket] = useState<Market | null>(null);
   const [selectedForResolution, setSelectedForResolution] = useState<Market | null>(null);
+  const [contractMarkets, setContractMarkets] = useState<Market[]>([]);
+  const [loading, setLoading] = useState(true);
   const { markets: userMarkets } = useStore();
   const demo = isDemo();
 
-  const allMarkets: Market[] = [...marketsData, ...userMarkets];
+  // Load markets from contract
+  useEffect(() => {
+    if (demo) {
+      // Demo markets
+      setContractMarkets([
+        {
+          id: '0',
+          question: 'Will BTC reach $100k in 2025?',
+          totalVolume: 125000,
+          yesPrice: 0.65,
+          noPrice: 0.35,
+          endDate: '2024-12-31',
+          status: 'active',
+          aiVerified: true,
+          aiConfidence: 0.92,
+          sparkline: [
+            { value: 0.45 },
+            { value: 0.52 },
+            { value: 0.58 },
+            { value: 0.62 },
+            { value: 0.65 }
+          ]
+        }
+      ]);
+      setLoading(false);
+      return;
+    }
+
+    const loadContractMarkets = async () => {
+      try {
+        const { createPublicClient, http } = await import('viem');
+        const { bscTestnet } = await import('viem/chains');
+        
+        const publicClient = createPublicClient({
+          chain: bscTestnet,
+          transport: http('https://bsc-testnet.publicnode.com'),
+        });
+        
+        // Get market count
+        const marketCount = await publicClient.readContract({
+          address: PREDICTION_MARKET_ADDRESS as `0x${string}`,
+          abi: PREDICTION_MARKET_ABI,
+          functionName: 'marketCount',
+        });
+        
+        console.log('Contract market count:', marketCount.toString());
+        
+        const markets: Market[] = [];
+        
+        // Load each market
+        for (let i = 0; i < Number(marketCount); i++) {
+          try {
+            const marketData = await publicClient.readContract({
+              address: PREDICTION_MARKET_ADDRESS as `0x${string}`,
+              abi: PREDICTION_MARKET_ABI,
+              functionName: 'markets',
+              args: [BigInt(i)],
+            }) as unknown as any[];
+            
+            const [question, totalYesShares, totalNoShares, endTime, resolved, outcome] = marketData;
+            
+            const totalShares = Number(totalYesShares) + Number(totalNoShares);
+            const yesPrice = totalShares > 0 ? Number(totalYesShares) / totalShares : 0.5;
+            const noPrice = 1 - yesPrice;
+            
+            const market: Market = {
+              id: i.toString(),
+              question: question || `Market ${i}`,
+              totalVolume: totalShares / 1e18,
+              yesPrice,
+              noPrice,
+              endDate: new Date(Number(endTime) * 1000).toISOString().split('T')[0],
+              status: resolved ? 'resolved' : 'active',
+              aiVerified: true,
+              aiConfidence: 0.9,
+              sparkline: [{ value: yesPrice }]
+            };
+            markets.push(market);
+            console.log(`Loaded market ${i}:`, market);
+          } catch (error) {
+            console.error(`Failed to load market ${i}:`, error);
+          }
+        }
+        
+        setContractMarkets(markets);
+      } catch (error) {
+        console.error('Failed to load contract markets:', error);
+        setContractMarkets([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadContractMarkets();
+  }, [demo]);
+
+  // Only show contract markets - user markets need to be deployed first
+  const allMarkets: Market[] = contractMarkets;
 
   return (
     <main className="min-h-screen p-8">
@@ -97,7 +194,10 @@ export default function Markets() {
                         ${(market.totalVolume / 1000).toFixed(1)}K
                       </div>
                     </div>
-                    <Button onClick={() => setSelectedMarket(market)} size="sm">
+                    <Button 
+                      onClick={() => setSelectedMarket(market)} 
+                      size="sm"
+                    >
                       <TrendingUp className="w-4 h-4 mr-2" />
                       Trade
                     </Button>
@@ -122,7 +222,15 @@ export default function Markets() {
           ))}
         </div>
 
-        {allMarkets.length === 0 && (
+        {loading && (
+          <Card className="text-center py-12">
+            <CardContent>
+              <p className="text-slate-400">Loading markets...</p>
+            </CardContent>
+          </Card>
+        )}
+        
+        {!loading && allMarkets.length === 0 && (
           <Card className="text-center py-12">
             <CardContent>
               <p className="text-slate-400 mb-4">No markets yet. Create the first one!</p>

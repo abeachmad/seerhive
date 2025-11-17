@@ -6,6 +6,7 @@ import { useStore } from '@/lib/store';
 import { useAccount, useWallets } from '@particle-network/connectkit';
 import { useSmartAccount } from '@particle-network/connectkit';
 import { parseEther, parseUnits, encodeFunctionData } from 'viem';
+import { bscTestnet } from 'viem/chains';
 import { PREDICTION_MARKET_ADDRESS, PREDICTION_MARKET_ABI } from '@/lib/contracts';
 import { SUPPORTED_TOKENS, ERC20_ABI } from '@/lib/tokens';
 import { isDemo } from '@/lib/demoFlags';
@@ -127,6 +128,8 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
       const token = SUPPORTED_TOKENS[selectedToken];
       const tokenAmount = parseUnits(amount, token.decimals);
       
+      // All markets are now deployed to contract
+      
       console.log('=== GASLESS TRANSACTION DEBUG ===');
       console.log('Connected Wallet (EOA):', address);
       console.log('Smart Account Address:', smartAccountAddress);
@@ -162,9 +165,9 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
           data: encodeFunctionData({
             abi: ERC20_ABI,
             functionName: 'transfer',
-            args: [smartAccountAddress, tokenAmount],
+            args: [smartAccountAddress as `0x${string}`, tokenAmount],
           }),
-          chain: { id: 97 },
+          chain: bscTestnet,
           account: address as `0x${string}`,
         });
         console.log('✅ Transfer tx:', transferHash);
@@ -183,7 +186,7 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
         data: encodeFunctionData({
           abi: ERC20_ABI,
           functionName: 'approve',
-          args: [PREDICTION_MARKET_ADDRESS, tokenAmount],
+          args: [PREDICTION_MARKET_ADDRESS as `0x${string}`, tokenAmount],
         }),
       };
       
@@ -200,11 +203,48 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
         userOpHash: approveGasless.userOpHash,
       });
       console.log('✅ Approve gasless sent:', approveHash);
-      console.log('⏳ Waiting 3 seconds for approve confirmation...');
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      console.log('⏳ Waiting for approve confirmation...');
       
-      // Step 2: Buy shares (gasless)
+      // Wait for approve transaction to be confirmed
+      let confirmed = false;
+      for (let i = 0; i < 30; i++) { // Wait up to 30 seconds
+        try {
+          const response = await fetch('https://bsc-testnet.publicnode.com', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              jsonrpc: '2.0',
+              method: 'eth_call',
+              params: [{
+                to: token.address,
+                data: `0xdd62ed3e000000000000000000000000${smartAccountAddress.slice(2)}000000000000000000000000${PREDICTION_MARKET_ADDRESS.slice(2)}`
+              }, 'latest'],
+              id: 1
+            })
+          });
+          const result = await response.json();
+          const allowance = BigInt(result.result || '0x0');
+          
+          if (allowance >= tokenAmount) {
+            console.log('✅ Approve confirmed, allowance:', allowance.toString());
+            confirmed = true;
+            break;
+          }
+        } catch (error) {
+          console.log('Checking allowance...', i);
+        }
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+      
+      if (!confirmed) {
+        throw new Error('Approve transaction not confirmed within 30 seconds');
+      }
+      
+      // Step 2: Buy shares (gasless) - Wait longer to avoid nonce conflicts
       console.log('💰 Buying shares gasless...');
+      console.log('⏳ Waiting extra time to avoid nonce conflicts...');
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 more seconds
+      
       const buyTx = {
         to: PREDICTION_MARKET_ADDRESS,
         value: '0',
@@ -223,7 +263,7 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
       if (!buyGasless) throw new Error('Buy gasless not available');
       
       console.log('🔄 Sending gasless transaction...');
-      console.log('UserOp:', buyGasless.userOp);
+      console.log('UserOp nonce:', buyGasless.userOp.nonce);
       console.log('UserOpHash:', buyGasless.userOpHash);
       
       const userOpResult = await smartAccount.sendUserOperation({
@@ -279,14 +319,26 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
       }, 5000); // Give user more time to see notification
     } catch (error: any) {
       console.error('Gasless failed:', error);
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name,
+        cause: error.cause,
+        full: JSON.stringify(error, null, 2)
+      });
       
+      const token = SUPPORTED_TOKENS[selectedToken];
       let errorMessage = 'Unknown error';
       if (error.message?.includes('transfer amount exceeds balance')) {
         errorMessage = `Insufficient ${token.symbol} balance. You need ${amount} ${token.symbol} but don't have enough tokens.`;
       } else if (error.message?.includes('execution reverted')) {
         errorMessage = 'Transaction failed - check token balance and allowance';
+      } else if (error.message?.includes('Market ended')) {
+        errorMessage = 'Market has ended or does not exist';
       } else if (error.message) {
         errorMessage = error.message;
+      } else {
+        errorMessage = 'Transaction failed - check console for details';
       }
       
       alert(`Failed: ${errorMessage}`);
@@ -313,13 +365,13 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
           const tokenAmount = parseUnits(amount, token.decimals);
           const txHash = await walletClient.sendTransaction({
             to: PREDICTION_MARKET_ADDRESS as `0x${string}`,
-            value: '0',
+            value: 0n,
             data: encodeFunctionData({
               abi: PREDICTION_MARKET_ABI,
               functionName: 'buyShares',
               args: [BigInt(market.id), side === 'yes', token.address, tokenAmount],
             }),
-            chain: { id: 97 },
+            chain: bscTestnet,
             account: address as `0x${string}`,
           });
           console.log('Regular tx:', txHash);

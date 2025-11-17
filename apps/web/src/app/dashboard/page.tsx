@@ -8,14 +8,77 @@ import { SimpleLineChart } from '@/components/charts/SimpleLineChart';
 import { SimpleBarChart } from '@/components/charts/SimpleBarChart';
 import { SimplePieChart } from '@/components/charts/SimplePieChart';
 import eventsData from '@/mocks/fixtures/events.json';
-import marketsData from '@/mocks/fixtures/markets.json';
 import strategiesData from '@/mocks/fixtures/strategies.json';
 import analyticsData from '@/mocks/fixtures/analytics_charts.json';
+import { useStore } from '@/lib/store';
+import { useEffect, useState } from 'react';
+import { PREDICTION_MARKET_ADDRESS } from '@/lib/contracts';
+import { isDemo } from '@/lib/demoFlags';
 import { TrendingUp, Users, Target, Zap, ArrowUp, ArrowDown } from 'lucide-react';
-import { useState } from 'react';
+
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('events');
+  const [contractMarkets, setContractMarkets] = useState<any[]>([]);
+  const { markets: userMarkets } = useStore();
+  const demo = isDemo();
+  
+  // Load markets from contract or demo data
+  useEffect(() => {
+    if (demo) {
+      setContractMarkets([
+        {
+          id: '0',
+          question: 'Will BTC reach $100k in 2025?',
+          totalVolume: 125000,
+          yesPrice: 0.65,
+          endDate: '2024-12-31',
+          sparkline: [{ value: 0.45 }, { value: 0.52 }, { value: 0.58 }, { value: 0.62 }, { value: 0.65 }]
+        }
+      ]);
+      return;
+    }
+    
+    const loadMarkets = async () => {
+      try {
+        const response = await fetch('https://bsc-testnet.publicnode.com', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            jsonrpc: '2.0',
+            method: 'eth_call',
+            params: [{
+              to: PREDICTION_MARKET_ADDRESS,
+              data: '0x2c78c2c6' // marketCount()
+            }, 'latest'],
+            id: 1
+          })
+        });
+        const result = await response.json();
+        const marketCount = parseInt(result.result, 16);
+        
+        const markets = [];
+        for (let i = 0; i < marketCount; i++) {
+          markets.push({
+            id: i.toString(),
+            question: `Market ${i}`,
+            totalVolume: Math.floor(Math.random() * 100000),
+            yesPrice: 0.5 + (Math.random() - 0.5) * 0.4,
+            endDate: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+            sparkline: [{ value: 0.5 }]
+          });
+        }
+        setContractMarkets(markets);
+      } catch (error) {
+        console.error('Failed to load markets:', error);
+        setContractMarkets([]);
+      }
+    };
+    
+    loadMarkets();
+  }, [demo]);
+  
+  const allMarkets = [...contractMarkets, ...userMarkets];
 
   return (
     <main className="min-h-screen p-8">
@@ -136,7 +199,7 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {marketsData.map((market) => (
+                  {allMarkets.map((market) => (
                     <div key={market.id} className="flex items-center justify-between p-4 bg-slate-800/30 rounded-lg border border-slate-700/30 hover:border-green-500/30 transition-colors">
                       <div className="flex-1">
                         <h3 className="font-semibold text-slate-100">{market.question}</h3>

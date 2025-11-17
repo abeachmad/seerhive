@@ -34,21 +34,30 @@ export function SharesBalance() {
     try {
       const shareBalances: ShareBalance[] = [];
       
-      // Check shares for markets 0-5 (adjust range as needed)
-      for (let marketId = 0; marketId < 6; marketId++) {
+      // Get total market count first
+      const marketCount = await publicClient.readContract({
+        address: PREDICTION_MARKET_ADDRESS as `0x${string}`,
+        abi: PREDICTION_MARKET_ABI,
+        functionName: 'marketCount',
+      });
+      
+      console.log('📊 SHARES: Total markets in contract:', marketCount.toString());
+      
+      // Check shares for all existing markets
+      for (let marketId = 0; marketId < Number(marketCount); marketId++) {
         try {
           const [yesShares, noShares] = await Promise.all([
             publicClient.readContract({
               address: PREDICTION_MARKET_ADDRESS as `0x${string}`,
               abi: PREDICTION_MARKET_ABI,
               functionName: 'yesShares',
-              args: [BigInt(marketId), checkAddress],
+              args: [BigInt(marketId), checkAddress as `0x${string}`],
             }),
             publicClient.readContract({
               address: PREDICTION_MARKET_ADDRESS as `0x${string}`,
               abi: PREDICTION_MARKET_ABI,
               functionName: 'noShares',
-              args: [BigInt(marketId), checkAddress],
+              args: [BigInt(marketId), checkAddress as `0x${string}`],
             }),
           ]);
 
