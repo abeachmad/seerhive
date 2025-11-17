@@ -31,7 +31,8 @@ interface Trade {
   timestamp: string;
   user: string;
   prediction: number;
-  outcome?: boolean; // Add outcome field
+  outcome?: boolean;
+  txHash?: string; // Add transaction hash
 }
 
 interface UserReputation {
@@ -70,9 +71,14 @@ export const useStore = create<Store>()(
         markets: [...state.markets, market] 
       })),
       
-      addTrade: (trade) => set((state) => ({ 
-        trades: [...state.trades, trade] 
-      })),
+      addTrade: (trade) => {
+        console.log('💾 STORE: Adding trade:', trade);
+        set((state) => {
+          const newTrades = [...state.trades, trade];
+          console.log('💾 STORE: New trades array:', newTrades);
+          return { trades: newTrades };
+        });
+      },
       
       updateMarket: (id, updates) => set((state) => ({
         markets: state.markets.map(m => m.id === id ? { ...m, ...updates } : m)

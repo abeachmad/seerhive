@@ -4,6 +4,7 @@ import './globals.css';
 import { Providers } from './providers';
 import { Navbar } from '@/components/Navbar';
 import { WalletDebug } from '@/components/WalletDebug';
+import { TransactionHistory } from '@/components/TransactionHistory';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -24,6 +25,7 @@ export default function RootLayout({
           <Navbar />
           {children}
           <WalletDebug />
+          <TransactionHistory />
         </Providers>
       </body>
     </html>

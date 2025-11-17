@@ -10,6 +10,7 @@ import { PREDICTION_MARKET_ADDRESS, PREDICTION_MARKET_ABI } from '@/lib/contract
 import { SUPPORTED_TOKENS, ERC20_ABI } from '@/lib/tokens';
 import { isDemo } from '@/lib/demoFlags';
 import { X, TrendingUp, TrendingDown, Zap } from 'lucide-react';
+import { TransactionNotification } from './TransactionNotification';
 
 interface TradeDialogProps {
   market: any;
@@ -31,6 +32,7 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
   const [feeQuote, setFeeQuote] = useState<any>(null);
   const [quoteLoading, setQuoteLoading] = useState(false);
   const [tokenBalance, setTokenBalance] = useState<string>('0');
+  const [showTxNotification, setShowTxNotification] = useState<string | null>(null);
   const { addTrade, updateMarket, updateUserReputation } = useStore();
   const { address, isConnected } = useAccount();
   const smartAccount = useSmartAccount();
@@ -149,6 +151,8 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
       const smartBalance = BigInt(result.result || '0x0');
       
       console.log('Smart Account Balance:', smartBalance.toString());
+      console.log('Required Amount:', tokenAmount.toString());
+      console.log('Has Sufficient Balance:', smartBalance >= tokenAmount);
       
       if (smartBalance < tokenAmount && address) {
         console.log('💸 Transferring tokens from EOA to smart account...');
@@ -172,6 +176,7 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
       console.log('Smart Account:', smartAccountAddress);
       console.log('Token Address:', token.address);
       console.log('Amount:', tokenAmount.toString());
+      console.log('Contract Address:', PREDICTION_MARKET_ADDRESS);
       const approveTx = {
         to: token.address,
         value: '0',
@@ -182,15 +187,20 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
         }),
       };
       
+      console.log('💰 Getting approve fee quotes...');
       const approveQuotes = await smartAccount.getFeeQuotes(approveTx);
+      console.log('💰 Approve quotes received:', approveQuotes);
       const approveGasless = approveQuotes?.verifyingPaymasterGasless;
+      console.log('💰 Approve gasless quote:', approveGasless);
       if (!approveGasless) throw new Error('Approve gasless not available');
       
+      console.log('🚀 Sending approve transaction...');
       const approveHash = await smartAccount.sendUserOperation({
         userOp: approveGasless.userOp,
         userOpHash: approveGasless.userOpHash,
       });
-      console.log('✅ Approve gasless:', approveHash);
+      console.log('✅ Approve gasless sent:', approveHash);
+      console.log('⏳ Waiting 3 seconds for approve confirmation...');
       await new Promise(resolve => setTimeout(resolve, 3000));
       
       // Step 2: Buy shares (gasless)
@@ -205,17 +215,68 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
         }),
       };
       
+      console.log('💰 Getting buy fee quotes...');
       const buyQuotes = await smartAccount.getFeeQuotes(buyTx);
+      console.log('💰 Buy quotes received:', buyQuotes);
       const buyGasless = buyQuotes?.verifyingPaymasterGasless;
+      console.log('💰 Buy gasless quote:', buyGasless);
       if (!buyGasless) throw new Error('Buy gasless not available');
       
-      const buyHash = await smartAccount.sendUserOperation({
+      console.log('🔄 Sending gasless transaction...');
+      console.log('UserOp:', buyGasless.userOp);
+      console.log('UserOpHash:', buyGasless.userOpHash);
+      
+      const userOpResult = await smartAccount.sendUserOperation({
         userOp: buyGasless.userOp,
         userOpHash: buyGasless.userOpHash,
       });
       
-      console.log('✅ Buy gasless:', buyHash);
-      setFeeQuote({ txHash: buyHash });
+      console.log('✅ UserOp sent, result:', userOpResult);
+      
+      // Use the actual transaction hash from the result
+      const txHash = userOpResult;
+      console.log('💾 Setting txHash:', txHash);
+      setFeeQuote({ txHash });
+      console.log('💾 FeeQuote set:', { txHash });
+      
+      // Create and add trade immediately after gasless transaction
+      const trade = {
+        id: Date.now().toString(),
+        marketId: market.id,
+        amount: parseFloat(amount),
+        side,
+        timestamp: new Date().toISOString(),
+        user: address,
+        prediction: side === 'yes' ? market.yesPrice : market.noPrice,
+        txHash,
+      };
+      
+      console.log('📝 Adding gasless trade:', trade);
+      addTrade(trade);
+      
+      // Show notification
+      console.log('🔔 Showing tx notification:', txHash);
+      setShowTxNotification(txHash);
+      
+      // Update market prices
+      const newVolume = market.totalVolume + parseFloat(amount);
+      const priceChange = parseFloat(amount) / (newVolume || 1) * 0.1;
+      
+      updateMarket(market.id, {
+        totalVolume: newVolume,
+        yesPrice: side === 'yes' 
+          ? Math.min(0.99, market.yesPrice + priceChange)
+          : Math.max(0.01, market.yesPrice - priceChange),
+        noPrice: side === 'no'
+          ? Math.min(0.99, market.noPrice + priceChange)
+          : Math.max(0.01, market.noPrice - priceChange),
+        sparkline: [...market.sparkline, { value: side === 'yes' ? market.yesPrice + priceChange : market.yesPrice - priceChange }].slice(-10),
+      });
+      
+      // Close dialog after successful transaction
+      setTimeout(() => {
+        onClose();
+      }, 5000); // Give user more time to see notification
     } catch (error: any) {
       console.error('Gasless failed:', error);
       
@@ -262,6 +323,7 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
             account: address as `0x${string}`,
           });
           console.log('Regular tx:', txHash);
+          setFeeQuote({ txHash });
           await new Promise(resolve => setTimeout(resolve, 2000));
         }
       } catch (error: any) {
@@ -275,23 +337,40 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
+    const txHash = feeQuote?.txHash;
+    
     const trade = {
       id: Date.now().toString(),
       marketId: market.id,
       amount: parseFloat(amount),
       side,
       timestamp: new Date().toISOString(),
-      user: address || 'demo-user', // Uses the connected wallet address
+      user: address || 'demo-user',
       prediction: side === 'yes' ? market.yesPrice : market.noPrice,
+      txHash,
     };
     
+    // Show transaction notification if we have a hash
+    console.log('🔔 Checking for tx notification, txHash:', txHash);
+    if (txHash) {
+      console.log('🔔 Setting tx notification:', txHash);
+      setShowTxNotification(txHash);
+    } else {
+      console.log('❌ No txHash found, notification not shown');
+    }
+    
     console.log('=== TRADE RECORD DEBUG ===');
+    console.log('Trade object:', trade);
     console.log('Trade User Address:', trade.user);
     console.log('Connected Wallet:', address);
     console.log('Smart Account:', smartAccountAddress);
+    console.log('TxHash from feeQuote:', feeQuote?.txHash);
+    console.log('UseGasless:', useGasless);
+    console.log('FeeQuote object:', feeQuote);
     console.log('=== END DEBUG ===');
 
     addTrade(trade);
+    console.log('✅ Trade added to store');
     
     if (address) {
       updateUserReputation(address, trade);
@@ -477,6 +556,13 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
 
 
       </div>
+      
+      {showTxNotification && (
+        <TransactionNotification
+          txHash={showTxNotification}
+          onClose={() => setShowTxNotification(null)}
+        />
+      )}
     </div>
   );
 }
