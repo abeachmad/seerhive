@@ -111,5 +111,25 @@ export const PREDICTION_MARKET_ABI = [
     ],
     "stateMutability": "view",
     "type": "function"
+  },
+  {
+    "inputs": [
+      {"internalType": "uint256", "name": "", "type": "uint256"},
+      {"internalType": "address", "name": "", "type": "address"}
+    ],
+    "name": "yesShares",
+    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {"internalType": "uint256", "name": "", "type": "uint256"},
+      {"internalType": "address", "name": "", "type": "address"}
+    ],
+    "name": "noShares",
+    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+    "stateMutability": "view",
+    "type": "function"
   }
 ] as const;

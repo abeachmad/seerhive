@@ -6,6 +6,8 @@ import { SparklineMini } from '@/components/charts/SparklineMini';
 import { CreateMarketDialog } from '@/components/CreateMarketDialog';
 import { TradeDialog } from '@/components/TradeDialog';
 import { ResolutionPanel } from '@/components/ResolutionPanel';
+import { SharesBalance } from '@/components/SharesBalance';
+import { ContractDebug } from '@/components/ContractDebug';
 import { isDemo } from '@/lib/demoFlags';
 import marketsDataRaw from '@/mocks/fixtures/markets.json';
 import { useStore } from '@/lib/store';
@@ -38,6 +40,9 @@ export default function Markets() {
           </Button>
         </div>
 
+        <SharesBalance />
+        <ContractDebug />
+        
         <div className="grid grid-cols-1 gap-6">
           {allMarkets.map((market) => (
             <Card key={market.id} className="hover:border-green-500/50 transition-all">
