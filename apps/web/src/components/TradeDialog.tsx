@@ -182,7 +182,7 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
       console.log('Contract Address:', PREDICTION_MARKET_ADDRESS);
       const approveTx = {
         to: token.address,
-        value: '0',
+        value: '0x0',
         data: encodeFunctionData({
           abi: ERC20_ABI,
           functionName: 'approve',
@@ -190,19 +190,13 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
         }),
       };
       
-      console.log('💰 Getting approve fee quotes...');
-      const approveQuotes = await smartAccount.getFeeQuotes(approveTx);
-      console.log('💰 Approve quotes received:', approveQuotes);
-      const approveGasless = approveQuotes?.verifyingPaymasterGasless;
-      console.log('💰 Approve gasless quote:', approveGasless);
-      if (!approveGasless) throw new Error('Approve gasless not available');
+      console.log('🔨 Building approve UserOperation...');
+      const approveUserOp = await smartAccount.buildUserOperation({ tx: approveTx });
+      console.log('✅ Approve UserOp built:', approveUserOp);
       
       console.log('🚀 Sending approve transaction...');
-      const approveHash = await smartAccount.sendUserOperation({
-        userOp: approveGasless.userOp,
-        userOpHash: approveGasless.userOpHash,
-      });
-      console.log('✅ Approve gasless sent:', approveHash);
+      const approveHash = await smartAccount.sendUserOperation(approveUserOp);
+      console.log('✅ Approve sent, hash:', approveHash);
       console.log('⏳ Waiting for approve confirmation...');
       
       // Wait for approve transaction to be confirmed
@@ -240,14 +234,14 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
         throw new Error('Approve transaction not confirmed within 30 seconds');
       }
       
-      // Step 2: Buy shares (gasless) - Wait longer to avoid nonce conflicts
+      // Step 2: Buy shares (gasless)
       console.log('💰 Buying shares gasless...');
-      console.log('⏳ Waiting extra time to avoid nonce conflicts...');
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 more seconds
+      console.log('⏳ Waiting for approve to settle...');
+      await new Promise(resolve => setTimeout(resolve, 3000)); // Wait 3 seconds
       
       const buyTx = {
         to: PREDICTION_MARKET_ADDRESS,
-        value: '0',
+        value: '0x0',
         data: encodeFunctionData({
           abi: PREDICTION_MARKET_ABI,
           functionName: 'buyShares',
@@ -255,23 +249,13 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
         }),
       };
       
-      console.log('💰 Getting buy fee quotes...');
-      const buyQuotes = await smartAccount.getFeeQuotes(buyTx);
-      console.log('💰 Buy quotes received:', buyQuotes);
-      const buyGasless = buyQuotes?.verifyingPaymasterGasless;
-      console.log('💰 Buy gasless quote:', buyGasless);
-      if (!buyGasless) throw new Error('Buy gasless not available');
+      console.log('🔨 Building buy UserOperation...');
+      const buyUserOp = await smartAccount.buildUserOperation({ tx: buyTx });
+      console.log('✅ Buy UserOp built:', buyUserOp);
       
-      console.log('🔄 Sending gasless transaction...');
-      console.log('UserOp nonce:', buyGasless.userOp.nonce);
-      console.log('UserOpHash:', buyGasless.userOpHash);
-      
-      const userOpResult = await smartAccount.sendUserOperation({
-        userOp: buyGasless.userOp,
-        userOpHash: buyGasless.userOpHash,
-      });
-      
-      console.log('✅ UserOp sent, result:', userOpResult);
+      console.log('🚀 Sending buy transaction...');
+      const userOpResult = await smartAccount.sendUserOperation(buyUserOp);
+      console.log('✅ Buy sent, result:', userOpResult);
       
       // Use the actual transaction hash from the result
       const txHash = userOpResult;

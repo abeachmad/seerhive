@@ -7,7 +7,6 @@ import { CreateMarketDialog } from '@/components/CreateMarketDialog';
 import { TradeDialog } from '@/components/TradeDialog';
 import { ResolutionPanel } from '@/components/ResolutionPanel';
 import { SharesBalance } from '@/components/SharesBalance';
-import { ContractDebug } from '@/components/ContractDebug';
 import { isDemo } from '@/lib/demoFlags';
 import { PREDICTION_MARKET_ADDRESS, PREDICTION_MARKET_ABI } from '@/lib/contracts';
 import { useStore } from '@/lib/store';
@@ -138,7 +137,6 @@ export default function Markets() {
         </div>
 
         <SharesBalance />
-        <ContractDebug />
         
         <div className="grid grid-cols-1 gap-6">
           {allMarkets.map((market) => (

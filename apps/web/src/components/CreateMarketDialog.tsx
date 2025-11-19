@@ -53,7 +53,7 @@ export function CreateMarketDialog({ onClose }: CreateMarketDialogProps) {
           
           const createTx = {
             to: PREDICTION_MARKET_ADDRESS,
-            value: '0',
+            value: '0x0',
             data: encodeFunctionData({
               abi: PREDICTION_MARKET_ABI,
               functionName: 'createMarket',
@@ -61,18 +61,12 @@ export function CreateMarketDialog({ onClose }: CreateMarketDialogProps) {
             }),
           };
           
-          const quotes = await smartAccount.getFeeQuotes(createTx);
-          const gaslessQuote = quotes?.verifyingPaymasterGasless;
+          console.log('🔨 Building UserOperation...');
+          const userOp = await smartAccount.buildUserOperation({ tx: createTx });
+          console.log('✅ UserOp built:', userOp);
           
-          if (!gaslessQuote) {
-            throw new Error('Gasless transaction not available');
-          }
-          
-          const txHash = await smartAccount.sendUserOperation({
-            userOp: gaslessQuote.userOp,
-            userOpHash: gaslessQuote.userOpHash,
-          });
-          
+          console.log('🚀 Sending UserOperation...');
+          const txHash = await smartAccount.sendUserOperation(userOp);
           console.log('✅ Market created gasless:', txHash);
           
           // Get the new market ID from contract

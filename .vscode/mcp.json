@@ -1,0 +1,9 @@
+{
+	"servers": {
+		"Particle Network docs": {
+			"url": "https://developers.particle.network/mcp",
+			"type": "http"
+		}
+	},
+	"inputs": []
+}
