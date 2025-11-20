@@ -10,6 +10,7 @@ import { bscTestnet } from 'viem/chains';
 import { PREDICTION_MARKET_ADDRESS, PREDICTION_MARKET_ABI } from '@/lib/contracts';
 import { SUPPORTED_TOKENS, ERC20_ABI } from '@/lib/tokens';
 import { isDemo } from '@/lib/demoFlags';
+import { GaslessService } from '@/lib/gasless';
 import { X, TrendingUp, TrendingDown, Zap } from 'lucide-react';
 import { TransactionNotification } from './TransactionNotification';
 
@@ -117,7 +118,6 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
 
   const handleGetQuote = async () => {
     if (!amount || parseFloat(amount) <= 0) return;
-    if (!smartAccount) return;
     if (!address) {
       alert('Please connect your wallet first');
       return;
@@ -128,142 +128,81 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
       const token = SUPPORTED_TOKENS[selectedToken];
       const tokenAmount = parseUnits(amount, token.decimals);
       
-      // All markets are now deployed to contract
+      console.log('=== GASLESS TRANSACTION ===');
+      console.log('Wallet:', address);
+      console.log('Has Particle Smart Account:', !!smartAccount);
       
-      console.log('=== GASLESS TRANSACTION DEBUG ===');
-      console.log('Connected Wallet (EOA):', address);
-      console.log('Smart Account Address:', smartAccountAddress);
-      console.log('Token:', token.symbol, token.address);
-      console.log('Amount:', tokenAmount.toString());
+      let txHash: string;
       
-      // Check if we need to transfer from EOA to smart account
-      const response = await fetch('https://bsc-testnet.publicnode.com', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          jsonrpc: '2.0',
-          method: 'eth_call',
-          params: [{
-            to: token.address,
-            data: `0x70a08231000000000000000000000000${smartAccountAddress.slice(2)}`
-          }, 'latest'],
-          id: 1
-        })
-      });
-      const result = await response.json();
-      const smartBalance = BigInt(result.result || '0x0');
-      
-      console.log('Smart Account Balance:', smartBalance.toString());
-      console.log('Required Amount:', tokenAmount.toString());
-      console.log('Has Sufficient Balance:', smartBalance >= tokenAmount);
-      
-      if (smartBalance < tokenAmount && address) {
-        console.log('💸 Transferring tokens from EOA to smart account...');
-        const walletClient = primaryWallet.getWalletClient();
-        const transferHash = await walletClient.sendTransaction({
-          to: token.address as `0x${string}`,
+      if (smartAccount) {
+        // Particle wallet - use Particle SDK (SIMPLE account auto-deploys)
+        console.log('✅ Using Particle SDK (Particle Wallet)');
+        
+        // Approve token
+        const approveTx = {
+          to: token.address,
+          value: '0x0',
           data: encodeFunctionData({
             abi: ERC20_ABI,
-            functionName: 'transfer',
-            args: [smartAccountAddress as `0x${string}`, tokenAmount],
+            functionName: 'approve',
+            args: [PREDICTION_MARKET_ADDRESS as `0x${string}`, tokenAmount],
           }),
-          chain: bscTestnet,
-          account: address as `0x${string}`,
-        });
-        console.log('✅ Transfer tx:', transferHash);
-        await new Promise(resolve => setTimeout(resolve, 3000));
-      }
-      
-      // Step 1: Approve token (gasless)
-      console.log('🔐 Approving', token.symbol, 'gasless...');
-      console.log('Smart Account:', smartAccountAddress);
-      console.log('Token Address:', token.address);
-      console.log('Amount:', tokenAmount.toString());
-      console.log('Contract Address:', PREDICTION_MARKET_ADDRESS);
-      const approveTx = {
-        to: token.address,
-        value: '0x0',
-        data: encodeFunctionData({
-          abi: ERC20_ABI,
-          functionName: 'approve',
-          args: [PREDICTION_MARKET_ADDRESS as `0x${string}`, tokenAmount],
-        }),
-      };
-      
-      console.log('🔨 Building approve UserOperation...');
-      const approveUserOp = await smartAccount.buildUserOperation({ tx: approveTx });
-      console.log('✅ Approve UserOp built:', approveUserOp);
-      
-      console.log('🚀 Sending approve transaction...');
-      const approveHash = await smartAccount.sendUserOperation(approveUserOp);
-      console.log('✅ Approve sent, hash:', approveHash);
-      console.log('⏳ Waiting for approve confirmation...');
-      
-      // Wait for approve transaction to be confirmed
-      let confirmed = false;
-      for (let i = 0; i < 30; i++) { // Wait up to 30 seconds
-        try {
-          const response = await fetch('https://bsc-testnet.publicnode.com', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              jsonrpc: '2.0',
-              method: 'eth_call',
-              params: [{
-                to: token.address,
-                data: `0xdd62ed3e000000000000000000000000${smartAccountAddress.slice(2)}000000000000000000000000${PREDICTION_MARKET_ADDRESS.slice(2)}`
-              }, 'latest'],
-              id: 1
-            })
+        };
+        
+        const approveQuotes = await smartAccount.getFeeQuotes(approveTx);
+        const approveGasless = approveQuotes?.verifyingPaymasterGasless;
+        
+        if (approveGasless) {
+          const approveHash = await smartAccount.sendUserOperation({
+            userOp: approveGasless.userOp,
+            userOpHash: approveGasless.userOpHash,
           });
-          const result = await response.json();
-          const allowance = BigInt(result.result || '0x0');
-          
-          if (allowance >= tokenAmount) {
-            console.log('✅ Approve confirmed, allowance:', allowance.toString());
-            confirmed = true;
-            break;
-          }
-        } catch (error) {
-          console.log('Checking allowance...', i);
+          console.log('✅ Approve:', approveHash);
+          await new Promise(resolve => setTimeout(resolve, 2000));
         }
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Buy shares
+        const buyTx = {
+          to: PREDICTION_MARKET_ADDRESS,
+          value: '0',
+          data: encodeFunctionData({
+            abi: PREDICTION_MARKET_ABI,
+            functionName: 'buyShares',
+            args: [BigInt(market.id), side === 'yes', token.address, tokenAmount],
+          }),
+        };
+        
+        const buyQuotes = await smartAccount.getFeeQuotes(buyTx);
+        const buyGasless = buyQuotes?.verifyingPaymasterGasless;
+        
+        if (!buyGasless) {
+          throw new Error('Particle gasless not available');
+        }
+        
+        txHash = await smartAccount.sendUserOperation({
+          userOp: buyGasless.userOp,
+          userOpHash: buyGasless.userOpHash,
+        });
+        console.log('✅ Buy (Particle SDK):', txHash);
+      } else {
+        // MetaMask or other wallet - use gasless service (Particle → Pimlico fallback)
+        console.log('✅ Using Gasless Service (MetaMask/Other)');
+        
+        const gaslessService = new GaslessService({ address });
+        const result = await gaslessService.buySharesGasless(
+          BigInt(market.id),
+          side === 'yes',
+          token.address,
+          tokenAmount
+        );
+        console.log('✅ Sponsored by:', result.provider);
+        txHash = 'pending';
       }
       
-      if (!confirmed) {
-        throw new Error('Approve transaction not confirmed within 30 seconds');
-      }
-      
-      // Step 2: Buy shares (gasless)
-      console.log('💰 Buying shares gasless...');
-      console.log('⏳ Waiting for approve to settle...');
-      await new Promise(resolve => setTimeout(resolve, 3000)); // Wait 3 seconds
-      
-      const buyTx = {
-        to: PREDICTION_MARKET_ADDRESS,
-        value: '0x0',
-        data: encodeFunctionData({
-          abi: PREDICTION_MARKET_ABI,
-          functionName: 'buyShares',
-          args: [BigInt(market.id), side === 'yes', token.address, tokenAmount],
-        }),
-      };
-      
-      console.log('🔨 Building buy UserOperation...');
-      const buyUserOp = await smartAccount.buildUserOperation({ tx: buyTx });
-      console.log('✅ Buy UserOp built:', buyUserOp);
-      
-      console.log('🚀 Sending buy transaction...');
-      const userOpResult = await smartAccount.sendUserOperation(buyUserOp);
-      console.log('✅ Buy sent, result:', userOpResult);
-      
-      // Use the actual transaction hash from the result
-      const txHash = userOpResult;
-      console.log('💾 Setting txHash:', txHash);
       setFeeQuote({ txHash });
-      console.log('💾 FeeQuote set:', { txHash });
+      setShowTxNotification(txHash);
       
-      // Create and add trade immediately after gasless transaction
+      // Add trade
       const trade = {
         id: Date.now().toString(),
         marketId: market.id,
@@ -275,14 +214,9 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
         txHash,
       };
       
-      console.log('📝 Adding gasless trade:', trade);
       addTrade(trade);
       
-      // Show notification
-      console.log('🔔 Showing tx notification:', txHash);
-      setShowTxNotification(txHash);
-      
-      // Update market prices
+      // Update market
       const newVolume = market.totalVolume + parseFloat(amount);
       const priceChange = parseFloat(amount) / (newVolume || 1) * 0.1;
       
@@ -297,35 +231,10 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
         sparkline: [...market.sparkline, { value: side === 'yes' ? market.yesPrice + priceChange : market.yesPrice - priceChange }].slice(-10),
       });
       
-      // Close dialog after successful transaction
-      setTimeout(() => {
-        onClose();
-      }, 5000); // Give user more time to see notification
+      setTimeout(() => onClose(), 3000);
     } catch (error: any) {
       console.error('Gasless failed:', error);
-      console.error('Error details:', {
-        message: error.message,
-        stack: error.stack,
-        name: error.name,
-        cause: error.cause,
-        full: JSON.stringify(error, null, 2)
-      });
-      
-      const token = SUPPORTED_TOKENS[selectedToken];
-      let errorMessage = 'Unknown error';
-      if (error.message?.includes('transfer amount exceeds balance')) {
-        errorMessage = `Insufficient ${token.symbol} balance. You need ${amount} ${token.symbol} but don't have enough tokens.`;
-      } else if (error.message?.includes('execution reverted')) {
-        errorMessage = 'Transaction failed - check token balance and allowance';
-      } else if (error.message?.includes('Market ended')) {
-        errorMessage = 'Market has ended or does not exist';
-      } else if (error.message) {
-        errorMessage = error.message;
-      } else {
-        errorMessage = 'Transaction failed - check console for details';
-      }
-      
-      alert(`Failed: ${errorMessage}`);
+      alert(`Failed: ${error.message || 'Unknown error'}`);
     } finally {
       setQuoteLoading(false);
     }

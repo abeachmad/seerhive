@@ -51,6 +51,8 @@ export function CreateMarketDialog({ onClose }: CreateMarketDialogProps) {
           console.log('Question:', question);
           console.log('Duration:', duration, 'seconds');
           
+          // Note: Account will auto-deploy on first transaction if needed
+          
           const createTx = {
             to: PREDICTION_MARKET_ADDRESS,
             value: '0x0',
@@ -61,12 +63,20 @@ export function CreateMarketDialog({ onClose }: CreateMarketDialogProps) {
             }),
           };
           
-          console.log('🔨 Building UserOperation...');
-          const userOp = await smartAccount.buildUserOperation({ tx: createTx });
-          console.log('✅ UserOp built:', userOp);
+          console.log('💰 Getting fee quotes for gasless...');
+          const feeQuotes = await smartAccount.getFeeQuotes(createTx);
+          const gaslessQuote = feeQuotes?.verifyingPaymasterGasless;
           
+          if (!gaslessQuote) {
+            throw new Error('Gasless mode not available for this transaction');
+          }
+          
+          console.log('✅ Gasless quote obtained');
           console.log('🚀 Sending UserOperation...');
-          const txHash = await smartAccount.sendUserOperation(userOp);
+          const txHash = await smartAccount.sendUserOperation({
+            userOp: gaslessQuote.userOp,
+            userOpHash: gaslessQuote.userOpHash,
+          });
           console.log('✅ Market created gasless:', txHash);
           
           // Get the new market ID from contract
