@@ -184,6 +184,9 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
           userOpHash: buyGasless.userOpHash,
         });
         console.log('✅ Buy (Particle SDK):', txHash);
+        
+        // Wait for SDK nonce cache to refresh
+        await new Promise(resolve => setTimeout(resolve, 3000));
       } else {
         // MetaMask or other wallet - use gasless service (Particle → Pimlico fallback)
         console.log('✅ Using Gasless Service (MetaMask/Other)');
@@ -231,7 +234,7 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
         sparkline: [...market.sparkline, { value: side === 'yes' ? market.yesPrice + priceChange : market.yesPrice - priceChange }].slice(-10),
       });
       
-      setTimeout(() => onClose(), 3000);
+      setTimeout(() => onClose(), 5000);
     } catch (error: any) {
       console.error('Gasless failed:', error);
       alert(`Failed: ${error.message || 'Unknown error'}`);
