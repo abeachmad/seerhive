@@ -1,7 +1,6 @@
 {
-  "buildCommand": "cd apps/web && pnpm build",
+  "buildCommand": "pnpm turbo run build --filter=@seerhive/web",
   "outputDirectory": "apps/web/.next",
   "installCommand": "pnpm install",
-  "framework": null,
-  "devCommand": "cd apps/web && pnpm dev"
+  "framework": null
 }
