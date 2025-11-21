@@ -8,13 +8,13 @@ import { aa } from '@particle-network/connectkit/aa';
 import { bscTestnet } from '@particle-network/connectkit/chains';
 import React from 'react';
 
-const projectId = process.env.NEXT_PUBLIC_PARTICLE_PROJECT_ID!;
-const clientKey = process.env.NEXT_PUBLIC_PARTICLE_CLIENT_KEY!;
-const appId = process.env.NEXT_PUBLIC_PARTICLE_APP_ID!;
+const projectId = process.env.NEXT_PUBLIC_PARTICLE_PROJECT_ID || 'placeholder-project-id';
+const clientKey = process.env.NEXT_PUBLIC_PARTICLE_CLIENT_KEY || 'placeholder-client-key';
+const appId = process.env.NEXT_PUBLIC_PARTICLE_APP_ID || 'placeholder-app-id';
 const walletConnectProjectId = process.env.NEXT_PUBLIC_WC_PROJECT_ID;
 
-if (!projectId || !clientKey || !appId) {
-  throw new Error('Missing Particle credentials. Check .env.local');
+if (typeof window !== 'undefined' && (!process.env.NEXT_PUBLIC_PARTICLE_PROJECT_ID || !process.env.NEXT_PUBLIC_PARTICLE_CLIENT_KEY || !process.env.NEXT_PUBLIC_PARTICLE_APP_ID)) {
+  console.warn('Missing Particle credentials. Wallet features will not work.');
 }
 
 const config = createConfig({
