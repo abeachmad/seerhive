@@ -21,7 +21,7 @@ export class GaslessService {
     const callData = encodeFunctionData({
       abi: PREDICTION_MARKET_ABI,
       functionName: 'buyShares',
-      args: [marketId, isYes, token, amount],
+      args: [marketId, isYes, token as `0x${string}`, amount],
     });
 
     const userOp = {
