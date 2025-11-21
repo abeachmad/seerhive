@@ -25,17 +25,17 @@ export class GaslessService {
     });
 
     const userOp = {
-      sender: this.account.address,
-      nonce: '0x0',
-      initCode: '0x',
-      callData,
-      callGasLimit: '0x30d40',
-      verificationGasLimit: '0x186a0',
-      preVerificationGas: '0xc350',
-      maxFeePerGas: '0x59682f00',
-      maxPriorityFeePerGas: '0x59682f00',
-      paymasterAndData: '0x',
-      signature: '0x',
+      sender: this.account.address as `0x${string}`,
+      nonce: '0x0' as `0x${string}`,
+      initCode: '0x' as `0x${string}`,
+      callData: callData as `0x${string}`,
+      callGasLimit: '0x30d40' as `0x${string}`,
+      verificationGasLimit: '0x186a0' as `0x${string}`,
+      preVerificationGas: '0xc350' as `0x${string}`,
+      maxFeePerGas: '0x59682f00' as `0x${string}`,
+      maxPriorityFeePerGas: '0x59682f00' as `0x${string}`,
+      paymasterAndData: '0x' as `0x${string}`,
+      signature: '0x' as `0x${string}`,
     };
 
     const response = await fetch('/api/aa/sponsor', {
@@ -62,17 +62,17 @@ export class GaslessService {
     });
 
     const userOp = {
-      sender: this.account.address,
-      nonce: '0x0',
-      initCode: '0x',
-      callData,
-      callGasLimit: '0x30d40',
-      verificationGasLimit: '0x186a0',
-      preVerificationGas: '0xc350',
-      maxFeePerGas: '0x59682f00',
-      maxPriorityFeePerGas: '0x59682f00',
-      paymasterAndData: '0x',
-      signature: '0x',
+      sender: this.account.address as `0x${string}`,
+      nonce: '0x0' as `0x${string}`,
+      initCode: '0x' as `0x${string}`,
+      callData: callData as `0x${string}`,
+      callGasLimit: '0x30d40' as `0x${string}`,
+      verificationGasLimit: '0x186a0' as `0x${string}`,
+      preVerificationGas: '0xc350' as `0x${string}`,
+      maxFeePerGas: '0x59682f00' as `0x${string}`,
+      maxPriorityFeePerGas: '0x59682f00' as `0x${string}`,
+      paymasterAndData: '0x' as `0x${string}`,
+      signature: '0x' as `0x${string}`,
     };
 
     const response = await fetch('/api/aa/sponsor', {

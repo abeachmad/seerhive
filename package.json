@@ -23,7 +23,9 @@
   },
   "pnpm": {
     "overrides": {
-      "@ethereumjs/util": "^8.1.0"
+      "@ethereumjs/util": "^8.1.0",
+      "react": "^19.2.0",
+      "react-dom": "^19.2.0"
     }
   },
   "packageManager": "pnpm@10.20.0"

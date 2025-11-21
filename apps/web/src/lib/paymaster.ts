@@ -5,7 +5,7 @@ const PARTICLE_PROJECT_UUID = process.env.PARTICLE_PROJECT_ID!;
 const PARTICLE_PROJECT_KEY = process.env.PARTICLE_CLIENT_KEY!;
 
 export async function sponsorUserOperation(
-  userOp: Partial<UserOperation>,
+  userOp: Partial<UserOperation<'v0.6'>>,
   entryPoint: string,
   chainId: number
 ) {

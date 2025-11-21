@@ -3,7 +3,7 @@ import type { UserOperation } from 'permissionless';
 const PARTICLE_BUNDLER_URL = 'https://bundler.particle.network';
 
 export async function sendUserOperation(
-  userOp: UserOperation,
+  userOp: UserOperation<'v0.6'>,
   entryPoint: string,
   chainId: number
 ) {
