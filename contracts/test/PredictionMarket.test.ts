@@ -26,7 +26,16 @@ describe('PredictionMarket', function () {
   it('Should allow buying shares', async function () {
     await market.createMarket('Test question?', 86400);
     
-    await market.connect(user1).buyShares(0, true, { value: ethers.parseEther('1') });
+    // Deploy mock ERC20 token for testing
+    const MockToken = await ethers.getContractFactory('MockERC20');
+    const token = await MockToken.deploy('Test Token', 'TEST');
+    await token.mint(user1.address, ethers.parseEther('100'));
+    
+    // Approve market contract to spend tokens
+    await token.connect(user1).approve(await market.getAddress(), ethers.parseEther('1'));
+    
+    // Buy shares with ERC20 token
+    await market.connect(user1).buyShares(0, true, await token.getAddress(), ethers.parseEther('1'));
     
     const shares = await market.yesShares(0, user1.address);
     expect(shares).to.equal(ethers.parseEther('1'));
