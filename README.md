@@ -149,7 +149,7 @@ No disputes → Market finalizes
 - [x] Demo mode for wallet-free testing
 - [x] Optimistic resolution with 24h challenge window (contract level)
 
-### 🚧 Phase 2: Beta (Q1 2025)
+### 🚧 Phase 2: Beta (Q1 2026)
 - [ ] **BNB Mainnet deployment** with mainnet tokens (BUSD, USDT, USDC, BNB)
 - [ ] **UMA Optimistic Oracle** integration for dispute resolution
 - [ ] **Challenge/dispute UI** - Frontend for 24h challenge window
@@ -158,7 +158,7 @@ No disputes → Market finalizes
 - [ ] **Mobile PWA** with Particle social login
 - [ ] **Improved payout mechanism** - Multi-token pool management
 
-### 🔮 Phase 3: Scale (Q2 2025)
+### 🔮 Phase 3: Scale (Q2 2026)
 - [ ] **Advanced AI** - Multiple data sources (Twitter, Reddit, News APIs)
 - [ ] **Autonomous dispute bots** - Detect manipulation automatically
 - [ ] **Cross-protocol incentive layers** - Reward honest disputes
@@ -166,7 +166,7 @@ No disputes → Market finalizes
 - [ ] **Liquidity aggregation** - AMM-style pools for capital efficiency
 - [ ] **Developer API** - Build on top of SeerHive
 
-### 🌟 Phase 4: Ecosystem (Q3-Q4 2025)
+### 🌟 Phase 4: Ecosystem (Q3-Q4 2026)
 - [ ] **Multi-chain expansion** (opBNB, Ethereum L2s)
 - [ ] **Prediction market SDK** - White-label solution for other projects
 - [ ] **AI prediction agents** - Autonomous trading bots
@@ -204,6 +204,21 @@ pnpm dev
 ```
 
 **Demo Mode (No Wallet):** Set `NEXT_PUBLIC_DEMO=1` in `.env.local` to test all features with mock data.
+
+## 💰 Supported Tokens (BNB Testnet)
+
+SeerHive supports multiple tokens for trading. Get testnet tokens from faucets:
+
+| Token | Contract Address | Faucet |
+|-------|-----------------|--------|
+| **BNB** | Native Token | [BNB Testnet Faucet](https://testnet.bnbchain.org/faucet-smart) |
+| **tBUSD** | `0xaB1a4d4f1D656d2450692D237fdD6C7f9146e814` | Get 100 tBUSD in-app (click 💰 button on Markets page, 24h limit) |
+| **tUSDT** | `0x337610d27c682E347C9cD60BD4b3b107C9d34dDd` | [BNB Testnet Faucet](https://testnet.bnbchain.org/faucet-smart) |
+| **tUSDC** | `0x64544969ed7EBf5f083679233325356EbE738930` | [BNB Testnet Faucet](https://testnet.bnbchain.org/faucet-smart) |
+| **tDAI** | `0xEC5dCb5Dbf4B114C9d0F65BcCAb49EC54F6A0867` | [BNB Testnet Faucet](https://testnet.bnbchain.org/faucet-smart) |
+| **tBTC** | `0x6ce8dA28E2f864420840cF74474eFf5fD80E65B8` | [BNB Testnet Faucet](https://testnet.bnbchain.org/faucet-smart) |
+
+**Note:** Gasless transactions work with all ERC20 tokens (tBUSD, tUSDT, tUSDC, tDAI, tBTC). BNB requires small gas fee (~$0.001).
 
 ## 📋 Available Scripts
 
