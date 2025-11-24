@@ -11,3 +11,6 @@ artifacts
 typechain-types
 coverage
 *.tsbuildinfo
+# Internal documentation and dumps
+.amazonq/rules/memory-bank/
+Dump Images/
