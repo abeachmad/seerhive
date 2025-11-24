@@ -4,7 +4,7 @@ import { bscTestnet } from 'viem/chains';
 import { privateKeyToAccount } from 'viem/accounts';
 
 const BUSD_ADDRESS = '0xaB1a4d4f1D656d2450692D237fdD6C7f9146e814';
-const FAUCET_AMOUNT = '30';
+const FAUCET_AMOUNT = '100';
 const RATE_LIMIT_HOURS = 24;
 
 const requestLog = new Map<string, number>();
@@ -60,6 +60,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       txHash: hash,
+      amount: FAUCET_AMOUNT,
       explorerUrl: `https://testnet.bscscan.com/tx/${hash}`,
     });
   } catch (error: any) {

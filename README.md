@@ -212,13 +212,15 @@ SeerHive supports multiple tokens for trading. Get testnet tokens from faucets:
 | Token | Contract Address | Faucet |
 |-------|-----------------|--------|
 | **BNB** | Native Token | [BNB Testnet Faucet](https://testnet.bnbchain.org/faucet-smart) |
-| **tBUSD** | `0xaB1a4d4f1D656d2450692D237fdD6C7f9146e814` | Get 100 tBUSD in-app (click 💰 button on Markets page, 24h limit) |
+| **tBUSD** | `0xaB1a4d4f1D656d2450692D237fdD6C7f9146e814` | [Get 30 tBUSD from Faucet](/faucet) (24h limit) |
 | **tUSDT** | `0x337610d27c682E347C9cD60BD4b3b107C9d34dDd` | [BNB Testnet Faucet](https://testnet.bnbchain.org/faucet-smart) |
 | **tUSDC** | `0x64544969ed7EBf5f083679233325356EbE738930` | [BNB Testnet Faucet](https://testnet.bnbchain.org/faucet-smart) |
 | **tDAI** | `0xEC5dCb5Dbf4B114C9d0F65BcCAb49EC54F6A0867` | [BNB Testnet Faucet](https://testnet.bnbchain.org/faucet-smart) |
 | **tBTC** | `0x6ce8dA28E2f864420840cF74474eFf5fD80E65B8` | [BNB Testnet Faucet](https://testnet.bnbchain.org/faucet-smart) |
 
-**Note:** Gasless transactions work with all ERC20 tokens (tBUSD, tUSDT, tUSDC, tDAI, tBTC). BNB requires small gas fee (~$0.001).
+**Note:** 
+- Gasless transactions work with all ERC20 tokens (tBUSD, tUSDT, tUSDC, tDAI, tBTC). BNB requires small gas fee (~$0.001).
+- Get free tBUSD from our [Faucet page](/faucet) - no wallet connection required, just paste your address!
 
 ## 📋 Available Scripts
 
