@@ -1,10 +1,182 @@
-# SeerHive - Social Prediction Markets
+# SeerHive - AI-Powered Prediction Markets
 
-AI-assisted prediction markets on BNB Chain with **gasless transactions** (ERC-4337), copy trading, and governance.
+**The first prediction market platform with AI-powered resolution and zero gas fees.**
+
+Bet on real-world events, earn from accurate predictions, and let AI automatically resolve markets using real-time web data.
 
 **Deployed Contract:** [0xc6Dd26D3eE0F58fAb15Dc87bEe3A66896B6D4127](https://testnet.bscscan.com/address/0xc6Dd26D3eE0F58fAb15Dc87bEe3A66896B6D4127) (BNB Testnet)
 
-## 👨⚖️ Judge Quick Start (≤10 minutes)
+---
+
+## 🎯 What is SeerHive?
+
+SeerHive is a **decentralized prediction market** where you can:
+- 📊 **Create markets** on any future event (sports, crypto, politics, tech)
+- 💰 **Trade outcome shares** to profit from your predictions
+- 🤖 **Let AI resolve** markets automatically using real-time web data
+- ⚡ **Pay zero gas fees** with account abstraction (ERC-4337)
+- 🏆 **Build reputation** and earn from accurate predictions
+
+### Example Markets
+- "Will BNB price reach $1000 by end of 2025?"
+- "Will Ethereum ETF approval happen in Q1 2025?"
+- "Will Trump win 2024 US Presidential Election?"
+- "Will Bitcoin halving occur before May 2024?"
+
+---
+
+## 🚀 Why SeerHive?
+
+### Problems We Solve
+
+#### For Crypto Newbies 👶
+- ❌ **Problem**: Gas fees are confusing and expensive
+- ✅ **Solution**: **Zero gas fees** - Trade without paying transaction costs
+
+- ❌ **Problem**: Don't know how to use crypto wallets
+- ✅ **Solution**: **Social login** via Particle Network (Google, Twitter, Email)
+
+- ❌ **Problem**: Prediction markets are complicated
+- ✅ **Solution**: **Simple UI** - Just pick YES or NO, like betting on sports
+
+#### For Experienced Users 🧠
+- ❌ **Problem**: Manual market resolution is slow and biased (UMA OO takes 24-48h)
+- ✅ **Solution**: **AI + Web Scraping** - Automated resolution in seconds with real-time data
+
+- ❌ **Problem**: Prediction markets feel like complex DeFi dApps
+- ✅ **Solution**: **Account Abstraction** - Gasless UX that feels like normal apps
+
+- ❌ **Problem**: Centralized oracles can be manipulated in low-liquidity markets
+- ✅ **Solution**: **Optimistic resolution** - 24h challenge window + DAO disputes
+
+### Competitive Advantages
+
+| Feature | SeerHive | Polymarket | Traditional Betting |
+|---------|----------|------------|---------------------|
+| **AI Resolution** | ✅ Yes (seconds) | ❌ Manual (24-48h) | ❌ Centralized |
+| **Zero Gas Fees** | ✅ Yes (ERC-4337) | ❌ No | N/A |
+| **Real-time Data** | ✅ Web Scraping | ❌ No | ✅ Yes |
+| **Decentralized** | ✅ Yes | ⚠️ Partial | ❌ No |
+| **Social Login** | ✅ Yes | ❌ No | ✅ Yes |
+| **BNB Chain Native** | ✅ Yes | ❌ Polygon | N/A |
+
+---
+
+## 🔄 How It Works
+
+### 1️⃣ Create a Market
+```
+User → "Will Bitcoin reach $100k by Dec 2025?"
+     → Set end date: 2025-12-31
+     → Deploy market (gasless)
+```
+
+### 2️⃣ Trade Outcome Shares
+```
+Buyer → Buy YES shares with BNB or stablecoins
+      → If outcome is YES, claim proportional payout from total pool
+      → If outcome is NO, lose stake
+      → Supports: BNB, tBUSD, tUSDT, tUSDC, tDAI, tBTC
+```
+
+### 3️⃣ AI Resolves Market
+```
+Market expires → AI searches web via Tavily
+              → "Bitcoin price on Dec 31, 2025: $95,000"
+              → AI determines: NO (didn't reach $100k)
+              → Proposes resolution on-chain
+```
+
+### 4️⃣ Challenge Window
+```
+24 hours → Anyone can dispute if AI is wrong
+         → Requires dispute bond
+         → DAO votes on disputes
+```
+
+### 5️⃣ Payout
+```
+No disputes → Market finalizes
+            → NO holders claim winnings
+            → YES holders lose stake
+```
+
+---
+
+---
+
+## 🏆 Seedify x BNB Chain Hackathon
+
+**SeerHive is competing in the YZi Labs Preferred Projects track**, addressing key challenges:
+
+### Problems We Solve (YZi Labs Focus Areas)
+
+1. **⚡ Slow Oracle Resolution**
+   - UMA's Optimistic Oracle takes 24-48h
+   - **Our Solution**: AI-assisted oracle resolves in seconds using real-time web data
+
+2. **🎯 Account Abstraction for Better UX**
+   - Prediction markets feel like complex DeFi dApps
+   - **Our Solution**: Gasless transactions via ERC-4337 make it feel like normal apps
+
+3. **🔍 Oracle Vulnerability in Low-Liquidity Markets**
+   - UMA OO can be manipulated when attention is low
+   - **Our Solution**: AI + 24h challenge window + DAO dispute resolution
+
+4. **🌐 Limited Market Coverage**
+   - Polymarket only covers well-defined, publicly verifiable events
+   - **Our Solution**: AI can handle subjective and multi-stage predictions
+
+### Why BNB Chain?
+
+- ✅ **Low transaction costs** - Ideal for high-frequency prediction markets
+- ✅ **ERC-4337 support** - Native account abstraction infrastructure
+- ✅ **Fast finality** - Quick market resolution and payouts
+- ✅ **Growing ecosystem** - Integration with BNB DeFi protocols
+
+---
+
+## 🛣️ Roadmap
+
+### ✅ Phase 1: MVP (Completed)
+- [x] Smart contracts on BNB Testnet with ERC20 token support
+- [x] Gasless transactions (ERC-4337) with Particle + Pimlico fallback
+- [x] AI resolution (Groq Llama 3.3 70B + Tavily web search)
+- [x] Real-time web scraping for current events
+- [x] Multi-token support (BNB, tBUSD, tUSDT, tUSDC, tDAI, tBTC)
+- [x] Gasless transactions for ERC20 tokens (BNB requires gas)
+- [x] Trading UI with token selection
+- [x] Demo mode for wallet-free testing
+- [x] Optimistic resolution with 24h challenge window (contract level)
+
+### 🚧 Phase 2: Beta (Q1 2025)
+- [ ] **BNB Mainnet deployment** with mainnet tokens (BUSD, USDT, USDC, BNB)
+- [ ] **UMA Optimistic Oracle** integration for dispute resolution
+- [ ] **Challenge/dispute UI** - Frontend for 24h challenge window
+- [ ] **Copy trading** - Follow top predictors
+- [ ] **Reputation system** - Brier scores, ELO ratings
+- [ ] **Mobile PWA** with Particle social login
+- [ ] **Improved payout mechanism** - Multi-token pool management
+
+### 🔮 Phase 3: Scale (Q2 2025)
+- [ ] **Advanced AI** - Multiple data sources (Twitter, Reddit, News APIs)
+- [ ] **Autonomous dispute bots** - Detect manipulation automatically
+- [ ] **Cross-protocol incentive layers** - Reward honest disputes
+- [ ] **DAO governance** - Community-driven platform decisions
+- [ ] **Liquidity aggregation** - AMM-style pools for capital efficiency
+- [ ] **Developer API** - Build on top of SeerHive
+
+### 🌟 Phase 4: Ecosystem (Q3-Q4 2025)
+- [ ] **Multi-chain expansion** (opBNB, Ethereum L2s)
+- [ ] **Prediction market SDK** - White-label solution for other projects
+- [ ] **AI prediction agents** - Autonomous trading bots
+- [ ] **Market aggregation** - Trade on Polymarket/Limitless via SeerHive
+- [ ] **Institutional features** - KYC, compliance, reporting
+- [ ] **Gamification** - Achievements, leaderboards, NFT badges
+
+---
+
+## ⚡ Quick Start (≤10 minutes)
 
 ```bash
 # 1. Clone and install
@@ -42,14 +214,98 @@ pnpm test             # Run all tests
 pnpm lint             # Lint code
 
 # Testing
-./scripts/test-sponsor.sh   # Test paymaster API
-./scripts/smoke-gasless.sh  # Test gasless flow
+./scripts/test-sponsor.sh     # Test paymaster API
+./scripts/test-ai-resolve.sh  # Test AI resolution API
+./scripts/smoke-gasless.sh    # Test gasless flow
 
 # Contracts
 cd contracts
 pnpm test             # Test smart contracts
 pnpm deploy:testnet   # Deploy to BNB Testnet
 ```
+
+## 🤖 AI-Powered Market Resolution
+
+SeerHive uses **AI + Web Scraping** to automatically resolve prediction markets with real-time data.
+
+### Architecture
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant UI as ResolutionPanel
+    participant API as /api/ai/resolve
+    participant Tavily as Tavily AI (Web Search)
+    participant Groq as Groq Llama 3.3 70B
+    participant Contract as Smart Contract
+
+    User->>UI: Click "Resolve with AI"
+    UI->>API: POST {question, resolutionDate}
+    API->>Tavily: Search web for context
+    Tavily-->>API: Real-time search results
+    API->>Groq: Analyze question + context
+    Groq-->>API: {outcome, confidence, reasoning}
+    API-->>UI: Resolution proposal
+    UI->>Contract: proposeResolution(outcome)
+    Contract-->>User: 24h challenge window starts
+```
+
+### Key Features
+
+- **Real-time web search**: Tavily AI fetches current events and news
+- **Advanced reasoning**: Groq Llama 3.3 70B analyzes context and determines outcome
+- **Structured output**: JSON with outcome (YES/NO/INVALID), confidence (0-100), reasoning
+- **Fallback models**: Llama 3.3 70B → Llama 3.1 8B for reliability
+- **Free tier**: 1000 searches/month (Tavily) + 30 req/min (Groq)
+
+### How It Works
+
+1. User clicks "Resolve with AI" on expired market
+2. Tavily searches web for real-time context about the question
+3. Groq Llama 3.3 70B analyzes question + web context
+4. AI returns structured decision with confidence score
+5. Proposal submitted on-chain with 24-hour challenge window
+6. If no disputes, market auto-finalizes
+
+### AI Resolution API Example
+
+**Endpoint:** `POST /api/ai/resolve`
+
+**Request:**
+```json
+{
+  "marketId": 1,
+  "question": "Did Bitcoin reach $100,000 in 2024?",
+  "resolutionDate": "2024-12-31"
+}
+```
+
+**Response:**
+```json
+{
+  "marketId": 1,
+  "outcome": "NO",
+  "confidence": 100,
+  "reasoning": "Historical data shows Bitcoin did not reach $100,000 in 2024",
+  "latency_ms": 1772
+}
+```
+
+**Test:**
+```bash
+./scripts/test-ai-resolve.sh
+```
+
+### Competitive Advantage
+
+| Platform | Resolution Method | Real-time Data |
+|----------|------------------|----------------|
+| **SeerHive** | AI + Web Scraping | ✅ Yes |
+| Predifi | Aggregation only | ❌ No resolution |
+| Kaido | Manual/Simple oracle | ❌ No |
+| Masang | Not mentioned | ❌ No |
+
+---
 
 ## ⚡ Gasless Transactions (ERC-4337)
 
@@ -258,6 +514,16 @@ PARTICLE_CLIENT_KEY=your_client_key
 PIMLICO_URL=https://api.pimlico.io/v2/97/rpc?apikey=YOUR_API_KEY
 ```
 
+### AI Resolution Configuration (Server-side Only)
+
+```bash
+# Groq AI (LLM) - Get free key at https://console.groq.com
+GROQ_API_KEY=gsk_your_groq_key_here
+
+# Tavily AI (Web Search) - Get free key at https://tavily.com
+TAVILY_API_KEY=tvly-your_tavily_key_here
+```
+
 ### Deployment (contracts/.env)
 
 ```bash
@@ -275,15 +541,17 @@ BSC_TESTNET_RPC=https://bsc-testnet.publicnode.com
 ### Known Limitations & Roadmap
 
 **Current Limitations:**
-- Subjective markets require manual resolution (AI oracle in progress)
+- AI resolution limited by LLM training data cutoff (use web search for recent events)
 - Single contract deployment (multi-market factory planned)
 - Testnet only (mainnet deployment pending audit)
 
 **Roadmap:**
+- [x] AI-powered resolution with web scraping (Groq + Tavily)
 - [ ] UMA Optimistic Oracle integration for dispute resolution
 - [ ] Multi-signature governance for critical operations
 - [ ] Cross-chain deployment (Ethereum, Polygon)
 - [ ] Mobile app with Particle social login
+- [ ] Enhanced AI with multiple data sources (Twitter, Reddit, News APIs)
 
 ## 🌐 Features & Pages
 
@@ -298,7 +566,8 @@ BSC_TESTNET_RPC=https://bsc-testnet.publicnode.com
 
 - ✅ **Gasless transactions** (ERC-4337) - Zero gas fees for users
 - ✅ **Dual paymaster** - Particle (primary) + Pimlico (fallback)
-- ✅ **AI-powered resolution** - Automated market settlement
+- ✅ **AI-powered resolution** - Groq Llama 3.3 70B + Tavily web search
+- ✅ **Real-time web scraping** - Resolves current events with live data
 - ✅ **Copy trading** - Follow top traders
 - ✅ **Reputation system** - Brier score, ELO, accuracy tracking
 - ✅ **Optimistic resolution** - 24h challenge window
@@ -332,6 +601,11 @@ BSC_TESTNET_RPC=https://bsc-testnet.publicnode.com
 - Particle Network Paymaster (Primary)
 - Pimlico Paymaster (Fallback)
 - EntryPoint v0.6.0
+
+**AI Resolution:**
+- Groq Llama 3.3 70B (Reasoning)
+- Tavily AI (Web Search)
+- Real-time data fetching
 
 **Infrastructure:**
 - Turborepo (Monorepo)

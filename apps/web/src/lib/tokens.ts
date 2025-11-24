@@ -1,4 +1,10 @@
 export const SUPPORTED_TOKENS = {
+  BNB: {
+    address: '0x0000000000000000000000000000000000000000',
+    symbol: 'BNB',
+    decimals: 18,
+    isNative: true,
+  },
   tBUSD: {
     address: '0xaB1a4d4f1D656d2450692D237fdD6C7f9146e814',
     symbol: 'tBUSD',

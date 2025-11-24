@@ -43,14 +43,19 @@ contract PredictionMarket is Ownable {
         return marketId;
     }
 
-    function buyShares(uint256 _marketId, bool _isYes, address _token, uint256 _amount) external {
+    function buyShares(uint256 _marketId, bool _isYes, address _token, uint256 _amount) external payable {
         Market storage market = markets[_marketId];
         require(block.timestamp < market.endTime, "Market ended");
         require(!market.resolved, "Market resolved");
         require(_amount > 0, "Amount must be > 0");
 
-        IERC20 token = IERC20(_token);
-        require(token.transferFrom(msg.sender, address(this), _amount), "Transfer failed");
+        // Handle native BNB (address(0)) or ERC20 tokens
+        if (_token == address(0)) {
+            require(msg.value == _amount, "BNB amount mismatch");
+        } else {
+            IERC20 token = IERC20(_token);
+            require(token.transferFrom(msg.sender, address(this), _amount), "Transfer failed");
+        }
 
         if (_isYes) {
             yesShares[_marketId][msg.sender] += _amount;

@@ -4,7 +4,8 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { useStore } from '@/lib/store';
-import { AlertTriangle, CheckCircle, Clock } from 'lucide-react';
+import { aiResolver } from '@/lib/aiResolver';
+import { AlertTriangle, CheckCircle, Clock, Sparkles } from 'lucide-react';
 
 interface ResolutionPanelProps {
   market: any;
@@ -14,23 +15,35 @@ export function ResolutionPanel({ market }: ResolutionPanelProps) {
   const [loading, setLoading] = useState(false);
   const { proposeResolution, challengeResolution } = useStore();
 
-  const handleProposeResolution = async (outcome: boolean) => {
+  const handleAIResolve = async () => {
     setLoading(true);
-    
-    // Call AI oracle
-    const response = await fetch('/api/oracle/resolve', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        marketId: market.id,
-        question: market.question,
-      }),
-    });
-    
-    const data = await response.json();
-    
-    proposeResolution(market.id, outcome, 'AI Oracle');
-    setLoading(false);
+    try {
+      const result = await aiResolver.resolveMarket(
+        market.id,
+        market.question,
+        market.endDate
+      );
+      
+      console.log('[ai-resolve] Result:', result);
+      
+      if (result.outcome === 'INVALID') {
+        alert(`AI cannot resolve: ${result.reasoning}`);
+        setLoading(false);
+        return;
+      }
+      
+      const outcome = result.outcome === 'YES';
+      proposeResolution(
+        market.id,
+        outcome,
+        `AI Oracle (${result.confidence}% confidence): ${result.reasoning}`
+      );
+    } catch (error: any) {
+      console.error('[ai-resolve] Error:', error);
+      alert(`AI resolution failed: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChallenge = () => {
@@ -138,32 +151,21 @@ export function ResolutionPanel({ market }: ResolutionPanelProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-sm text-slate-400">
-          Market has ended. AI oracle will verify and propose resolution.
+          Market has ended. Use AI to automatically resolve based on real-world data.
         </p>
         
-        <div className="grid grid-cols-2 gap-4">
-          <Button 
-            variant="success"
-            onClick={() => handleProposeResolution(true)}
-            disabled={loading}
-            className="w-full"
-          >
-            {loading ? 'Verifying...' : 'Resolve YES'}
-          </Button>
-          
-          <Button 
-            variant="danger"
-            onClick={() => handleProposeResolution(false)}
-            disabled={loading}
-            className="w-full"
-          >
-            {loading ? 'Verifying...' : 'Resolve NO'}
-          </Button>
-        </div>
+        <Button 
+          onClick={handleAIResolve}
+          disabled={loading}
+          className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+        >
+          <Sparkles className="w-4 h-4 mr-2" />
+          {loading ? 'AI Analyzing...' : 'Resolve with AI'}
+        </Button>
         
-        <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
-          <p className="text-sm text-blue-400">
-            🤖 AI will check news sources and social media before proposing resolution
+        <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-3">
+          <p className="text-sm text-purple-400">
+            ✨ AI will search news sources and analyze context to determine the outcome
           </p>
         </div>
       </CardContent>

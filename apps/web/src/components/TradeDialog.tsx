@@ -41,6 +41,13 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
   const [primaryWallet] = useWallets();
   const demo = isDemo();
   
+  // Disable gasless when BNB is selected
+  useEffect(() => {
+    if (SUPPORTED_TOKENS[selectedToken]?.isNative) {
+      setUseGasless(false);
+    }
+  }, [selectedToken]);
+  
   // Debug wallet connection
   useEffect(() => {
     console.log('=== WALLET CONNECTION DEBUG ===');
@@ -80,24 +87,44 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
         console.log('EOA Address:', address);
         console.log('Smart Account Address:', smartAccountAddress);
         console.log('Token Contract:', token.address, token.symbol);
-        console.log('Smart Account Available:', !!smartAccount);
+        console.log('Is Native BNB:', token.isNative);
         
-        // Direct RPC call to check balance
-        const response = await fetch('https://bsc-testnet.publicnode.com', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            jsonrpc: '2.0',
-            method: 'eth_call',
-            params: [{
-              to: token.address,
-              data: `0x70a08231000000000000000000000000${smartAccountAddress.slice(2)}`
-            }, 'latest'],
-            id: 1
-          })
-        });
-        const result = await response.json();
-        const smartBalance = BigInt(result.result || '0x0');
+        let smartBalance: bigint;
+        
+        if (token.isNative) {
+          // Native BNB - use eth_getBalance
+          const response = await fetch('https://bsc-testnet.publicnode.com', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              jsonrpc: '2.0',
+              method: 'eth_getBalance',
+              params: [smartAccountAddress, 'latest'],
+              id: 1
+            })
+          });
+          const result = await response.json();
+          const balanceHex = result.result || '0x0';
+          smartBalance = balanceHex === '0x' ? 0n : BigInt(balanceHex);
+        } else {
+          // ERC20 token - use eth_call
+          const response = await fetch('https://bsc-testnet.publicnode.com', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              jsonrpc: '2.0',
+              method: 'eth_call',
+              params: [{
+                to: token.address,
+                data: `0x70a08231000000000000000000000000${smartAccountAddress.slice(2)}`
+              }, 'latest'],
+              id: 1
+            })
+          });
+          const result = await response.json();
+          const balanceHex = result.result || '0x0';
+          smartBalance = balanceHex === '0x' ? 0n : BigInt(balanceHex);
+        }
         
         console.log('Smart Account Raw Balance:', smartBalance.toString());
         
@@ -137,34 +164,39 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
       if (smartAccount) {
         // Particle wallet - use Particle SDK (SIMPLE account auto-deploys)
         console.log('✅ Using Particle SDK (Particle Wallet)');
+        console.log('Token:', token.symbol, 'Is Native:', token.isNative);
         
-        // Approve token
-        const approveTx = {
-          to: token.address,
-          value: '0x0',
-          data: encodeFunctionData({
-            abi: ERC20_ABI,
-            functionName: 'approve',
-            args: [PREDICTION_MARKET_ADDRESS as `0x${string}`, tokenAmount],
-          }),
-        };
-        
-        const approveQuotes = await smartAccount.getFeeQuotes(approveTx);
-        const approveGasless = approveQuotes?.verifyingPaymasterGasless;
-        
-        if (approveGasless) {
-          const approveHash = await smartAccount.sendUserOperation({
-            userOp: approveGasless.userOp,
-            userOpHash: approveGasless.userOpHash,
-          });
-          console.log('✅ Approve:', approveHash);
-          await new Promise(resolve => setTimeout(resolve, 2000));
+        // Approve token (skip for native BNB)
+        if (!token.isNative) {
+          const approveTx = {
+            to: token.address,
+            value: '0x0',
+            data: encodeFunctionData({
+              abi: ERC20_ABI,
+              functionName: 'approve',
+              args: [PREDICTION_MARKET_ADDRESS as `0x${string}`, tokenAmount],
+            }),
+          };
+          
+          const approveQuotes = await smartAccount.getFeeQuotes(approveTx);
+          const approveGasless = approveQuotes?.verifyingPaymasterGasless;
+          
+          if (approveGasless) {
+            const approveHash = await smartAccount.sendUserOperation({
+              userOp: approveGasless.userOp,
+              userOpHash: approveGasless.userOpHash,
+            });
+            console.log('✅ Approve:', approveHash);
+            await new Promise(resolve => setTimeout(resolve, 2000));
+          }
+        } else {
+          console.log('⏭️ Skipping approve for native BNB');
         }
         
         // Buy shares
         const buyTx = {
           to: PREDICTION_MARKET_ADDRESS,
-          value: '0',
+          value: token.isNative ? tokenAmount.toString() : '0',
           data: encodeFunctionData({
             abi: PREDICTION_MARKET_ABI,
             functionName: 'buyShares',
@@ -439,11 +471,15 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
                 type="checkbox"
                 checked={useGasless}
                 onChange={(e) => setUseGasless(e.target.checked)}
+                disabled={SUPPORTED_TOKENS[selectedToken]?.isNative}
                 className="w-4 h-4"
               />
               <span className="text-sm text-slate-300">
                 <Zap className="w-4 h-4 inline text-yellow-400 mr-1" />
                 Use Gasless Transaction
+                {SUPPORTED_TOKENS[selectedToken]?.isNative && (
+                  <span className="text-xs text-yellow-400 ml-2">(Not available for BNB)</span>
+                )}
               </span>
             </label>
             {useGasless && smartAccountAddress && (
