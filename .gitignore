@@ -14,3 +14,10 @@ coverage
 # Internal documentation and dumps
 .amazonq/rules/memory-bank/
 Dump Images/
+
+# Build artifacts
+.turbo/
+.next/
+tsconfig.tsbuildinfo
+artifacts/
+cache/
