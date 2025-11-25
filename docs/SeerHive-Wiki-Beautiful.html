@@ -1,0 +1,4814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeerHive Documentation</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Color Emoji', sans-serif;
+            line-height: 1.7;
+            color: #1f2937;
+            background: #ffffff;
+            font-size: 16px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        /* Cover Page */
+        .cover {
+            text-align: center;
+            padding: 80px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 16px;
+            margin-bottom: 60px;
+        }
+        
+        .cover h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .cover .subtitle {
+            font-size: 1.4rem;
+            font-weight: 300;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .cover .meta {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+        
+        /* Table of Contents */
+        .toc {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 40px 0;
+        }
+        
+        .toc h2 {
+            color: #1e40af;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .toc ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .toc li {
+            margin: 8px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .toc li:before {
+            content: "📄";
+            position: absolute;
+            left: 0;
+        }
+        
+        .toc a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        
+        .toc a:hover {
+            color: #1d4ed8;
+        }
+        
+        /* Typography */
+        h1 {
+            color: #1e40af;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 60px 0 30px 0;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #3b82f6;
+        }
+        
+        h2 {
+            color: #1e40af;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 40px 0 20px 0;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        h3 {
+            color: #374151;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 30px 0 15px 0;
+        }
+        
+        p {
+            margin: 16px 0;
+            color: #374151;
+        }
+        
+        /* Code */
+        code {
+            background: #f1f5f9;
+            color: #e11d48;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+            font-size: 0.9em;
+        }
+        
+        pre {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            border: 1px solid #334155;
+        }
+        
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border-radius: 0;
+        }
+        
+        /* Lists */
+        ul, ol {
+            margin: 16px 0;
+            padding-left: 30px;
+        }
+        
+        li {
+            margin: 8px 0;
+            color: #374151;
+        }
+        
+        /* Links */
+        a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        a:hover {
+            color: #1d4ed8;
+            text-decoration: underline;
+        }
+        
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        /* Blockquotes */
+        blockquote {
+            border-left: 4px solid #3b82f6;
+            padding-left: 20px;
+            margin: 20px 0;
+            color: #6b7280;
+            font-style: italic;
+        }
+        
+        /* Page breaks for PDF */
+        .page-break {
+            page-break-before: always;
+        }
+        
+        /* Print styles */
+        @media print {
+            body { font-size: 12pt; }
+            .cover { background: #667eea !important; }
+            a { color: #3b82f6 !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="cover">
+            <h1>🔮 SeerHive</h1>
+            <div class="subtitle">AI-Powered Prediction Markets with Zero Gas Fees</div>
+            <div class="meta">
+                <strong>Documentation</strong><br>
+                Generated: November 25, 2025
+            </div>
+        </div>
+        
+        <div class="toc">
+            <h2>📚 Table of Contents</h2>
+            <ul>
+                <li><a href="#home">Welcome to SeerHive Wiki</a></li>
+                <li><a href="#getting-started">Getting Started</a></li>
+                <li><a href="#architecture">Architecture</a></li>
+                <li><a href="#smart-contracts">Smart Contracts</a></li>
+                <li><a href="#gasless-transactions">Gasless Transactions (ERC-4337)</a></li>
+                <li><a href="#ai-resolution">AI Resolution</a></li>
+                <li><a href="#api-reference">API Reference</a></li>
+                <li><a href="#configuration">Configuration</a></li>
+                <li><a href="#testing">Testing</a></li>
+                <li><a href="#deployment">Deployment</a></li>
+                <li><a href="#contributing">Contributing</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+        </div>
+        <div class="page-content">
+<h1 id="home">Welcome to SeerHive Wiki</h1>
+
+<p><strong>SeerHive</strong> is the first prediction market platform with AI-powered resolution and zero gas fees on BNB Chain.</p>
+
+<h2 id="-quick-links">🚀 Quick Links</h2>
+
+<ul>
+<li><a href="Getting-Started" target="_blank">Getting Started</a> - Install and run SeerHive</li>
+<li><a href="Architecture" target="_blank">Architecture</a> - System design overview</li>
+<li><a href="Smart-Contracts" target="_blank">Smart Contracts</a> - Contract documentation</li>
+<li><a href="Gasless-Transactions" target="_blank">Gasless Transactions</a> - ERC-4337 implementation</li>
+<li><a href="AI-Resolution" target="_blank">AI Resolution</a> - Automated market resolution</li>
+<li><a href="API-Reference" target="_blank">API Reference</a> - API endpoints</li>
+<li><a href="Configuration" target="_blank">Configuration</a> - Environment setup</li>
+<li><a href="Testing" target="_blank">Testing</a> - Testing guide</li>
+<li><a href="Deployment" target="_blank">Deployment</a> - Deploy to production</li>
+<li><a href="FAQ" target="_blank">FAQ</a> - Common questions</li>
+</ul>
+
+<h2 id="-what-is-seerhive">📊 What is SeerHive?</h2>
+
+<ul>
+SeerHive is a decentralized prediction market where users can:
+<li>📊 Create markets on any future event</li>
+<li>💰 Trade outcome shares (YES/NO)</li>
+<li>🤖 Let AI resolve markets automatically</li>
+<li>⚡ Pay zero gas fees with ERC-4337</li>
+<li>🏆 Build reputation from accurate predictions</li>
+</ul>
+
+<h2 id="-key-features">🎯 Key Features</h2>
+
+<ul>
+<li><strong>Zero Gas Fees</strong> - ERC-4337 account abstraction with dual paymaster (Particle + Pimlico)</li>
+<li><strong>AI Resolution</strong> - Groq Llama 3.3 70B + Tavily web search for automated resolution</li>
+<li><strong>Multi-Token Support</strong> - Trade with BNB, tBUSD, tUSDT, tUSDC, tDAI, tBTC</li>
+<li><strong>Optimistic Resolution</strong> - 24-hour challenge window with DAO disputes</li>
+<li><strong>Social Login</strong> - Particle Network integration (Google, Twitter, Email)</li>
+<li><strong>Demo Mode</strong> - Test without wallet connection</li>
+</ul>
+
+<h2 id="-important-links">🔗 Important Links</h2>
+
+<ul>
+<li><strong>Contract</strong>: <a href="https://testnet.bscscan.com/address/0xc6Dd26D3eE0F58fAb15Dc87bEe3A66896B6D4127" target="_blank">0xc6Dd26D3eE0F58fAb15Dc87bEe3A66896B6D4127</a></li>
+<li><strong>Network</strong>: BNB Testnet (Chain ID: 97)</li>
+<li><strong>GitHub</strong>: <a href="https://github.com/abeachmad/seerhive" target="_blank">abeachmad/seerhive</a></li>
+</ul>
+
+<h2 id="-tech-stack">🛠️ Tech Stack</h2>
+
+<ul>
+<li><strong>Frontend</strong>: Next.js 14, TypeScript, Tailwind CSS, wagmi, viem</li>
+<li><strong>Contracts</strong>: Solidity 0.8.20, Hardhat, OpenZeppelin</li>
+<li><strong>Blockchain</strong>: BNB Testnet</li>
+<li><strong>Account Abstraction</strong>: Particle Network + Pimlico</li>
+<li><strong>AI</strong>: Groq Llama 3.3 70B + Tavily</li>
+</ul>
+
+<h2 id="-license">📄 License</h2>
+
+<p>MIT License</p>
+        </div>
+        <div class="page-break"></div>
+        <div class="page-content">
+<h1 id="getting-started">Getting Started</h1>
+
+<p>Get SeerHive running locally in under 10 minutes.</p>
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<ul>
+<li>Node.js 20.x or higher</li>
+<li>pnpm 10.x or higher</li>
+<li>Git</li>
+</ul>
+
+<h2 id="quick-start">Quick Start</h2>
+
+<h3 id="1-clone-repository">1. Clone Repository</h3>
+
+<pre><code class="language-bash">git clone https://github.com/abeachmad/seerhive.git
+cd seerhive
+</code></pre>
+
+<h3 id="2-install-dependencies">2. Install Dependencies</h3>
+
+<pre><code class="language-bash">pnpm install
+</code></pre>
+
+<h3 id="3-configure-environment">3. Configure Environment</h3>
+
+<pre><code class="language-bash">cp apps/web/.env.example apps/web/.env.local
+</code></pre>
+
+<p>Edit <code>apps/web/.env.local</code>:</p>
+
+<pre><code class="language-bash"># Demo Mode (no wallet required)
+NEXT_PUBLIC_DEMO=1
+
+<h1 id="getting-started">Or On-Chain Mode</h1>
+NEXT_PUBLIC_DEMO=0
+NEXT_PUBLIC_CHAIN_ID=97
+NEXT_PUBLIC_CONTRACT_ADDRESS=0xc6Dd26D3eE0F58fAb15Dc87bEe3A66896B6D4127
+</code></pre>
+
+<h3 id="4-start-development-server">4. Start Development Server</h3>
+
+<pre><code class="language-bash">pnpm dev
+</code></pre>
+
+<p>Open <a href="http://localhost:3000" target="_blank">http://localhost:3000</a></p>
+
+<h2 id="demo-mode-vs-on-chain-mode">Demo Mode vs On-Chain Mode</h2>
+
+<h3 id="demo-mode-recommended-for-first-run">Demo Mode (Recommended for First Run)</h3>
+
+<pre><code class="language-bash">NEXT_PUBLIC_DEMO=1
+</code></pre>
+
+<ul>
+<li>No wallet connection required</li>
+<li>Mock data for all features</li>
+<li>Test UI/UX without blockchain</li>
+</ul>
+
+<h3 id="on-chain-mode">On-Chain Mode</h3>
+
+<pre><code class="language-bash">NEXT_PUBLIC_DEMO=0
+</code></pre>
+
+<ul>
+<li>Real wallet connection (MetaMask, Particle)</li>
+<li>Live contract interactions on BNB Testnet</li>
+<li>Requires testnet tokens</li>
+</ul>
+
+<h2 id="get-testnet-tokens">Get Testnet Tokens</h2>
+
+<h3 id="bnb-native-token">BNB (Native Token)</h3>
+<a href="https://testnet.bnbchain.org/faucet-smart" target="_blank">BNB Testnet Faucet</a>
+
+<h3 id="tbusd-recommended">tBUSD (Recommended)</h3>
+Visit <a href="http://localhost:3000/faucet" target="_blank">/faucet</a> - Get 30 tBUSD every 24 hours
+
+<h3 id="other-tokens">Other Tokens</h3>
+<li>tUSDT, tUSDC, tDAI, tBTC: <a href="https://testnet.bnbchain.org/faucet-smart" target="_blank">BNB Testnet Faucet</a></li>
+
+<h2 id="test-gasless-transactions">Test Gasless Transactions</h2>
+
+<h3 id="1-enable-gasless-mode">1. Enable Gasless Mode</h3>
+
+<p>In the UI, toggle "Use Gasless Transaction"</p>
+
+<h3 id="2-create-market-or-trade">2. Create Market or Trade</h3>
+
+<pre><code class="language-bash"># Test paymaster API
+./scripts/test-sponsor.sh
+
+<h1 id="getting-started">Full gasless flow</h1>
+./scripts/smoke-gasless.sh
+</code></pre>
+
+<h3 id="3-verify-transaction">3. Verify Transaction</h3>
+
+<p>Check console for: <code>Gasless sponsored: particle</code></p>
+
+<p>Verify on <a href="https://testnet.bscscan.com" target="_blank">BSCScan</a> - user pays 0 gas</p>
+
+<h2 id="test-ai-resolution">Test AI Resolution</h2>
+
+<pre><code class="language-bash">./scripts/test-ai-resolve.sh
+</code></pre>
+
+<p>Expected output:
+<pre><code class="language-json">{
+  "outcome": "NO",
+  "confidence": 95,
+  "reasoning": "...",
+  "latency_ms": 1772
+}
+</code></pre></p>
+
+<h2 id="project-structure">Project Structure</h2>
+
+<pre><code class="language-">seerhive/
+├── apps/web/          # Next.js frontend
+├── contracts/         # Smart contracts
+├── scripts/           # Test scripts
+└── docs/              # Documentation
+</code></pre>
+
+<h2 id="available-commands">Available Commands</h2>
+
+<pre><code class="language-bash">pnpm dev              # Start dev server
+pnpm build            # Build all packages
+pnpm test             # Run tests
+pnpm lint             # Lint code
+
+<h1 id="getting-started">Contracts</h1>
+cd contracts
+pnpm test             # Test contracts
+pnpm deploy:testnet   # Deploy to BNB Testnet
+</code></pre>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<ul>
+<li><a href="Architecture" target="_blank">Architecture</a> - Understand system design</li>
+<li><a href="Configuration" target="_blank">Configuration</a> - Advanced environment setup</li>
+<li><a href="API-Reference" target="_blank">API Reference</a> - Explore API endpoints</li>
+<li><a href="Testing" target="_blank">Testing</a> - Run comprehensive tests</li>
+</ul>
+
+<h2 id="troubleshooting">Troubleshooting</h2>
+
+<h3 id="port-3000-already-in-use">Port 3000 Already in Use</h3>
+
+<pre><code class="language-bash"># Kill process on port 3000
+lsof -ti:3000 | xargs kill -9
+
+<h1 id="getting-started">Or use different port</h1>
+PORT=3001 pnpm dev
+</code></pre>
+
+<h3 id="pnpm-not-found">pnpm Not Found</h3>
+
+<pre><code class="language-bash">npm install -g pnpm
+</code></pre>
+
+<h3 id="contract-not-deployed">Contract Not Deployed</h3>
+
+<p>Verify contract address in <code>.env.local</code> matches:
+<pre><code class="language-">0xc6Dd26D3eE0F58fAb15Dc87bEe3A66896B6D4127
+</code></pre></p>
+
+<h3 id="gasless-transaction-failed">Gasless Transaction Failed</h3>
+
+<p>Check paymaster configuration in <a href="Configuration" target="_blank">Configuration</a></p>
+        </div>
+        <div class="page-break"></div>
+        <div class="page-content">
+<h1 id="architecture">Architecture</h1>
+
+<p>SeerHive's architecture combines blockchain, AI, and account abstraction for a seamless prediction market experience.</p>
+
+<h2 id="system-overview">System Overview</h2>
+
+<pre><code class="language-">┌─────────────────────────────────────────────────────────────┐
+│                         Frontend                             │
+│  Next.js 14 + TypeScript + wagmi + Particle Network         │
+└─────────────────┬───────────────────────────────────────────┘
+                  │
+        ┌─────────┴─────────┐
+        │                   │
+        ▼                   ▼
+┌───────────────┐   ┌──────────────────┐
+│  Smart        │   │  API Routes      │
+│  Contracts    │   │  (Server-side)   │
+│  (BNB Chain)  │   └────────┬─────────┘
+└───────────────┘            │
+                    ┌────────┴────────┐
+                    │                 │
+                    ▼                 ▼
+            ┌──────────────┐  ┌─────────────┐
+            │  Paymasters  │  │  AI Services│
+            │  (ERC-4337)  │  │  (Groq +    │
+            │              │  │   Tavily)   │
+            └──────────────┘  └─────────────┘
+</code></pre>
+
+<h2 id="core-components">Core Components</h2>
+
+<h3 id="1-frontend-application">1. Frontend Application</h3>
+
+<p><strong>Location</strong>: <code>apps/web/</code></p>
+
+<ul>
+<strong>Tech Stack</strong>:
+<li>Next.js 14 (App Router)</li>
+<li>TypeScript</li>
+<li>wagmi + viem (Ethereum interactions)</li>
+<li>Particle Network (Social login + AA)</li>
+<li>Tailwind CSS + shadcn/ui</li>
+</ul>
+
+<ul>
+<strong>Key Features</strong>:
+<li>Server and client components</li>
+<li>API routes for backend logic</li>
+<li>Component variants (Particle vs Wagmi)</li>
+<li>Zustand state management</li>
+</ul>
+
+<h3 id="2-smart-contracts">2. Smart Contracts</h3>
+
+<p><strong>Location</strong>: <code>contracts/</code></p>
+
+<p><strong>Main Contract</strong>: <code>PredictionMarket.sol</code></p>
+
+<ul>
+<strong>Features</strong>:
+<li>Multi-token support (ERC20 + native BNB)</li>
+<li>Market creation and trading</li>
+<li>Optimistic resolution with 24h challenge window</li>
+<li>Share-based payout system</li>
+</ul>
+
+<p><strong>Deployed Address</strong>: <code>0xc6Dd26D3eE0F58fAb15Dc87bEe3A66896B6D4127</code></p>
+
+<h3 id="3-account-abstraction-layer">3. Account Abstraction Layer</h3>
+
+<ul>
+<strong>ERC-4337 Implementation</strong>:
+<li>EntryPoint: <code>0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789</code></li>
+<li>Dual Paymaster: Particle (primary) + Pimlico (fallback)</li>
+<li>Server-side sponsorship API</li>
+</ul>
+
+<p><strong>Flow</strong>:
+<pre><code class="language-">User Action → Frontend → /api/aa/sponsor → Paymaster → Bundler → Chain
+</code></pre></p>
+
+<h3 id="4-ai-resolution-system">4. AI Resolution System</h3>
+
+<ul>
+<strong>Components</strong>:
+<li>Groq Llama 3.3 70B (Reasoning)</li>
+<li>Tavily AI (Web Search)</li>
+<li>Server-side API route (<code>/api/ai/resolve</code>)</li>
+</ul>
+
+<p><strong>Flow</strong>:
+<pre><code class="language-">Market Expires → User Triggers → Tavily Search → Groq Analysis → On-chain Proposal
+</code></pre></p>
+
+<h2 id="data-flow">Data Flow</h2>
+
+<h3 id="trading-flow">Trading Flow</h3>
+
+<pre><code class="language-mermaid">sequenceDiagram
+    participant User
+    participant UI
+    participant Gasless
+    participant Paymaster
+    participant Contract
+
+<p>User->>UI: Buy YES shares
+    UI->>Gasless: buySharesGasless()
+    Gasless->>Paymaster: Sponsor UserOp
+    Paymaster-->>Gasless: paymasterAndData
+    Gasless->>Contract: Execute trade (0 gas)
+    Contract-->>User: Shares minted
+</code></pre></p>
+
+<h3 id="resolution-flow">Resolution Flow</h3>
+
+<pre><code class="language-mermaid">sequenceDiagram
+    participant User
+    participant UI
+    participant API
+    participant Tavily
+    participant Groq
+    participant Contract
+
+<p>User->>UI: Resolve Market
+    UI->>API: /api/ai/resolve
+    API->>Tavily: Search web
+    Tavily-->>API: Context
+    API->>Groq: Analyze
+    Groq-->>API: Decision
+    API-->>UI: Resolution
+    UI->>Contract: proposeResolution()
+    Contract-->>User: 24h challenge starts
+</code></pre></p>
+
+<h2 id="directory-structure">Directory Structure</h2>
+
+<pre><code class="language-">seerhive/
+├── apps/web/
+│   ├── src/
+│   │   ├── app/              # Pages & API routes
+│   │   │   ├── api/
+│   │   │   │   ├── aa/sponsor/    # Paymaster API
+│   │   │   │   └── ai/resolve/    # AI resolution
+│   │   │   ├── markets/           # Markets page
+│   │   │   └── dashboard/         # Analytics
+│   │   ├── components/       # React components
+│   │   │   ├── TradeDialog.tsx
+│   │   │   ├── WalletButton.tsx
+│   │   │   └── ui/                # shadcn/ui
+│   │   ├── lib/              # Core services
+│   │   │   ├── gasless.ts         # Gasless service
+│   │   │   ├── contracts.ts       # Contract ABI
+│   │   │   ├── aiResolver.ts      # AI service
+│   │   │   └── paymaster/         # Paymaster adapters
+│   │   └── types/            # TypeScript types
+│   └── .env.local            # Environment config
+├── contracts/
+│   ├── contracts/
+│   │   ├── PredictionMarket.sol
+│   │   ├── MockERC20.sol
+│   │   └── BUSDFaucet.sol
+│   ├── scripts/              # Deployment
+│   └── test/                 # Contract tests
+└── scripts/                  # Testing scripts
+</code></pre>
+
+<h2 id="key-design-patterns">Key Design Patterns</h2>
+
+<h3 id="component-variants">Component Variants</h3>
+
+<p>Separate implementations for different providers:</p>
+
+<pre><code class="language-typescript">// TradeDialog-Particle.tsx - Particle Network
+export function TradeDialogParticle({ market }: Props) { }
+
+<p>// TradeDialog-Wagmi.tsx - Wagmi
+export function TradeDialogWagmi({ market }: Props) { }</p>
+
+<p>// TradeDialog.tsx - Unified interface
+export function TradeDialog(props: Props) {
+  return isParticle ? <TradeDialogParticle {...props} /> : <TradeDialogWagmi {...props} />;
+}
+</code></pre></p>
+
+<h3 id="paymaster-fallback">Paymaster Fallback</h3>
+
+<p>Automatic failover for reliability:</p>
+
+<pre><code class="language-typescript">// Try Particle first
+try {
+  return await particlePaymaster.sponsor(userOp);
+} catch (error) {
+  // Fallback to Pimlico
+  return await pimlicoPaymaster.sponsor(userOp);
+}
+</code></pre>
+
+<h3 id="server-side-security">Server-Side Security</h3>
+
+<p>All sensitive keys in API routes:</p>
+
+<pre><code class="language-typescript">// ❌ Client-side (exposed)
+NEXT_PUBLIC_API_KEY=xxx
+
+<p>// ✅ Server-side (secure)
+GROQ_API_KEY=xxx
+PARTICLE_PROJECT_ID=xxx
+</code></pre></p>
+
+<h2 id="network-architecture">Network Architecture</h2>
+
+<h3 id="bnb-testnet-chain-id-97">BNB Testnet (Chain ID: 97)</h3>
+
+<ul>
+<li><strong>RPC</strong>: https://bsc-testnet.publicnode.com</li>
+<li><strong>Explorer</strong>: https://testnet.bscscan.com</li>
+<li><strong>Faucet</strong>: https://testnet.bnbchain.org/faucet-smart</li>
+</ul>
+
+<h3 id="supported-tokens">Supported Tokens</h3>
+
+<p>| Token | Address | Type |
+|-------|---------|------|
+| BNB | Native | Native |
+| tBUSD | 0xaB1a4d4f1D656d2450692D237fdD6C7f9146e814 | ERC20 |
+| tUSDT | 0x337610d27c682E347C9cD60BD4b3b107C9d34dDd | ERC20 |
+| tUSDC | 0x64544969ed7EBf5f083679233325356EbE738930 | ERC20 |
+| tDAI | 0xEC5dCb5Dbf4B114C9d0F65BcCAb49EC54F6A0867 | ERC20 |
+| tBTC | 0x6ce8dA28E2f864420840cF74474eFf5fD80E65B8 | ERC20 |</p>
+
+<h2 id="scalability-considerations">Scalability Considerations</h2>
+
+<h3 id="current-limitations">Current Limitations</h3>
+<li>Single contract deployment</li>
+<li>Testnet only</li>
+<li>Rate limits on AI services (30 req/min Groq, 1000/month Tavily)</li>
+
+<h3 id="future-improvements">Future Improvements</h3>
+<li>Multi-market factory pattern</li>
+<li>Cross-chain deployment (opBNB, Ethereum L2s)</li>
+<li>Enhanced AI with multiple data sources</li>
+<li>Liquidity aggregation (AMM-style pools)</li>
+
+<h2 id="security-architecture">Security Architecture</h2>
+
+<h3 id="smart-contract-security">Smart Contract Security</h3>
+<li>OpenZeppelin libraries</li>
+<li>ReentrancyGuard on critical functions</li>
+<li>Owner-based access control</li>
+<li>24-hour challenge window</li>
+
+<h3 id="api-security">API Security</h3>
+<li>Server-side key management</li>
+<li>Rate limiting on paymaster endpoints</li>
+<li>Input validation on all endpoints</li>
+<li>Automatic fallback prevents DoS</li>
+
+<h3 id="frontend-security">Frontend Security</h3>
+<li>No private keys in client code</li>
+<li>Environment variable separation</li>
+<li>Secure wallet connection (wagmi)</li>
+
+<h2 id="monitoring-observability">Monitoring & Observability</h2>
+
+<h3 id="logging">Logging</h3>
+<pre><code class="language-typescript">console.log('✅ Transaction:', txHash);
+console.warn('[ai-resolve] Tavily failed:', error);
+console.error('[api-route] Error:', error);
+</code></pre>
+
+<h3 id="metrics">Metrics</h3>
+<li>Transaction latency (<code>latency_ms</code> in API responses)</li>
+<li>Paymaster provider usage (particle vs pimlico)</li>
+<li>AI resolution confidence scores</li>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<ul>
+<li><a href="Smart-Contracts" target="_blank">Smart Contracts</a> - Contract details</li>
+<li><a href="Gasless-Transactions" target="_blank">Gasless Transactions</a> - ERC-4337 deep dive</li>
+<li><a href="AI-Resolution" target="_blank">AI Resolution</a> - AI system details</li>
+</ul>
+        </div>
+        <div class="page-break"></div>
+        <div class="page-content">
+<h1 id="smart-contracts">Smart Contracts</h1>
+
+<p>SeerHive's smart contracts handle market creation, trading, and resolution on BNB Chain.</p>
+
+<h2 id="deployed-contracts">Deployed Contracts</h2>
+
+<h3 id="predictionmarketsol">PredictionMarket.sol</h3>
+
+<p><strong>Address</strong>: <code>0xc6Dd26D3eE0F58fAb15Dc87bEe3A66896B6D4127</code></p>
+
+<p><strong>Network</strong>: BNB Testnet (Chain ID: 97)</p>
+
+<p><strong>Explorer</strong>: <a href="https://testnet.bscscan.com/address/0xc6Dd26D3eE0F58fAb15Dc87bEe3A66896B6D4127" target="_blank">View on BSCScan</a></p>
+
+<h2 id="contract-overview">Contract Overview</h2>
+
+<h3 id="key-features">Key Features</h3>
+
+<ul>
+<li>Multi-token support (BNB + ERC20 tokens)</li>
+<li>Share-based trading system</li>
+<li>Optimistic resolution with 24h challenge window</li>
+<li>Dispute mechanism with bond requirements</li>
+<li>Owner-controlled finalization</li>
+</ul>
+
+<h3 id="state-variables">State Variables</h3>
+
+<pre><code class="language-solidity">uint256 public marketCount;
+mapping(uint256 => Market) public markets;
+mapping(uint256 => mapping(address => mapping(bool => uint256))) public userShares;
+mapping(uint256 => Resolution) public resolutions;
+</code></pre>
+
+<h2 id="core-functions">Core Functions</h2>
+
+<h3 id="1-create-market">1. Create Market</h3>
+
+<pre><code class="language-solidity">function createMarket(
+    string memory _question,
+    uint256 _duration
+) external returns (uint256)
+</code></pre>
+
+<ul>
+<strong>Parameters</strong>:
+<li><code>_question</code>: Market question (e.g., "Will BNB reach $1000?")</li>
+<li><code>_duration</code>: Time until market expires (in seconds)</li>
+</ul>
+
+<p><strong>Returns</strong>: Market ID</p>
+
+<p><strong>Example</strong>:
+<pre><code class="language-typescript">const tx = await contract.createMarket(
+  "Will Bitcoin reach $100k in 2025?",
+  86400 <em> 365 // 1 year
+);
+</code></pre></p>
+
+<h3 id="2-buy-shares">2. Buy Shares</h3>
+
+<pre><code class="language-solidity">function buyShares(
+    uint256 _marketId,
+    bool _isYes,
+    address _token,
+    uint256 _amount
+) public payable nonReentrant
+</code></pre>
+
+<ul>
+<strong>Parameters</strong>:
+<li><code>_marketId</code>: Market ID</li>
+<li><code>_isYes</code>: true for YES, false for NO</li>
+<li><code>_token</code>: Token address (0x0 for BNB)</li>
+<li><code>_amount</code>: Amount to spend</li>
+</ul>
+
+<ul>
+<strong>Requirements</strong>:
+<li>Market must be active (not expired, not resolved)</li>
+<li>For ERC20: User must approve contract first</li>
+<li>For BNB: msg.value must equal _amount</li>
+</ul>
+
+<p><strong>Example</strong>:
+<pre><code class="language-typescript">// Buy YES shares with tBUSD
+const amount = parseUnits("10", 18);
+await contract.buyShares(marketId, true, tBUSD_ADDRESS, amount);</p>
+
+<p>// Buy NO shares with BNB
+await contract.buyShares(marketId, false, ethers.ZeroAddress, amount, {
+  value: amount
+});
+</code></pre></p>
+
+<h3 id="3-propose-resolution">3. Propose Resolution</h3>
+
+<pre><code class="language-solidity">function proposeResolution(
+    uint256 _marketId,
+    bool _outcome
+) external
+</code></pre>
+
+<ul>
+<strong>Parameters</strong>:
+<li><code>_marketId</code>: Market ID</li>
+<li><code>_outcome</code>: true for YES, false for NO</li>
+</ul>
+
+<ul>
+<strong>Requirements</strong>:
+<li>Market must be expired</li>
+<li>Market must not be resolved</li>
+<li>No existing resolution proposal</li>
+</ul>
+
+<p><strong>Starts</strong>: 24-hour challenge window</p>
+
+<p><strong>Example</strong>:
+<pre><code class="language-typescript">await contract.proposeResolution(marketId, true); // Propose YES
+</code></pre></p>
+
+<h3 id="4-challenge-resolution">4. Challenge Resolution</h3>
+
+<pre><code class="language-solidity">function challengeResolution(
+    uint256 _marketId
+) external payable
+</code></pre>
+
+<ul>
+<strong>Parameters</strong>:
+<li><code>_marketId</code>: Market ID</li>
+</ul>
+
+<ul>
+<strong>Requirements</strong>:
+<li>Resolution must be proposed</li>
+<li>Within 24-hour challenge window</li>
+<li>Must send dispute bond (0.01 BNB)</li>
+</ul>
+
+<p><strong>Example</strong>:
+<pre><code class="language-typescript">await contract.challengeResolution(marketId, {
+  value: parseEther("0.01")
+});
+</code></pre></p>
+
+<h3 id="5-finalize-market">5. Finalize Market</h3>
+
+<pre><code class="language-solidity">function finalizeMarket(
+    uint256 _marketId,
+    bool _outcome
+) external onlyOwner
+</code></pre>
+
+<ul>
+<strong>Parameters</strong>:
+<li><code>_marketId</code>: Market ID</li>
+<li><code>_outcome</code>: Final outcome (true = YES, false = NO)</li>
+</ul>
+
+<ul>
+<strong>Requirements</strong>:
+<li>Only owner can call</li>
+<li>Market must be expired</li>
+<li>Called after challenge window or dispute resolution</li>
+</ul>
+
+<p><strong>Example</strong>:
+<pre><code class="language-typescript">await contract.finalizeMarket(marketId, true); // Finalize as YES
+</code></pre></p>
+
+<h3 id="6-claim-winnings">6. Claim Winnings</h3>
+
+<pre><code class="language-solidity">function claimWinnings(
+    uint256 _marketId
+) external nonReentrant
+</code></pre>
+
+<ul>
+<strong>Parameters</strong>:
+<li><code>_marketId</code>: Market ID</li>
+</ul>
+
+<ul>
+<strong>Requirements</strong>:
+<li>Market must be finalized</li>
+<li>User must have winning shares</li>
+<li>User hasn't claimed yet</li>
+</ul>
+
+<p><strong>Payout Calculation</strong>:
+<pre><code class="language-">userPayout = (userShares / totalWinningShares) </em> totalPool
+</code></pre></p>
+
+<p><strong>Example</strong>:
+<pre><code class="language-typescript">await contract.claimWinnings(marketId);
+</code></pre></p>
+
+<h2 id="data-structures">Data Structures</h2>
+
+<h3 id="market-struct">Market Struct</h3>
+
+<pre><code class="language-solidity">struct Market {
+    string question;
+    uint256 totalYesShares;
+    uint256 totalNoShares;
+    uint256 endTime;
+    bool resolved;
+    bool outcome;
+    mapping(address => uint256) tokenPools;
+}
+</code></pre>
+
+<h3 id="resolution-struct">Resolution Struct</h3>
+
+<pre><code class="language-solidity">struct Resolution {
+    bool proposed;
+    bool outcome;
+    uint256 proposalTime;
+    bool challenged;
+    address challenger;
+}
+</code></pre>
+
+<h2 id="events">Events</h2>
+
+<pre><code class="language-solidity">event MarketCreated(uint256 indexed marketId, string question, uint256 endTime);
+event SharesPurchased(uint256 indexed marketId, address indexed buyer, bool isYes, uint256 amount);
+event ResolutionProposed(uint256 indexed marketId, bool outcome, uint256 proposalTime);
+event ResolutionChallenged(uint256 indexed marketId, address challenger);
+event MarketFinalized(uint256 indexed marketId, bool outcome);
+event WinningsClaimed(uint256 indexed marketId, address indexed claimer, uint256 amount);
+</code></pre>
+
+<h2 id="token-support">Token Support</h2>
+
+<h3 id="supported-tokens-bnb-testnet">Supported Tokens (BNB Testnet)</h3>
+
+<p>| Token | Address | Decimals |
+|-------|---------|----------|
+| BNB | <code>0x0000000000000000000000000000000000000000</code> | 18 |
+| tBUSD | <code>0xaB1a4d4f1D656d2450692D237fdD6C7f9146e814</code> | 18 |
+| tUSDT | <code>0x337610d27c682E347C9cD60BD4b3b107C9d34dDd</code> | 18 |
+| tUSDC | <code>0x64544969ed7EBf5f083679233325356EbE738930</code> | 18 |
+| tDAI | <code>0xEC5dCb5Dbf4B114C9d0F65BcCAb49EC54F6A0867</code> | 18 |
+| tBTC | <code>0x6ce8dA28E2f864420840cF74474eFf5fD80E65B8</code> | 18 |</p>
+
+<h3 id="erc20-approval">ERC20 Approval</h3>
+
+<p>Before buying shares with ERC20 tokens:</p>
+
+<pre><code class="language-typescript">// 1. Approve contract to spend tokens
+const erc20 = new ethers.Contract(tokenAddress, ERC20_ABI, signer);
+await erc20.approve(PREDICTION_MARKET_ADDRESS, amount);
+
+<p>// 2. Buy shares
+await contract.buyShares(marketId, isYes, tokenAddress, amount);
+</code></pre></p>
+
+<h2 id="security-features">Security Features</h2>
+
+<h3 id="reentrancyguard">ReentrancyGuard</h3>
+
+<ul>
+All state-changing functions use <code>nonReentrant</code> modifier:
+<li><code>buyShares()</code></li>
+<li><code>claimWinnings()</code></li>
+</ul>
+
+<h3 id="access-control">Access Control</h3>
+
+<ul>
+Owner-only functions:
+<li><code>finalizeMarket()</code> - Prevents unauthorized resolution</li>
+</ul>
+
+<h3 id="time-locks">Time Locks</h3>
+
+<ul>
+<li>24-hour challenge window after resolution proposal</li>
+<li>Markets can't be resolved before expiry</li>
+</ul>
+
+<h3 id="validation">Validation</h3>
+
+<ul>
+<li>Market existence checks</li>
+<li>Balance verification before transfers</li>
+<li>Duplicate claim prevention</li>
+</ul>
+
+<h2 id="gas-optimization">Gas Optimization</h2>
+
+<h3 id="storage-patterns">Storage Patterns</h3>
+
+<ul>
+<li>Packed structs for efficient storage</li>
+<li>Mappings instead of arrays for user data</li>
+<li>Minimal storage writes</li>
+</ul>
+
+<h3 id="function-optimization">Function Optimization</h3>
+
+<ul>
+<li>Early returns on validation failures</li>
+<li>Batch operations where possible</li>
+<li>Efficient loop patterns</li>
+</ul>
+
+<h2 id="testing">Testing</h2>
+
+<h3 id="run-tests">Run Tests</h3>
+
+<pre><code class="language-bash">cd contracts
+pnpm test
+</code></pre>
+
+<h3 id="test-coverage">Test Coverage</h3>
+
+<ul>
+<li>Market creation</li>
+<li>Share purchases (BNB + ERC20)</li>
+<li>Resolution proposal</li>
+<li>Challenge mechanism</li>
+<li>Finalization</li>
+<li>Winnings claims</li>
+<li>Edge cases and reverts</li>
+</ul>
+
+<h3 id="example-test">Example Test</h3>
+
+<pre><code class="language-typescript">it("Should allow buying YES shares", async function () {
+  const marketId = 0;
+  const amount = parseEther("1");
+  
+  await market.buyShares(marketId, true, ethers.ZeroAddress, amount, {
+    value: amount
+  });
+  
+  const shares = await market.userShares(marketId, user1.address, true);
+  expect(shares).to.equal(amount);
+});
+</code></pre>
+
+<h2 id="deployment">Deployment</h2>
+
+<h3 id="deploy-to-bnb-testnet">Deploy to BNB Testnet</h3>
+
+<pre><code class="language-bash">cd contracts
+cp .env.example .env
+<h1 id="smart-contracts">Add PRIVATE_KEY and BSC_TESTNET_RPC</h1>
+pnpm deploy:testnet
+</code></pre>
+
+<h3 id="verify-contract">Verify Contract</h3>
+
+<pre><code class="language-bash">npx hardhat verify --network bscTestnet 0xYourContractAddress
+</code></pre>
+
+<h2 id="upgradeability">Upgradeability</h2>
+
+<p>Current contract is <strong>not upgradeable</strong> for security and simplicity.</p>
+
+<ul>
+Future versions may implement:
+<li>Proxy pattern (UUPS or Transparent)</li>
+<li>Multi-signature governance</li>
+<li>Timelock for critical operations</li>
+</ul>
+
+<h2 id="known-limitations">Known Limitations</h2>
+
+<p>1. <strong>Single Pool</strong>: All tokens in one pool (no per-token pools)
+2. <strong>No Partial Claims</strong>: Must claim all winnings at once
+3. <strong>Fixed Challenge Period</strong>: 24 hours (not configurable per market)
+4. <strong>Owner Dependency</strong>: Finalization requires owner action</p>
+
+<h2 id="roadmap">Roadmap</h2>
+
+<ul>
+<li>[ ] Multi-token pool management</li>
+<li>[ ] Partial claim support</li>
+<li>[ ] Configurable challenge periods</li>
+<li>[ ] DAO-based finalization</li>
+<li>[ ] Market factory pattern</li>
+<li>[ ] Liquidity pools (AMM-style)</li>
+</ul>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<ul>
+<li><a href="Gasless-Transactions" target="_blank">Gasless Transactions</a> - ERC-4337 integration</li>
+<li><a href="API-Reference" target="_blank">API Reference</a> - Contract interaction via API</li>
+<li><a href="Testing" target="_blank">Testing</a> - Comprehensive testing guide</li>
+</ul>
+        </div>
+        <div class="page-break"></div>
+        <div class="page-content">
+<h1 id="gasless-transactions">Gasless Transactions (ERC-4337)</h1>
+
+<p>SeerHive implements Account Abstraction (ERC-4337) to provide zero gas fee transactions for users.</p>
+
+<h2 id="overview">Overview</h2>
+
+<p>Users can trade on prediction markets without paying gas fees. The platform sponsors transactions through paymasters.</p>
+
+<h3 id="key-benefits">Key Benefits</h3>
+
+<ul>
+<li>✅ <strong>Zero Gas Fees</strong> - Users don't pay transaction costs</li>
+<li>✅ <strong>Better UX</strong> - No need to hold BNB for gas</li>
+<li>✅ <strong>Dual Paymaster</strong> - Automatic failover for reliability</li>
+<li>✅ <strong>Multi-Token Support</strong> - Works with all ERC20 tokens</li>
+</ul>
+
+<h2 id="architecture">Architecture</h2>
+
+<pre><code class="language-">User Action → Frontend → /api/aa/sponsor → Paymaster → Bundler → Chain
+                              ↓
+                    Try Particle First
+                              ↓
+                    Fallback to Pimlico
+</code></pre>
+
+<h3 id="components">Components</h3>
+
+<p>1. <strong>EntryPoint</strong>: <code>0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789</code>
+2. <strong>Particle Paymaster</strong>: Primary sponsor
+3. <strong>Pimlico Paymaster</strong>: Fallback sponsor
+4. <strong>Bundler</strong>: Submits UserOperations to chain</p>
+
+<h2 id="how-it-works">How It Works</h2>
+
+<h3 id="1-user-initiates-transaction">1. User Initiates Transaction</h3>
+
+<pre><code class="language-typescript">// User clicks "Buy Shares"
+await gaslessService.buySharesGasless({
+  marketId: 1,
+  side: 'yes',
+  token: SUPPORTED_TOKENS.tBUSD,
+  amount: '10'
+});
+</code></pre>
+
+<h3 id="2-frontend-constructs-useroperation">2. Frontend Constructs UserOperation</h3>
+
+<pre><code class="language-typescript">const callData = encodeFunctionData({
+  abi: PREDICTION_MARKET_ABI,
+  functionName: 'buyShares',
+  args: [BigInt(marketId), isYes, tokenAddress, amount]
+});
+
+<p>const userOp = {
+  sender: smartAccountAddress,
+  nonce: await getNonce(),
+  initCode: '0x',
+  callData,
+  callGasLimit: '0x0',
+  verificationGasLimit: '0x0',
+  preVerificationGas: '0x0',
+  maxFeePerGas: '0x0',
+  maxPriorityFeePerGas: '0x0',
+  paymasterAndData: '0x',
+  signature: '0x'
+};
+</code></pre></p>
+
+<h3 id="3-request-sponsorship">3. Request Sponsorship</h3>
+
+<pre><code class="language-typescript">const response = await fetch('/api/aa/sponsor', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    userOp,
+    entryPoint: ENTRY_POINT_ADDRESS,
+    chainId: 97
+  })
+});
+
+<p>const { paymasterAndData, callGasLimit, verificationGasLimit } = await response.json();
+</code></pre></p>
+
+<h3 id="4-backend-tries-paymasters">4. Backend Tries Paymasters</h3>
+
+<pre><code class="language-typescript">// Try Particle first
+try {
+  const result = await particlePaymaster.sponsor(userOp);
+  return { ...result, provider: 'particle' };
+} catch (error) {
+  console.warn('Particle failed, trying Pimlico...');
+  
+  // Fallback to Pimlico
+  const result = await pimlicoPaymaster.sponsor(userOp);
+  return { ...result, provider: 'pimlico', fallback: true };
+}
+</code></pre>
+
+<h3 id="5-submit-sponsored-transaction">5. Submit Sponsored Transaction</h3>
+
+<pre><code class="language-typescript">const sponsoredUserOp = {
+  ...userOp,
+  paymasterAndData,
+  callGasLimit,
+  verificationGasLimit,
+  preVerificationGas
+};
+
+<p>const txHash = await bundler.sendUserOperation(sponsoredUserOp);
+</code></pre></p>
+
+<h2 id="paymaster-configuration">Paymaster Configuration</h2>
+
+<h3 id="particle-network-primary">Particle Network (Primary)</h3>
+
+<p><strong>Endpoint</strong>: <code>https://paymaster.particle.network/chain/97</code></p>
+
+<p><strong>Environment Variables</strong>:
+<pre><code class="language-bash">PARTICLE_PAYMASTER_URL=https://paymaster.particle.network/chain/97
+PARTICLE_PROJECT_ID=your_project_id
+PARTICLE_CLIENT_KEY=your_client_key
+</code></pre></p>
+
+<p><strong>Request Format</strong>:
+<pre><code class="language-typescript">{
+  method: 'pm_sponsorUserOperation',
+  params: [userOp, entryPoint, { chainId: 97 }]
+}
+</code></pre></p>
+
+<p><strong>Headers</strong>:
+<pre><code class="language-typescript">{
+  'Content-Type': 'application/json',
+  'x-project-id': PARTICLE_PROJECT_ID,
+  'x-client-key': PARTICLE_CLIENT_KEY
+}
+</code></pre></p>
+
+<h3 id="pimlico-fallback">Pimlico (Fallback)</h3>
+
+<p><strong>Endpoint</strong>: <code>https://api.pimlico.io/v2/97/rpc?apikey=YOUR_KEY</code></p>
+
+<p><strong>Environment Variables</strong>:
+<pre><code class="language-bash">PIMLICO_URL=https://api.pimlico.io/v2/97/rpc?apikey=YOUR_KEY
+</code></pre></p>
+
+<p><strong>Request Format</strong>:
+<pre><code class="language-typescript">{
+  method: 'pm_sponsorUserOperation',
+  params: [userOp, { entryPoint }]
+}
+</code></pre></p>
+
+<h2 id="api-endpoint">API Endpoint</h2>
+
+<h3 id="post-apiaasponsor">POST /api/aa/sponsor</h3>
+
+<p>Sponsors UserOperations with automatic paymaster fallback.</p>
+
+<p><strong>Request</strong>:
+<pre><code class="language-json">{
+  "userOp": {
+    "sender": "0x...",
+    "nonce": "0x0",
+    "initCode": "0x",
+    "callData": "0x...",
+    "callGasLimit": "0x0",
+    "verificationGasLimit": "0x0",
+    "preVerificationGas": "0x0",
+    "maxFeePerGas": "0x0",
+    "maxPriorityFeePerGas": "0x0",
+    "paymasterAndData": "0x",
+    "signature": "0x"
+  },
+  "entryPoint": "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789",
+  "chainId": 97
+}
+</code></pre></p>
+
+<p><strong>Response (Success)</strong>:
+<pre><code class="language-json">{
+  "paymasterAndData": "0x...",
+  "preVerificationGas": "0xc350",
+  "verificationGasLimit": "0x186a0",
+  "callGasLimit": "0x30d40",
+  "provider": "particle",
+  "latency_ms": 234
+}
+</code></pre></p>
+
+<p><strong>Response (Fallback)</strong>:
+<pre><code class="language-json">{
+  "paymasterAndData": "0x...",
+  "preVerificationGas": "0xc350",
+  "verificationGasLimit": "0x186a0",
+  "callGasLimit": "0x30d40",
+  "provider": "pimlico",
+  "fallback": true,
+  "latency_ms": 456
+}
+</code></pre></p>
+
+<p><strong>Response (Error)</strong>:
+<pre><code class="language-json">{
+  "error": "Both paymasters failed",
+  "details": {
+    "particle": "Rate limit exceeded",
+    "pimlico": "Insufficient balance"
+  }
+}
+</code></pre></p>
+
+<h2 id="testing">Testing</h2>
+
+<h3 id="test-paymaster-api">Test Paymaster API</h3>
+
+<pre><code class="language-bash">./scripts/test-sponsor.sh
+</code></pre>
+
+<p>Expected output:
+<pre><code class="language-json">{
+  "paymasterAndData": "0x...",
+  "provider": "particle",
+  "latency_ms": 234
+}
+</code></pre></p>
+
+<h3 id="full-gasless-flow">Full Gasless Flow</h3>
+
+<pre><code class="language-bash">./scripts/smoke-gasless.sh
+</code></pre>
+
+<p>This tests:
+1. UserOperation construction
+2. Paymaster sponsorship
+3. Transaction submission
+4. On-chain verification</p>
+
+<h3 id="manual-testing">Manual Testing</h3>
+
+<p>1. Start dev server: <code>pnpm dev</code>
+2. Connect wallet (MetaMask on BNB Testnet)
+3. Go to <code>/markets</code>
+4. Toggle "Use Gasless Transaction"
+5. Create market or buy shares
+6. Check console: <code>Gasless sponsored: particle</code>
+7. Verify on BSCScan: User paid 0 gas</p>
+
+<h2 id="supported-operations">Supported Operations</h2>
+
+<h3 id="-gasless-erc20-tokens">✅ Gasless (ERC20 Tokens)</h3>
+
+<ul>
+<li>Buy shares with tBUSD, tUSDT, tUSDC, tDAI, tBTC</li>
+<li>Create markets</li>
+<li>Propose resolutions</li>
+<li>Challenge resolutions</li>
+<li>Claim winnings</li>
+</ul>
+
+<h3 id="-requires-gas-bnb">⚠️ Requires Gas (BNB)</h3>
+
+<ul>
+<li>Buy shares with native BNB (~$0.001 gas)</li>
+<li>Initial smart account deployment</li>
+</ul>
+
+<h2 id="limitations">Limitations</h2>
+
+<h3 id="rate-limits">Rate Limits</h3>
+
+<ul>
+<strong>Particle Network</strong>:
+<li>Free tier: Limited requests per day</li>
+<li>May reject during high usage</li>
+</ul>
+
+<ul>
+<strong>Pimlico</strong>:
+<li>Free tier: 10,000 UserOps/month</li>
+<li>Rate limit: 100 req/min</li>
+</ul>
+
+<h3 id="token-support">Token Support</h3>
+
+<ul>
+<li>✅ All ERC20 tokens fully gasless</li>
+<li>⚠️ Native BNB requires small gas fee</li>
+</ul>
+
+<h3 id="network-support">Network Support</h3>
+
+<p>Currently only BNB Testnet (Chain ID: 97)</p>
+
+<p>Future: BNB Mainnet, opBNB, Ethereum L2s</p>
+
+<h2 id="troubleshooting">Troubleshooting</h2>
+
+<h3 id="both-paymasters-failed">"Both paymasters failed"</h3>
+
+<ul>
+<strong>Causes</strong>:
+<li>Rate limit exceeded</li>
+<li>Invalid UserOperation</li>
+<li>Network issues</li>
+</ul>
+
+<p><strong>Solutions</strong>:
+1. Wait and retry
+2. Check paymaster API keys
+3. Verify UserOperation format</p>
+
+<h3 id="insufficient-balance">"Insufficient balance"</h3>
+
+<p><strong>Cause</strong>: Paymaster account low on funds</p>
+
+<p><strong>Solution</strong>: Contact team to refill paymaster</p>
+
+<h3 id="invalid-signature">"Invalid signature"</h3>
+
+<p><strong>Cause</strong>: UserOperation not properly signed</p>
+
+<p><strong>Solution</strong>: Ensure smart account is initialized</p>
+
+<h2 id="security-considerations">Security Considerations</h2>
+
+<h3 id="server-side-only">Server-Side Only</h3>
+
+<p>All paymaster keys stored server-side:</p>
+
+<pre><code class="language-bash"># ❌ Never expose in client
+NEXT_PUBLIC_PARTICLE_KEY=xxx
+
+<h1 id="gasless-transactions">✅ Server-side only</h1>
+PARTICLE_PROJECT_ID=xxx
+PARTICLE_CLIENT_KEY=xxx
+</code></pre>
+
+<h3 id="rate-limiting">Rate Limiting</h3>
+
+<ul>
+API route implements rate limiting:
+<li>Per IP: 100 requests/hour</li>
+<li>Per user: 50 requests/hour</li>
+</ul>
+
+<h3 id="validation">Validation</h3>
+
+<ul>
+All UserOperations validated before sponsorship:
+<li>Valid sender address</li>
+<li>Reasonable gas limits</li>
+<li>Proper callData format</li>
+</ul>
+
+<h2 id="cost-analysis">Cost Analysis</h2>
+
+<h3 id="traditional-transaction">Traditional Transaction</h3>
+
+<pre><code class="language-">User pays: ~$0.10 per trade
+Platform pays: $0
+</code></pre>
+
+<h3 id="gasless-transaction">Gasless Transaction</h3>
+
+<pre><code class="language-">User pays: $0
+Platform pays: ~$0.10 per trade
+</code></pre>
+
+<h3 id="monthly-cost-estimate">Monthly Cost Estimate</h3>
+
+<pre><code class="language-">1000 trades/month × $0.10 = $100/month
+</code></pre>
+
+<h2 id="monitoring">Monitoring</h2>
+
+<h3 id="metrics-tracked">Metrics Tracked</h3>
+
+<ul>
+<li>Paymaster provider usage (particle vs pimlico)</li>
+<li>Sponsorship latency</li>
+<li>Failure rates</li>
+<li>Fallback frequency</li>
+</ul>
+
+<h3 id="logs">Logs</h3>
+
+<pre><code class="language-typescript">console.log('✅ Gasless sponsored:', provider);
+console.warn('⚠️ Particle failed, using Pimlico');
+console.error('❌ Both paymasters failed');
+</code></pre>
+
+<h2 id="future-improvements">Future Improvements</h2>
+
+<ul>
+<li>[ ] Multi-chain support (opBNB, Ethereum L2s)</li>
+<li>[ ] Session keys for batch operations</li>
+<li>[ ] Gas estimation optimization</li>
+<li>[ ] Custom bundler for lower latency</li>
+<li>[ ] Paymaster balance monitoring</li>
+<li>[ ] User-specific rate limits</li>
+</ul>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<ul>
+<li><a href="API-Reference" target="_blank">API Reference</a> - Full API documentation</li>
+<li><a href="Testing" target="_blank">Testing</a> - Comprehensive testing guide</li>
+<li><a href="Configuration" target="_blank">Configuration</a> - Environment setup</li>
+</ul>
+        </div>
+        <div class="page-break"></div>
+        <div class="page-content">
+<h1 id="ai-resolution">AI Resolution</h1>
+
+<p>SeerHive uses AI + web scraping to automatically resolve prediction markets with real-time data.</p>
+
+<h2 id="overview">Overview</h2>
+
+<p>Traditional prediction markets rely on manual resolution or slow oracles (24-48h). SeerHive resolves markets in seconds using:</p>
+
+<ul>
+<li><strong>Groq Llama 3.3 70B</strong> - Advanced reasoning</li>
+<li><strong>Tavily AI</strong> - Real-time web search</li>
+<li><strong>Structured Output</strong> - JSON with outcome, confidence, reasoning</li>
+</ul>
+
+<h2 id="how-it-works">How It Works</h2>
+
+<pre><code class="language-mermaid">sequenceDiagram
+    participant User
+    participant UI
+    participant API
+    participant Tavily
+    participant Groq
+    participant Contract
+
+<p>User->>UI: Click "Resolve with AI"
+    UI->>API: POST /api/ai/resolve
+    API->>Tavily: Search web for context
+    Tavily-->>API: Real-time results
+    API->>Groq: Analyze question + context
+    Groq-->>API: {outcome, confidence, reasoning}
+    API-->>UI: Resolution proposal
+    UI->>Contract: proposeResolution(outcome)
+    Contract-->>User: 24h challenge window
+</code></pre></p>
+
+<h2 id="api-endpoint">API Endpoint</h2>
+
+<h3 id="post-apiairesolve">POST /api/ai/resolve</h3>
+
+<p>Resolves a prediction market using AI analysis.</p>
+
+<p><strong>Request</strong>:
+<pre><code class="language-json">{
+  "marketId": 1,
+  "question": "Did Bitcoin reach $100,000 in 2024?",
+  "resolutionDate": "2024-12-31"
+}
+</code></pre></p>
+
+<p><strong>Response</strong>:
+<pre><code class="language-json">{
+  "marketId": 1,
+  "outcome": "NO",
+  "confidence": 100,
+  "reasoning": "According to multiple sources, Bitcoin's price on December 31, 2024 was approximately $95,000, which did not reach the $100,000 threshold.",
+  "sources": [
+    "https://coinmarketcap.com/...",
+    "https://coingecko.com/..."
+  ],
+  "latency_ms": 1772
+}
+</code></pre></p>
+
+<p><strong>Error Response</strong>:
+<pre><code class="language-json">{
+  "error": "Failed to resolve market",
+  "details": "Both AI models failed"
+}
+</code></pre></p>
+
+<h2 id="resolution-process">Resolution Process</h2>
+
+<h3 id="1-web-search-tavily-ai">1. Web Search (Tavily AI)</h3>
+
+<p>Fetches real-time context about the question:</p>
+
+<pre><code class="language-typescript">const response = await fetch('https://api.tavily.com/search', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    api_key: TAVILY_API_KEY,
+    query: <code>${question} as of ${resolutionDate}</code>,
+    search_depth: 'basic',
+    max_results: 3,
+    include_answer: true
+  })
+});
+
+<p>const data = await response.json();
+const context = [
+  data.answer,
+  ...data.results.map(r => r.content)
+].join('\n\n');
+</code></pre></p>
+
+<p><strong>Example Context</strong>:
+<pre><code class="language-">Bitcoin price on December 31, 2024: $95,000</p>
+
+<p>Source 1: CoinMarketCap shows BTC at $95,234 on Dec 31, 2024
+Source 2: CoinGecko reports Bitcoin closed 2024 at $94,876
+</code></pre></p>
+
+<h3 id="2-ai-analysis-groq">2. AI Analysis (Groq)</h3>
+
+<p>Analyzes context and determines outcome:</p>
+
+<pre><code class="language-typescript">const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+  method: 'POST',
+  headers: {
+    'Authorization': <code>Bearer ${GROQ_API_KEY}</code>,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    model: 'llama-3.3-70b-versatile',
+    messages: [
+      {
+        role: 'system',
+        content: 'You are a prediction market resolver. Analyze the question and context, then return JSON: {"outcome": "YES|NO|INVALID", "confidence": 0-100, "reasoning": "..."}'
+      },
+      {
+        role: 'user',
+        content: <code>Question: ${question}\n\nContext:\n${context}\n\nResolution Date: ${resolutionDate}</code>
+      }
+    ],
+    temperature: 0.1,
+    max_tokens: 200
+  })
+});
+
+<p>const result = await response.json();
+const decision = JSON.parse(result.choices[0].message.content);
+</code></pre></p>
+
+<h3 id="3-fallback-models">3. Fallback Models</h3>
+
+<p>If primary model fails, automatically tries fallback:</p>
+
+<pre><code class="language-typescript">const models = [
+  'llama-3.3-70b-versatile',  // Primary
+  'llama-3.1-8b-instant'       // Fallback
+];
+
+<p>for (const model of models) {
+  try {
+    const result = await resolveWithModel(model);
+    return result;
+  } catch (error) {
+    console.warn(<code>${model} failed:</code>, error.message);
+    continue;
+  }
+}</p>
+
+<p>throw new Error('All models failed');
+</code></pre></p>
+
+<h2 id="configuration">Configuration</h2>
+
+<h3 id="environment-variables">Environment Variables</h3>
+
+<pre><code class="language-bash"># Groq AI (LLM)
+GROQ_API_KEY=gsk_your_groq_key_here
+
+<h1 id="ai-resolution">Tavily AI (Web Search)</h1>
+TAVILY_API_KEY=tvly-your_tavily_key_here
+</code></pre>
+
+<h3 id="get-api-keys">Get API Keys</h3>
+
+<p><strong>Groq</strong> (Free):
+1. Visit <a href="https://console.groq.com" target="_blank">console.groq.com</a>
+2. Sign up for free account
+3. Create API key
+4. Rate limit: 30 requests/minute</p>
+
+<p><strong>Tavily</strong> (Free):
+1. Visit <a href="https://tavily.com" target="_blank">tavily.com</a>
+2. Sign up for free account
+3. Get API key
+4. Free tier: 1000 searches/month</p>
+
+<h2 id="outcome-types">Outcome Types</h2>
+
+<h3 id="yes">YES</h3>
+Market question is true/happened
+
+<p><strong>Example</strong>: "Did Bitcoin reach $100k?" → Price was $105k → YES</p>
+
+<h3 id="no">NO</h3>
+Market question is false/didn't happen
+
+<p><strong>Example</strong>: "Did Bitcoin reach $100k?" → Price was $95k → NO</p>
+
+<h3 id="invalid">INVALID</h3>
+Question is ambiguous or unresolvable
+
+<p><strong>Example</strong>: "Will aliens land?" → No verifiable data → INVALID</p>
+
+<h2 id="confidence-scores">Confidence Scores</h2>
+
+<p>AI returns confidence level (0-100):</p>
+
+<ul>
+<li><strong>90-100</strong>: Very high confidence (clear evidence)</li>
+<li><strong>70-89</strong>: High confidence (strong evidence)</li>
+<li><strong>50-69</strong>: Moderate confidence (some uncertainty)</li>
+<li><strong>0-49</strong>: Low confidence (ambiguous/unclear)</li>
+</ul>
+
+<p><strong>Example</strong>:
+<pre><code class="language-json">{
+  "outcome": "NO",
+  "confidence": 95,
+  "reasoning": "Multiple reliable sources confirm Bitcoin was $95k on Dec 31, 2024"
+}
+</code></pre></p>
+
+<h2 id="testing">Testing</h2>
+
+<h3 id="test-ai-resolution">Test AI Resolution</h3>
+
+<pre><code class="language-bash">./scripts/test-ai-resolve.sh
+</code></pre>
+
+<p><strong>Expected Output</strong>:
+<pre><code class="language-json">{
+  "marketId": 999,
+  "outcome": "NO",
+  "confidence": 100,
+  "reasoning": "Historical data shows Bitcoin did not reach $100,000 in 2024. The highest price recorded was approximately $95,000.",
+  "latency_ms": 1772
+}
+</code></pre></p>
+
+<h3 id="manual-testing">Manual Testing</h3>
+
+<pre><code class="language-bash">curl -X POST http://localhost:3000/api/ai/resolve \
+  -H "Content-Type: application/json" \
+  -d '{
+    "marketId": 1,
+    "question": "Did Bitcoin reach $100k in 2024?",
+    "resolutionDate": "2024-12-31"
+  }'
+</code></pre>
+
+<h2 id="use-cases">Use Cases</h2>
+
+<h3 id="financial-markets">Financial Markets</h3>
+
+<p><strong>Question</strong>: "Will BNB price reach $1000 by end of 2025?"</p>
+
+<p><strong>AI Process</strong>:
+1. Search: "BNB price December 31, 2025"
+2. Find: Multiple sources show $850
+3. Determine: NO (didn't reach $1000)
+4. Confidence: 95%</p>
+
+<h3 id="political-events">Political Events</h3>
+
+<p><strong>Question</strong>: "Will Trump win 2024 US Presidential Election?"</p>
+
+<p><strong>AI Process</strong>:
+1. Search: "2024 US Presidential Election results"
+2. Find: Official results from news sources
+3. Determine: YES or NO based on winner
+4. Confidence: 100%</p>
+
+<h3 id="technology-events">Technology Events</h3>
+
+<p><strong>Question</strong>: "Will Ethereum ETF approval happen in Q1 2025?"</p>
+
+<p><strong>AI Process</strong>:
+1. Search: "Ethereum ETF approval Q1 2025"
+2. Find: SEC announcements and news
+3. Determine: YES/NO based on approval status
+4. Confidence: 90%</p>
+
+<h3 id="sports-events">Sports Events</h3>
+
+<p><strong>Question</strong>: "Will Lakers win NBA Championship 2025?"</p>
+
+<p><strong>AI Process</strong>:
+1. Search: "NBA Championship 2025 winner"
+2. Find: Official NBA results
+3. Determine: YES/NO based on winner
+4. Confidence: 100%</p>
+
+<h2 id="advantages-vs-manual-resolution">Advantages vs Manual Resolution</h2>
+
+<p>| Feature | SeerHive AI | Manual (UMA OO) | Traditional Betting |
+|---------|-------------|-----------------|---------------------|
+| <strong>Speed</strong> | Seconds | 24-48 hours | Hours to days |
+| <strong>Cost</strong> | ~$0.01 | ~$10-50 | N/A |
+| <strong>Bias</strong> | Minimal | Possible | High |
+| <strong>Data</strong> | Real-time web | Static oracle | Centralized |
+| <strong>Transparency</strong> | Full reasoning | Limited | None |</p>
+
+<h2 id="limitations">Limitations</h2>
+
+<h3 id="training-data-cutoff">Training Data Cutoff</h3>
+
+<ul>
+LLMs have training data cutoff dates. For recent events:
+<li>✅ <strong>Solution</strong>: Tavily web search provides real-time data</li>
+<li>✅ <strong>Fallback</strong>: Multiple sources for verification</li>
+</ul>
+
+<h3 id="ambiguous-questions">Ambiguous Questions</h3>
+
+<ul>
+Some questions are hard to resolve objectively:
+<li>"Will AI be sentient by 2030?" → Subjective definition</li>
+<li>"Will world peace be achieved?" → Unclear criteria</li>
+</ul>
+
+<p><strong>Solution</strong>: AI returns INVALID with reasoning</p>
+
+<h3 id="rate-limits">Rate Limits</h3>
+
+<p><strong>Groq</strong>: 30 requests/minute (free tier)
+<strong>Tavily</strong>: 1000 searches/month (free tier)</p>
+
+<p><strong>Solution</strong>: Implement caching and rate limiting</p>
+
+<h2 id="security-fairness">Security & Fairness</h2>
+
+<h3 id="challenge-window">Challenge Window</h3>
+
+<ul>
+After AI proposes resolution:
+<li>24-hour challenge period</li>
+<li>Anyone can dispute with bond</li>
+<li>DAO votes on disputes</li>
+</ul>
+
+<h3 id="multiple-data-sources">Multiple Data Sources</h3>
+
+<ul>
+Tavily aggregates multiple sources:
+<li>News websites</li>
+<li>Official data providers</li>
+<li>Social media (verified accounts)</li>
+</ul>
+
+<h3 id="reasoning-transparency">Reasoning Transparency</h3>
+
+<p>AI provides full reasoning:
+<pre><code class="language-json">{
+  "reasoning": "According to CoinMarketCap, CoinGecko, and Binance, Bitcoin's price on December 31, 2024 was between $94,876 and $95,234, which did not reach the $100,000 threshold."
+}
+</code></pre></p>
+
+<h2 id="future-improvements">Future Improvements</h2>
+
+<ul>
+<li>[ ] Multiple AI models voting (ensemble)</li>
+<li>[ ] Twitter/Reddit sentiment analysis</li>
+<li>[ ] Custom data sources per market category</li>
+<li>[ ] Confidence-based dispute bonds</li>
+<li>[ ] Automated dispute detection</li>
+<li>[ ] Historical accuracy tracking</li>
+</ul>
+
+<h2 id="monitoring">Monitoring</h2>
+
+<h3 id="metrics-tracked">Metrics Tracked</h3>
+
+<ul>
+<li>Resolution latency</li>
+<li>Confidence scores</li>
+<li>Model usage (70B vs 8B)</li>
+<li>Fallback frequency</li>
+<li>Error rates</li>
+</ul>
+
+<h3 id="logs">Logs</h3>
+
+<pre><code class="language-typescript">console.log('[ai-resolve] Tavily search:', query);
+console.log('[ai-resolve] Context length:', context.length);
+console.log('[ai-resolve] Model:', model);
+console.log('[ai-resolve] Result:', { outcome, confidence });
+console.warn('[ai-resolve] Tavily failed:', error);
+console.error('[ai-resolve] All models failed');
+</code></pre>
+
+<h2 id="cost-analysis">Cost Analysis</h2>
+
+<h3 id="per-resolution">Per Resolution</h3>
+
+<ul>
+<li>Tavily search: ~$0.005</li>
+<li>Groq inference: ~$0.005</li>
+<li>Total: ~$0.01 per resolution</li>
+</ul>
+
+<h3 id="monthly-estimate">Monthly Estimate</h3>
+
+<pre><code class="language-">100 resolutions/month × $0.01 = $1/month
+</code></pre>
+
+<p>Much cheaper than manual resolution ($10-50 per market).</p>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<ul>
+<li><a href="API-Reference" target="_blank">API Reference</a> - Full API documentation</li>
+<li><a href="Testing" target="_blank">Testing</a> - Testing guide</li>
+<li><a href="Smart-Contracts" target="_blank">Smart Contracts</a> - Resolution on-chain</li>
+</ul>
+        </div>
+        <div class="page-break"></div>
+        <div class="page-content">
+<h1 id="api-reference">API Reference</h1>
+
+<p>Complete reference for SeerHive's API endpoints.</p>
+
+<h2 id="base-url">Base URL</h2>
+
+<p><strong>Development</strong>: <code>http://localhost:3000</code>
+<strong>Production</strong>: <code>https://seerhive.vercel.app</code> (Coming Soon)</p>
+
+<h2 id="authentication">Authentication</h2>
+
+<p>Currently no authentication required for public endpoints.</p>
+
+<p>Future: API keys for rate limiting and premium features.</p>
+
+<h2 id="endpoints">Endpoints</h2>
+
+<h3 id="account-abstraction">Account Abstraction</h3>
+
+<p>#### POST /api/aa/sponsor</p>
+
+<p>Sponsors UserOperations for gasless transactions.</p>
+
+<p><strong>Request</strong>:
+<pre><code class="language-json">{
+  "userOp": {
+    "sender": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+    "nonce": "0x0",
+    "initCode": "0x",
+    "callData": "0x...",
+    "callGasLimit": "0x0",
+    "verificationGasLimit": "0x0",
+    "preVerificationGas": "0x0",
+    "maxFeePerGas": "0x0",
+    "maxPriorityFeePerGas": "0x0",
+    "paymasterAndData": "0x",
+    "signature": "0x"
+  },
+  "entryPoint": "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789",
+  "chainId": 97
+}
+</code></pre></p>
+
+<p><strong>Response (Success)</strong>:
+<pre><code class="language-json">{
+  "paymasterAndData": "0x...",
+  "preVerificationGas": "0xc350",
+  "verificationGasLimit": "0x186a0",
+  "callGasLimit": "0x30d40",
+  "provider": "particle",
+  "latency_ms": 234
+}
+</code></pre></p>
+
+<p><strong>Response (Fallback)</strong>:
+<pre><code class="language-json">{
+  "paymasterAndData": "0x...",
+  "provider": "pimlico",
+  "fallback": true,
+  "latency_ms": 456
+}
+</code></pre></p>
+
+<p><strong>Response (Error)</strong>:
+<pre><code class="language-json">{
+  "error": "Both paymasters failed",
+  "details": {
+    "particle": "Rate limit exceeded",
+    "pimlico": "Insufficient balance"
+  }
+}
+</code></pre></p>
+
+<ul>
+<strong>Status Codes</strong>:
+<li><code>200</code> - Success</li>
+<li><code>400</code> - Invalid request</li>
+<li><code>500</code> - Server error</li>
+</ul>
+
+<p>---</p>
+
+<p>#### POST /api/aa/sponsor-metamask</p>
+
+<p>Sponsors UserOperations for MetaMask smart accounts.</p>
+
+<p><strong>Request</strong>: Same as <code>/api/aa/sponsor</code></p>
+
+<p><strong>Response</strong>: Same as <code>/api/aa/sponsor</code></p>
+
+<p>---</p>
+
+<h3 id="ai-resolution">AI Resolution</h3>
+
+<p>#### POST /api/ai/resolve</p>
+
+<p>Resolves a prediction market using AI analysis.</p>
+
+<p><strong>Request</strong>:
+<pre><code class="language-json">{
+  "marketId": 1,
+  "question": "Did Bitcoin reach $100,000 in 2024?",
+  "resolutionDate": "2024-12-31"
+}
+</code></pre></p>
+
+<p><strong>Response (Success)</strong>:
+<pre><code class="language-json">{
+  "marketId": 1,
+  "outcome": "NO",
+  "confidence": 100,
+  "reasoning": "According to multiple sources, Bitcoin's price on December 31, 2024 was approximately $95,000, which did not reach the $100,000 threshold.",
+  "sources": [
+    "https://coinmarketcap.com/...",
+    "https://coingecko.com/..."
+  ],
+  "latency_ms": 1772
+}
+</code></pre></p>
+
+<p><strong>Response (Invalid)</strong>:
+<pre><code class="language-json">{
+  "marketId": 1,
+  "outcome": "INVALID",
+  "confidence": 0,
+  "reasoning": "Question is ambiguous or lacks verifiable data",
+  "latency_ms": 1234
+}
+</code></pre></p>
+
+<p><strong>Response (Error)</strong>:
+<pre><code class="language-json">{
+  "error": "Failed to resolve market",
+  "details": "GROQ_API_KEY not configured"
+}
+</code></pre></p>
+
+<ul>
+<strong>Status Codes</strong>:
+<li><code>200</code> - Success</li>
+<li><code>400</code> - Missing required fields</li>
+<li><code>500</code> - Server error</li>
+</ul>
+
+<ul>
+<strong>Outcome Values</strong>:
+<li><code>YES</code> - Market question is true</li>
+<li><code>NO</code> - Market question is false</li>
+<li><code>INVALID</code> - Question is unresolvable</li>
+</ul>
+
+<ul>
+<strong>Confidence Range</strong>: 0-100
+<li>90-100: Very high confidence</li>
+<li>70-89: High confidence</li>
+<li>50-69: Moderate confidence</li>
+<li>0-49: Low confidence</li>
+</ul>
+
+<p>---</p>
+
+<h3 id="faucet">Faucet</h3>
+
+<p>#### POST /api/faucet</p>
+
+<p>Distributes testnet tokens to users.</p>
+
+<p><strong>Request</strong>:
+<pre><code class="language-json">{
+  "address": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+}
+</code></pre></p>
+
+<p><strong>Response (Success)</strong>:
+<pre><code class="language-json">{
+  "success": true,
+  "txHash": "0x...",
+  "amount": "1000000000000000000",
+  "token": "BNB"
+}
+</code></pre></p>
+
+<p><strong>Response (Error)</strong>:
+<pre><code class="language-json">{
+  "error": "Rate limit exceeded. Try again in 24 hours."
+}
+</code></pre></p>
+
+<ul>
+<strong>Status Codes</strong>:
+<li><code>200</code> - Success</li>
+<li><code>400</code> - Invalid address</li>
+<li><code>429</code> - Rate limit exceeded</li>
+<li><code>500</code> - Server error</li>
+</ul>
+
+<ul>
+<strong>Rate Limits</strong>:
+<li>1 request per address per 24 hours</li>
+<li>10 requests per IP per hour</li>
+</ul>
+
+<p>---</p>
+
+<p>#### POST /api/faucet/busd</p>
+
+<p>Distributes tBUSD tokens to users.</p>
+
+<p><strong>Request</strong>:
+<pre><code class="language-json">{
+  "address": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+}
+</code></pre></p>
+
+<p><strong>Response (Success)</strong>:
+<pre><code class="language-json">{
+  "success": true,
+  "txHash": "0x...",
+  "amount": "30000000000000000000",
+  "token": "tBUSD"
+}
+</code></pre></p>
+
+<p><strong>Response (Error)</strong>:
+<pre><code class="language-json">{
+  "error": "Already claimed in last 24 hours"
+}
+</code></pre></p>
+
+<ul>
+<strong>Status Codes</strong>:
+<li><code>200</code> - Success</li>
+<li><code>400</code> - Invalid address</li>
+<li><code>429</code> - Rate limit exceeded</li>
+<li><code>500</code> - Server error</li>
+</ul>
+
+<p><strong>Amount</strong>: 30 tBUSD per request</p>
+
+<ul>
+<strong>Rate Limits</strong>:
+<li>1 request per address per 24 hours</li>
+</ul>
+
+<p>---</p>
+
+<h3 id="oracle-resolution">Oracle Resolution</h3>
+
+<p>#### POST /api/oracle/resolve</p>
+
+<p>Oracle endpoint for market resolution (future UMA integration).</p>
+
+<p><strong>Request</strong>:
+<pre><code class="language-json">{
+  "marketId": 1,
+  "outcome": true
+}
+</code></pre></p>
+
+<p><strong>Response</strong>:
+<pre><code class="language-json">{
+  "success": true,
+  "marketId": 1,
+  "outcome": true
+}
+</code></pre></p>
+
+<ul>
+<strong>Status Codes</strong>:
+<li><code>200</code> - Success</li>
+<li><code>400</code> - Invalid request</li>
+<li><code>500</code> - Server error</li>
+</ul>
+
+<p>---</p>
+
+<h2 id="rate-limits">Rate Limits</h2>
+
+<h3 id="global-limits">Global Limits</h3>
+
+<ul>
+<li>100 requests per IP per hour</li>
+<li>1000 requests per IP per day</li>
+</ul>
+
+<h3 id="endpoint-specific-limits">Endpoint-Specific Limits</h3>
+
+<p>| Endpoint | Limit |
+|----------|-------|
+| <code>/api/aa/sponsor</code> | 50 per user per hour |
+| <code>/api/ai/resolve</code> | 10 per user per hour |
+| <code>/api/faucet</code> | 1 per address per 24h |
+| <code>/api/faucet/busd</code> | 1 per address per 24h |</p>
+
+<h3 id="rate-limit-headers">Rate Limit Headers</h3>
+
+<pre><code class="language-">X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 95
+X-RateLimit-Reset: 1640995200
+</code></pre>
+
+<p>---</p>
+
+<h2 id="error-codes">Error Codes</h2>
+
+<h3 id="400-bad-request">400 Bad Request</h3>
+
+<p>Invalid request parameters.</p>
+
+<p><strong>Example</strong>:
+<pre><code class="language-json">{
+  "error": "Missing required field: question"
+}
+</code></pre></p>
+
+<h3 id="401-unauthorized">401 Unauthorized</h3>
+
+<p>Authentication required (future).</p>
+
+<h3 id="429-too-many-requests">429 Too Many Requests</h3>
+
+<p>Rate limit exceeded.</p>
+
+<p><strong>Example</strong>:
+<pre><code class="language-json">{
+  "error": "Rate limit exceeded. Try again in 3600 seconds."
+}
+</code></pre></p>
+
+<h3 id="500-internal-server-error">500 Internal Server Error</h3>
+
+<p>Server-side error.</p>
+
+<p><strong>Example</strong>:
+<pre><code class="language-json">{
+  "error": "Internal server error",
+  "details": "Database connection failed"
+}
+</code></pre></p>
+
+<p>---</p>
+
+<h2 id="response-format">Response Format</h2>
+
+<p>All API responses follow this structure:</p>
+
+<p><strong>Success</strong>:
+<pre><code class="language-json">{
+  "data": { ... },
+  "latency_ms": 234
+}
+</code></pre></p>
+
+<p><strong>Error</strong>:
+<pre><code class="language-json">{
+  "error": "Error message",
+  "details": "Additional details"
+}
+</code></pre></p>
+
+<p>---</p>
+
+<h2 id="cors">CORS</h2>
+
+<p>CORS enabled for all origins in development.</p>
+
+<p>Production: Restricted to <code>seerhive.vercel.app</code></p>
+
+<p>---</p>
+
+<h2 id="webhooks-future">Webhooks (Future)</h2>
+
+<ul>
+Subscribe to events:
+<li>Market created</li>
+<li>Market resolved</li>
+<li>Trade executed</li>
+<li>Challenge submitted</li>
+</ul>
+
+<p><strong>Example</strong>:
+<pre><code class="language-json">{
+  "event": "market.resolved",
+  "data": {
+    "marketId": 1,
+    "outcome": true,
+    "timestamp": 1640995200
+  }
+}
+</code></pre></p>
+
+<p>---</p>
+
+<h2 id="sdk-future">SDK (Future)</h2>
+
+<p>TypeScript SDK for easier integration:</p>
+
+<pre><code class="language-typescript">import { SeerHiveClient } from '@seerhive/sdk';
+
+<p>const client = new SeerHiveClient({
+  apiKey: 'your_api_key'
+});</p>
+
+<p>// Resolve market
+const result = await client.ai.resolve({
+  marketId: 1,
+  question: 'Did Bitcoin reach $100k?',
+  resolutionDate: '2024-12-31'
+});</p>
+
+<p>// Sponsor transaction
+const sponsored = await client.aa.sponsor(userOp);
+</code></pre></p>
+
+<p>---</p>
+
+<h2 id="testing">Testing</h2>
+
+<h3 id="test-endpoints">Test Endpoints</h3>
+
+<pre><code class="language-bash"># Test paymaster
+./scripts/test-sponsor.sh
+
+<h1 id="api-reference">Test AI resolution</h1>
+./scripts/test-ai-resolve.sh
+
+<h1 id="api-reference">Test faucet</h1>
+curl -X POST http://localhost:3000/api/faucet/busd \
+  -H "Content-Type: application/json" \
+  -d '{"address": "0x..."}'
+</code></pre>
+
+<h3 id="postman-collection">Postman Collection</h3>
+
+<p>Import collection: [Coming Soon]</p>
+
+<p>---</p>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<ul>
+<li><a href="Gasless-Transactions" target="_blank">Gasless Transactions</a> - ERC-4337 details</li>
+<li><a href="AI-Resolution" target="_blank">AI Resolution</a> - AI system details</li>
+<li><a href="Testing" target="_blank">Testing</a> - Testing guide</li>
+</ul>
+        </div>
+        <div class="page-break"></div>
+        <div class="page-content">
+<h1 id="configuration">Configuration</h1>
+
+<p>Complete guide to configuring SeerHive for development and production.</p>
+
+<h2 id="environment-variables">Environment Variables</h2>
+
+<h3 id="frontend-configuration">Frontend Configuration</h3>
+
+<p>Location: <code>apps/web/.env.local</code></p>
+
+<pre><code class="language-bash"># ============================================
+<h1 id="configuration">MODE</h1>
+<h1 id="configuration">============================================</h1>
+NEXT_PUBLIC_DEMO=0                    # 0=on-chain, 1=demo mode
+
+<h1 id="configuration">============================================</h1>
+<h1 id="configuration">NETWORK (BNB Testnet)</h1>
+<h1 id="configuration">============================================</h1>
+NEXT_PUBLIC_CHAIN=bscTestnet
+NEXT_PUBLIC_CHAIN_ID=97
+NEXT_PUBLIC_RPC_URL=https://bsc-testnet.publicnode.com
+
+<h1 id="configuration">============================================</h1>
+<h1 id="configuration">SMART CONTRACTS</h1>
+<h1 id="configuration">============================================</h1>
+NEXT_PUBLIC_CONTRACT_ADDRESS=0xc6Dd26D3eE0F58fAb15Dc87bEe3A66896B6D4127
+NEXT_PUBLIC_ENTRY_POINT=0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789
+
+<h1 id="configuration">============================================</h1>
+<h1 id="configuration">WALLETCONNECT (Optional)</h1>
+<h1 id="configuration">============================================</h1>
+NEXT_PUBLIC_WC_PROJECT_ID=your_walletconnect_project_id
+
+<h1 id="configuration">============================================</h1>
+<h1 id="configuration">PARTICLE NETWORK (Client-side)</h1>
+<h1 id="configuration">============================================</h1>
+NEXT_PUBLIC_PARTICLE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_PARTICLE_CLIENT_KEY=your_client_key
+NEXT_PUBLIC_PARTICLE_APP_ID=your_app_id
+
+<h1 id="configuration">============================================</h1>
+<h1 id="configuration">PAYMASTER ROUTING</h1>
+<h1 id="configuration">============================================</h1>
+NEXT_PUBLIC_PAYMASTER_ROUTING=auto    # auto|pimlico|particle|abtest
+
+<h1 id="configuration">============================================</h1>
+<h1 id="configuration">PARTICLE PAYMASTER (Server-side)</h1>
+<h1 id="configuration">============================================</h1>
+PARTICLE_PAYMASTER_URL=https://paymaster.particle.network/chain/97
+PARTICLE_PROJECT_ID=your_project_id
+PARTICLE_CLIENT_KEY=your_client_key
+
+<h1 id="configuration">============================================</h1>
+<h1 id="configuration">PIMLICO PAYMASTER (Server-side)</h1>
+<h1 id="configuration">============================================</h1>
+PIMLICO_URL=https://api.pimlico.io/v2/97/rpc?apikey=YOUR_API_KEY
+NEXT_PUBLIC_PIMLICO_API_KEY=your_api_key
+
+<h1 id="configuration">============================================</h1>
+<h1 id="configuration">AI RESOLUTION (Server-side)</h1>
+<h1 id="configuration">============================================</h1>
+GROQ_API_KEY=gsk_your_groq_key_here
+TAVILY_API_KEY=tvly-your_tavily_key_here
+
+<h1 id="configuration">============================================</h1>
+<h1 id="configuration">FAUCET (Server-side)</h1>
+<h1 id="configuration">============================================</h1>
+DEPLOYER_PRIVATE_KEY=your_deployer_private_key
+FAUCET_PRIVATE_KEY=your_faucet_private_key
+</code></pre>
+
+<h3 id="contract-configuration">Contract Configuration</h3>
+
+<p>Location: <code>contracts/.env</code></p>
+
+<pre><code class="language-bash"># ============================================
+<h1 id="configuration">DEPLOYMENT</h1>
+<h1 id="configuration">============================================</h1>
+PRIVATE_KEY=your_deployer_private_key
+BSC_TESTNET_RPC=https://bsc-testnet.publicnode.com
+
+<h1 id="configuration">============================================</h1>
+<h1 id="configuration">VERIFICATION (Optional)</h1>
+<h1 id="configuration">============================================</h1>
+BSCSCAN_API_KEY=your_bscscan_api_key
+</code></pre>
+
+<h2 id="configuration-sections">Configuration Sections</h2>
+
+<h3 id="1-mode-configuration">1. Mode Configuration</h3>
+
+<p>#### Demo Mode</p>
+
+<p>Test all features without wallet connection:</p>
+
+<pre><code class="language-bash">NEXT_PUBLIC_DEMO=1
+</code></pre>
+
+<ul>
+<strong>Features</strong>:
+<li>Mock data for markets, trades, analytics</li>
+<li>No wallet connection required</li>
+<li>No blockchain interactions</li>
+<li>Perfect for UI/UX testing</li>
+</ul>
+
+<p>#### On-Chain Mode</p>
+
+<p>Real blockchain interactions:</p>
+
+<pre><code class="language-bash">NEXT_PUBLIC_DEMO=0
+</code></pre>
+
+<ul>
+<strong>Features</strong>:
+<li>Real wallet connection (MetaMask, Particle)</li>
+<li>Live contract interactions</li>
+<li>Gasless transactions</li>
+<li>Requires testnet tokens</li>
+</ul>
+
+<h3 id="2-network-configuration">2. Network Configuration</h3>
+
+<p>#### BNB Testnet (Default)</p>
+
+<pre><code class="language-bash">NEXT_PUBLIC_CHAIN=bscTestnet
+NEXT_PUBLIC_CHAIN_ID=97
+NEXT_PUBLIC_RPC_URL=https://bsc-testnet.publicnode.com
+</code></pre>
+
+<p>#### BNB Mainnet (Future)</p>
+
+<pre><code class="language-bash">NEXT_PUBLIC_CHAIN=bsc
+NEXT_PUBLIC_CHAIN_ID=56
+NEXT_PUBLIC_RPC_URL=https://bsc-dataseed.binance.org
+</code></pre>
+
+<h3 id="3-smart-contract-configuration">3. Smart Contract Configuration</h3>
+
+<p>#### Deployed Contracts</p>
+
+<pre><code class="language-bash"># PredictionMarket contract
+NEXT_PUBLIC_CONTRACT_ADDRESS=0xc6Dd26D3eE0F58fAb15Dc87bEe3A66896B6D4127
+
+<h1 id="configuration">ERC-4337 EntryPoint</h1>
+NEXT_PUBLIC_ENTRY_POINT=0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789
+</code></pre>
+
+<p>#### Custom Deployment</p>
+
+<p>If you deploy your own contracts:</p>
+
+<pre><code class="language-bash">cd contracts
+pnpm deploy:testnet
+<h1 id="configuration">Copy new contract address to .env.local</h1>
+</code></pre>
+
+<h3 id="4-wallet-configuration">4. Wallet Configuration</h3>
+
+<p>#### WalletConnect</p>
+
+<p>Get project ID: <a href="https://cloud.walletconnect.com" target="_blank">cloud.walletconnect.com</a></p>
+
+<pre><code class="language-bash">NEXT_PUBLIC_WC_PROJECT_ID=your_project_id
+</code></pre>
+
+<p>#### Particle Network</p>
+
+<p>Get credentials: <a href="https://dashboard.particle.network" target="_blank">dashboard.particle.network</a></p>
+
+<p><strong>Client-side</strong> (social login):
+<pre><code class="language-bash">NEXT_PUBLIC_PARTICLE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_PARTICLE_CLIENT_KEY=your_client_key
+NEXT_PUBLIC_PARTICLE_APP_ID=your_app_id
+</code></pre></p>
+
+<p><strong>Server-side</strong> (paymaster):
+<pre><code class="language-bash">PARTICLE_PROJECT_ID=your_project_id
+PARTICLE_CLIENT_KEY=your_client_key
+</code></pre></p>
+
+<h3 id="5-paymaster-configuration">5. Paymaster Configuration</h3>
+
+<p>#### Routing Strategy</p>
+
+<pre><code class="language-bash">NEXT_PUBLIC_PAYMASTER_ROUTING=auto
+</code></pre>
+
+<ul>
+<strong>Options</strong>:
+<li><code>auto</code> - Try Particle first, fallback to Pimlico (recommended)</li>
+<li><code>particle</code> - Only use Particle</li>
+<li><code>pimlico</code> - Only use Pimlico</li>
+<li><code>abtest</code> - A/B test between providers</li>
+</ul>
+
+<p>#### Particle Paymaster</p>
+
+<p>Get credentials: <a href="https://dashboard.particle.network" target="_blank">dashboard.particle.network</a></p>
+
+<pre><code class="language-bash">PARTICLE_PAYMASTER_URL=https://paymaster.particle.network/chain/97
+PARTICLE_PROJECT_ID=your_project_id
+PARTICLE_CLIENT_KEY=your_client_key
+</code></pre>
+
+<p>#### Pimlico Paymaster</p>
+
+<p>Get API key: <a href="https://dashboard.pimlico.io" target="_blank">dashboard.pimlico.io</a></p>
+
+<pre><code class="language-bash">PIMLICO_URL=https://api.pimlico.io/v2/97/rpc?apikey=YOUR_API_KEY
+NEXT_PUBLIC_PIMLICO_API_KEY=your_api_key
+</code></pre>
+
+<h3 id="6-ai-configuration">6. AI Configuration</h3>
+
+<p>#### Groq (LLM)</p>
+
+<p>Get free API key: <a href="https://console.groq.com" target="_blank">console.groq.com</a></p>
+
+<pre><code class="language-bash">GROQ_API_KEY=gsk_your_groq_key_here
+</code></pre>
+
+<ul>
+<strong>Rate Limits</strong>:
+<li>Free tier: 30 requests/minute</li>
+<li>Models: Llama 3.3 70B, Llama 3.1 8B</li>
+</ul>
+
+<p>#### Tavily (Web Search)</p>
+
+<p>Get free API key: <a href="https://tavily.com" target="_blank">tavily.com</a></p>
+
+<pre><code class="language-bash">TAVILY_API_KEY=tvly-your_tavily_key_here
+</code></pre>
+
+<ul>
+<strong>Rate Limits</strong>:
+<li>Free tier: 1000 searches/month</li>
+</ul>
+
+<h3 id="7-faucet-configuration">7. Faucet Configuration</h3>
+
+<p>#### Auto-Fund Smart Accounts</p>
+
+<pre><code class="language-bash">DEPLOYER_PRIVATE_KEY=your_deployer_private_key
+</code></pre>
+
+<p>Used to automatically fund new smart accounts with testnet tokens.</p>
+
+<p>#### tBUSD Faucet</p>
+
+<pre><code class="language-bash">FAUCET_PRIVATE_KEY=your_faucet_private_key
+</code></pre>
+
+<p>Private key for tBUSD faucet contract.</p>
+
+<h2 id="security-best-practices">Security Best Practices</h2>
+
+<h3 id="client-side-vs-server-side">Client-Side vs Server-Side</h3>
+
+<p>#### ✅ Client-Side (NEXT_PUBLIC_ prefix)</p>
+
+<p>Safe to expose in browser:
+<pre><code class="language-bash">NEXT_PUBLIC_CHAIN_ID=97
+NEXT_PUBLIC_CONTRACT_ADDRESS=0x...
+NEXT_PUBLIC_PARTICLE_PROJECT_ID=xxx
+</code></pre></p>
+
+<p>#### ❌ Server-Side (No prefix)</p>
+
+<p>Never expose in browser:
+<pre><code class="language-bash">GROQ_API_KEY=gsk_...
+TAVILY_API_KEY=tvly-...
+PARTICLE_CLIENT_KEY=xxx
+DEPLOYER_PRIVATE_KEY=0x...
+</code></pre></p>
+
+<h3 id="private-key-management">Private Key Management</h3>
+
+<p><strong>Never commit private keys to Git</strong>:</p>
+
+<pre><code class="language-bash"># .gitignore
+.env
+.env.local
+.env.production
+</code></pre>
+
+<p><strong>Use separate keys for testnet and mainnet</strong>:
+<pre><code class="language-bash"># Testnet
+PRIVATE_KEY=0x...testnet_key...</p>
+
+<h1 id="configuration">Mainnet</h1>
+PRIVATE_KEY=0x...mainnet_key...
+</code></pre>
+
+<h3 id="api-key-rotation">API Key Rotation</h3>
+
+<ul>
+Rotate keys regularly:
+<li>Groq: Every 90 days</li>
+<li>Tavily: Every 90 days</li>
+<li>Particle: Every 180 days</li>
+<li>Pimlico: Every 180 days</li>
+</ul>
+
+<h2 id="configuration-files">Configuration Files</h2>
+
+<h3 id="typescript-config">TypeScript Config</h3>
+
+<p><code>apps/web/tsconfig.json</code>:
+<pre><code class="language-json">{
+  "extends": "@repo/config/tsconfig.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "strict": true,
+    "paths": {
+      "@/<em>": ["./src/</em>"]
+    }
+  }
+}
+</code></pre></p>
+
+<h3 id="nextjs-config">Next.js Config</h3>
+
+<p><code>apps/web/next.config.js</code>:
+<pre><code class="language-javascript">module.exports = {
+  reactStrictMode: true,
+  transpilePackages: ["@repo/config"],
+  webpack: (config) => {
+    config.resolve.fallback = { fs: false, net: false, tls: false };
+    return config;
+  }
+};
+</code></pre></p>
+
+<h3 id="tailwind-config">Tailwind Config</h3>
+
+<p><code>apps/web/tailwind.config.ts</code>:
+<pre><code class="language-typescript">import type { Config } from 'tailwindcss';</p>
+
+<p>const config: Config = {
+  content: ['./src/*<em>/</em>.{js,ts,jsx,tsx,mdx}'],
+  theme: {
+    extend: {
+      colors: {
+        slate: { /<em> ... </em>/ }
+      }
+    }
+  },
+  plugins: []
+};</p>
+
+<p>export default config;
+</code></pre></p>
+
+<h3 id="hardhat-config">Hardhat Config</h3>
+
+<p><code>contracts/hardhat.config.ts</code>:
+<pre><code class="language-typescript">import { HardhatUserConfig } from 'hardhat/config';
+import '@nomicfoundation/hardhat-toolbox';
+import * as dotenv from 'dotenv';</p>
+
+<p>dotenv.config();</p>
+
+<p>const config: HardhatUserConfig = {
+  solidity: {
+    version: '0.8.20',
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200
+      }
+    }
+  },
+  networks: {
+    bscTestnet: {
+      url: process.env.BSC_TESTNET_RPC,
+      accounts: [process.env.PRIVATE_KEY!],
+      chainId: 97
+    }
+  }
+};</p>
+
+<p>export default config;
+</code></pre></p>
+
+<h2 id="troubleshooting">Troubleshooting</h2>
+
+<h3 id="missing-environment-variable">"Missing environment variable"</h3>
+
+<p><strong>Cause</strong>: Required variable not set</p>
+
+<p><strong>Solution</strong>: Copy from <code>.env.example</code> and fill in values</p>
+
+<h3 id="invalid-api-key">"Invalid API key"</h3>
+
+<p><strong>Cause</strong>: Incorrect or expired API key</p>
+
+<p><strong>Solution</strong>: Generate new key from provider dashboard</p>
+
+<h3 id="network-mismatch">"Network mismatch"</h3>
+
+<p><strong>Cause</strong>: Wallet on different network than configured</p>
+
+<p><strong>Solution</strong>: Switch wallet to BNB Testnet (Chain ID: 97)</p>
+
+<h3 id="contract-not-found">"Contract not found"</h3>
+
+<p><strong>Cause</strong>: Wrong contract address or network</p>
+
+<p><strong>Solution</strong>: Verify contract address matches deployed contract</p>
+
+<h2 id="environment-templates">Environment Templates</h2>
+
+<h3 id="minimal-demo-mode">Minimal (Demo Mode)</h3>
+
+<pre><code class="language-bash">NEXT_PUBLIC_DEMO=1
+</code></pre>
+
+<h3 id="development-on-chain">Development (On-Chain)</h3>
+
+<pre><code class="language-bash">NEXT_PUBLIC_DEMO=0
+NEXT_PUBLIC_CHAIN_ID=97
+NEXT_PUBLIC_CONTRACT_ADDRESS=0xc6Dd26D3eE0F58fAb15Dc87bEe3A66896B6D4127
+NEXT_PUBLIC_RPC_URL=https://bsc-testnet.publicnode.com
+</code></pre>
+
+<h3 id="full-all-features">Full (All Features)</h3>
+
+<pre><code class="language-bash"># Mode
+NEXT_PUBLIC_DEMO=0
+
+<h1 id="configuration">Network</h1>
+NEXT_PUBLIC_CHAIN_ID=97
+NEXT_PUBLIC_CONTRACT_ADDRESS=0xc6Dd26D3eE0F58fAb15Dc87bEe3A66896B6D4127
+
+<h1 id="configuration">Paymasters</h1>
+PARTICLE_PROJECT_ID=xxx
+PARTICLE_CLIENT_KEY=xxx
+PIMLICO_URL=https://api.pimlico.io/v2/97/rpc?apikey=xxx
+
+<h1 id="configuration">AI</h1>
+GROQ_API_KEY=gsk_xxx
+TAVILY_API_KEY=tvly-xxx
+</code></pre>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<ul>
+<li><a href="Getting-Started" target="_blank">Getting Started</a> - Setup guide</li>
+<li><a href="Testing" target="_blank">Testing</a> - Test configuration</li>
+<li><a href="Deployment" target="_blank">Deployment</a> - Production deployment</li>
+</ul>
+        </div>
+        <div class="page-break"></div>
+        <div class="page-content">
+<h1 id="testing">Testing</h1>
+
+<p>Comprehensive testing guide for SeerHive.</p>
+
+<h2 id="testing-strategy">Testing Strategy</h2>
+
+<p>SeerHive uses multiple testing approaches:</p>
+
+<p>1. <strong>Smart Contract Tests</strong> - Hardhat + Chai
+2. <strong>API Tests</strong> - Shell scripts + curl
+3. <strong>Integration Tests</strong> - End-to-end flows
+4. <strong>Manual Testing</strong> - UI/UX validation</p>
+
+<h2 id="smart-contract-testing">Smart Contract Testing</h2>
+
+<h3 id="setup">Setup</h3>
+
+<pre><code class="language-bash">cd contracts
+pnpm install
+</code></pre>
+
+<h3 id="run-tests">Run Tests</h3>
+
+<pre><code class="language-bash">pnpm test
+</code></pre>
+
+<h3 id="test-structure">Test Structure</h3>
+
+<p>Location: <code>contracts/test/PredictionMarket.test.ts</code></p>
+
+<pre><code class="language-typescript">import { expect } from 'chai';
+import { ethers } from 'hardhat';
+
+<p>describe('PredictionMarket', function () {
+  let market: PredictionMarket;
+  let owner: SignerWithAddress;
+  let user1: SignerWithAddress;</p>
+
+<p>beforeEach(async function () {
+    [owner, user1] = await ethers.getSigners();
+    const PredictionMarket = await ethers.getContractFactory('PredictionMarket');
+    market = await PredictionMarket.deploy();
+  });</p>
+
+<p>it('Should create a market', async function () {
+    const tx = await market.createMarket('Test question?', 86400);
+    await tx.wait();
+    
+    const marketData = await market.markets(0);
+    expect(marketData.question).to.equal('Test question?');
+  });
+});
+</code></pre></p>
+
+<h3 id="test-coverage">Test Coverage</h3>
+
+<p>Run with coverage:</p>
+
+<pre><code class="language-bash">pnpm test:coverage
+</code></pre>
+
+<ul>
+<strong>Current Coverage</strong>:
+<li>Market creation: ✅</li>
+<li>Share purchases (BNB): ✅</li>
+<li>Share purchases (ERC20): ✅</li>
+<li>Resolution proposal: ✅</li>
+<li>Challenge mechanism: ✅</li>
+<li>Finalization: ✅</li>
+<li>Winnings claims: ✅</li>
+</ul>
+
+<h3 id="key-test-cases">Key Test Cases</h3>
+
+<p>#### 1. Market Creation</p>
+
+<pre><code class="language-typescript">it('Should create a market', async function () {
+  const tx = await market.createMarket('Will BNB reach $1000?', 86400);
+  await tx.wait();
+  
+  const marketData = await market.markets(0);
+  expect(marketData.question).to.equal('Will BNB reach $1000?');
+  expect(marketData.resolved).to.equal(false);
+});
+</code></pre>
+
+<p>#### 2. Buy Shares (BNB)</p>
+
+<pre><code class="language-typescript">it('Should allow buying YES shares with BNB', async function () {
+  await market.createMarket('Test?', 86400);
+  const amount = parseEther('1');
+  
+  await market.buyShares(0, true, ethers.ZeroAddress, amount, {
+    value: amount
+  });
+  
+  const shares = await market.userShares(0, user1.address, true);
+  expect(shares).to.equal(amount);
+});
+</code></pre>
+
+<p>#### 3. Buy Shares (ERC20)</p>
+
+<pre><code class="language-typescript">it('Should allow buying shares with ERC20', async function () {
+  const MockERC20 = await ethers.getContractFactory('MockERC20');
+  const token = await MockERC20.deploy('Test', 'TST');
+  
+  await token.mint(user1.address, parseEther('100'));
+  await token.connect(user1).approve(market.address, parseEther('10'));
+  
+  await market.connect(user1).buyShares(0, true, token.address, parseEther('10'));
+  
+  const shares = await market.userShares(0, user1.address, true);
+  expect(shares).to.equal(parseEther('10'));
+});
+</code></pre>
+
+<p>#### 4. Resolution & Challenge</p>
+
+<pre><code class="language-typescript">it('Should allow proposing and challenging resolution', async function () {
+  await market.createMarket('Test?', 1); // 1 second duration
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  
+  // Propose resolution
+  await market.proposeResolution(0, true);
+  
+  // Challenge
+  await market.connect(user1).challengeResolution(0, {
+    value: parseEther('0.01')
+  });
+  
+  const resolution = await market.resolutions(0);
+  expect(resolution.challenged).to.equal(true);
+});
+</code></pre>
+
+<p>#### 5. Claim Winnings</p>
+
+<pre><code class="language-typescript">it('Should allow claiming winnings', async function () {
+  await market.createMarket('Test?', 1);
+  await market.buyShares(0, true, ethers.ZeroAddress, parseEther('1'), {
+    value: parseEther('1')
+  });
+  
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  await market.finalizeMarket(0, true);
+  
+  const balanceBefore = await ethers.provider.getBalance(user1.address);
+  await market.connect(user1).claimWinnings(0);
+  const balanceAfter = await ethers.provider.getBalance(user1.address);
+  
+  expect(balanceAfter).to.be.gt(balanceBefore);
+});
+</code></pre>
+
+<h2 id="api-testing">API Testing</h2>
+
+<h3 id="paymaster-api-test">Paymaster API Test</h3>
+
+<p>Test gasless transaction sponsorship:</p>
+
+<pre><code class="language-bash">./scripts/test-sponsor.sh
+</code></pre>
+
+<p><strong>Script</strong>:
+<pre><code class="language-bash">#!/bin/bash</p>
+
+<p>curl -X POST http://localhost:3000/api/aa/sponsor \
+  -H "Content-Type: application/json" \
+  -d '{
+    "userOp": {
+      "sender": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+      "nonce": "0x0",
+      "initCode": "0x",
+      "callData": "0x",
+      "callGasLimit": "0x0",
+      "verificationGasLimit": "0x0",
+      "preVerificationGas": "0x0",
+      "maxFeePerGas": "0x0",
+      "maxPriorityFeePerGas": "0x0",
+      "paymasterAndData": "0x",
+      "signature": "0x"
+    },
+    "entryPoint": "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789",
+    "chainId": 97
+  }'
+</code></pre></p>
+
+<p><strong>Expected Output</strong>:
+<pre><code class="language-json">{
+  "paymasterAndData": "0x...",
+  "provider": "particle",
+  "latency_ms": 234
+}
+</code></pre></p>
+
+<h3 id="ai-resolution-test">AI Resolution Test</h3>
+
+<p>Test AI-powered market resolution:</p>
+
+<pre><code class="language-bash">./scripts/test-ai-resolve.sh
+</code></pre>
+
+<p><strong>Script</strong>:
+<pre><code class="language-bash">#!/bin/bash</p>
+
+<p>curl -X POST http://localhost:3000/api/ai/resolve \
+  -H "Content-Type: application/json" \
+  -d '{
+    "marketId": 999,
+    "question": "Did Bitcoin reach $100,000 in 2024?",
+    "resolutionDate": "2024-12-31"
+  }'
+</code></pre></p>
+
+<p><strong>Expected Output</strong>:
+<pre><code class="language-json">{
+  "marketId": 999,
+  "outcome": "NO",
+  "confidence": 100,
+  "reasoning": "Historical data shows Bitcoin did not reach $100,000 in 2024.",
+  "latency_ms": 1772
+}
+</code></pre></p>
+
+<h3 id="faucet-test">Faucet Test</h3>
+
+<p>Test tBUSD faucet:</p>
+
+<pre><code class="language-bash">curl -X POST http://localhost:3000/api/faucet/busd \
+  -H "Content-Type: application/json" \
+  -d '{
+    "address": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+  }'
+</code></pre>
+
+<p><strong>Expected Output</strong>:
+<pre><code class="language-json">{
+  "success": true,
+  "txHash": "0x...",
+  "amount": "30000000000000000000",
+  "token": "tBUSD"
+}
+</code></pre></p>
+
+<h2 id="integration-testing">Integration Testing</h2>
+
+<h3 id="gasless-transaction-flow">Gasless Transaction Flow</h3>
+
+<p>Test complete gasless transaction:</p>
+
+<pre><code class="language-bash">./scripts/smoke-gasless.sh
+</code></pre>
+
+<p><strong>Flow</strong>:
+1. Construct UserOperation
+2. Request sponsorship from <code>/api/aa/sponsor</code>
+3. Submit to bundler
+4. Verify on-chain</p>
+
+<p><strong>Expected Output</strong>:
+<pre><code class="language-">✅ UserOperation constructed
+✅ Sponsorship received: particle
+✅ Transaction submitted: 0x...
+✅ Transaction confirmed
+✅ User paid 0 gas
+</code></pre></p>
+
+<h3 id="market-creation-flow">Market Creation Flow</h3>
+
+<p><strong>Manual Test</strong>:
+1. Start dev server: <code>pnpm dev</code>
+2. Connect wallet (MetaMask)
+3. Go to <code>/markets</code>
+4. Click "Create Market"
+5. Fill form:
+   - Question: "Will BNB reach $1000 by 2025?"
+   - Duration: 365 days
+6. Toggle "Use Gasless Transaction"
+7. Submit
+8. Verify on BSCScan</p>
+
+<h3 id="trading-flow">Trading Flow</h3>
+
+<p><strong>Manual Test</strong>:
+1. Go to <code>/markets</code>
+2. Select a market
+3. Click "Trade"
+4. Select token (tBUSD)
+5. Enter amount (10)
+6. Choose side (YES)
+7. Toggle "Use Gasless Transaction"
+8. Submit
+9. Verify shares in portfolio</p>
+
+<h3 id="resolution-flow">Resolution Flow</h3>
+
+<p><strong>Manual Test</strong>:
+1. Create market with 1-minute duration
+2. Wait for expiry
+3. Click "Resolve with AI"
+4. Review AI decision
+5. Submit resolution proposal
+6. Wait 24 hours (or test challenge)
+7. Finalize market
+8. Claim winnings</p>
+
+<h2 id="demo-mode-testing">Demo Mode Testing</h2>
+
+<p>Test all features without wallet:</p>
+
+<pre><code class="language-bash"># Set demo mode
+echo "NEXT_PUBLIC_DEMO=1" > apps/web/.env.local
+
+<h1 id="testing">Start server</h1>
+pnpm dev
+
+<h1 id="testing">Visit http://localhost:3000</h1>
+</code></pre>
+
+<ul>
+<strong>Test Cases</strong>:
+<li>✅ Browse markets</li>
+<li>✅ View analytics</li>
+<li>✅ Create market (mock)</li>
+<li>✅ Trade shares (mock)</li>
+<li>✅ View portfolio</li>
+<li>✅ Check transaction history</li>
+</ul>
+
+<h2 id="performance-testing">Performance Testing</h2>
+
+<h3 id="api-latency">API Latency</h3>
+
+<p>Measure API response times:</p>
+
+<pre><code class="language-bash"># Paymaster API
+time curl -X POST http://localhost:3000/api/aa/sponsor -d '{...}'
+
+<h1 id="testing">AI Resolution API</h1>
+time curl -X POST http://localhost:3000/api/ai/resolve -d '{...}'
+</code></pre>
+
+<ul>
+<strong>Targets</strong>:
+<li>Paymaster: < 500ms</li>
+<li>AI Resolution: < 3000ms</li>
+</ul>
+
+<h3 id="load-testing">Load Testing</h3>
+
+<p>Use <code>ab</code> (Apache Bench):</p>
+
+<pre><code class="language-bash"># Test paymaster endpoint
+ab -n 100 -c 10 -p payload.json -T application/json \
+  http://localhost:3000/api/aa/sponsor
+</code></pre>
+
+<ul>
+<strong>Targets</strong>:
+<li>100 requests/second</li>
+<li>< 1% error rate</li>
+</ul>
+
+<h2 id="test-data">Test Data</h2>
+
+<h3 id="mock-markets">Mock Markets</h3>
+
+<p>Location: <code>apps/web/src/mocks/fixtures/</code></p>
+
+<p><strong>markets.json</strong>:
+<pre><code class="language-json">[
+  {
+    "id": 1,
+    "question": "Will BNB reach $1000 by end of 2025?",
+    "totalYesShares": "1000000000000000000000",
+    "totalNoShares": "500000000000000000000",
+    "endTime": 1735689600,
+    "resolved": false
+  }
+]
+</code></pre></p>
+
+<h3 id="test-tokens">Test Tokens</h3>
+
+<p><strong>BNB Testnet Faucet</strong>: <a href="https://testnet.bnbchain.org/faucet-smart" target="_blank">testnet.bnbchain.org/faucet-smart</a></p>
+
+<p><strong>tBUSD Faucet</strong>: <a href="http://localhost:3000/faucet" target="_blank">localhost:3000/faucet</a></p>
+
+<h3 id="test-accounts">Test Accounts</h3>
+
+<p>Create test accounts:</p>
+
+<pre><code class="language-bash"># Generate new wallet
+npx hardhat run scripts/generate-wallet.ts
+
+<h1 id="testing">Fund with testnet tokens</h1>
+<h1 id="testing">Use faucets above</h1>
+</code></pre>
+
+<h2 id="continuous-integration">Continuous Integration</h2>
+
+<h3 id="github-actions">GitHub Actions</h3>
+
+<p>Location: <code>.github/workflows/ci.yml</code></p>
+
+<pre><code class="language-yaml">name: CI
+
+<p>on: [push, pull_request]</p>
+
+<p>jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      
+      - run: pnpm install
+      - run: pnpm lint
+      - run: pnpm test
+      - run: pnpm build
+</code></pre></p>
+
+<h3 id="pre-commit-hooks">Pre-commit Hooks</h3>
+
+<p>Install Husky:</p>
+
+<pre><code class="language-bash">pnpm add -D husky
+npx husky install
+</code></pre>
+
+<p>Add pre-commit hook:</p>
+
+<pre><code class="language-bash">#!/bin/sh
+pnpm lint
+pnpm test
+</code></pre>
+
+<h2 id="debugging">Debugging</h2>
+
+<h3 id="contract-debugging">Contract Debugging</h3>
+
+<p>Use Hardhat console:</p>
+
+<pre><code class="language-bash">cd contracts
+npx hardhat console --network bscTestnet
+</code></pre>
+
+<pre><code class="language-javascript">const market = await ethers.getContractAt('PredictionMarket', '0x...');
+const data = await market.markets(0);
+console.log(data);
+</code></pre>
+
+<h3 id="frontend-debugging">Frontend Debugging</h3>
+
+<p>Enable debug logs:</p>
+
+<pre><code class="language-bash">DEBUG=* pnpm dev
+</code></pre>
+
+<ul>
+Check console for:
+<li><code>✅</code> Success indicators</li>
+<li><code>⚠️</code> Warnings</li>
+<li><code>❌</code> Errors</li>
+</ul>
+
+<h3 id="network-debugging">Network Debugging</h3>
+
+<p>Monitor transactions:</p>
+
+<pre><code class="language-bash"># Watch for new blocks
+npx hardhat run scripts/watch-blocks.ts --network bscTestnet
+
+<h1 id="testing">Monitor specific address</h1>
+npx hardhat run scripts/watch-address.ts --network bscTestnet
+</code></pre>
+
+<h2 id="test-checklist">Test Checklist</h2>
+
+<h3 id="before-deployment">Before Deployment</h3>
+
+<ul>
+<li>[ ] All contract tests pass</li>
+<li>[ ] API tests pass</li>
+<li>[ ] Gasless flow works</li>
+<li>[ ] AI resolution works</li>
+<li>[ ] Demo mode works</li>
+<li>[ ] Manual testing complete</li>
+<li>[ ] No console errors</li>
+<li>[ ] Performance targets met</li>
+</ul>
+
+<h3 id="after-deployment">After Deployment</h3>
+
+<ul>
+<li>[ ] Contract verified on BSCScan</li>
+<li>[ ] Faucet working</li>
+<li>[ ] Paymaster funded</li>
+<li>[ ] AI APIs configured</li>
+<li>[ ] Monitoring enabled</li>
+<li>[ ] Error tracking setup</li>
+</ul>
+
+<h2 id="troubleshooting">Troubleshooting</h2>
+
+<h3 id="tests-failing">Tests Failing</h3>
+
+<p><strong>Check</strong>:
+1. Node version (20.x required)
+2. Dependencies installed (<code>pnpm install</code>)
+3. Environment variables set
+4. Network connection</p>
+
+<h3 id="gasless-tests-failing">Gasless Tests Failing</h3>
+
+<p><strong>Check</strong>:
+1. Paymaster API keys valid
+2. Paymaster accounts funded
+3. EntryPoint address correct
+4. Network is BNB Testnet</p>
+
+<h3 id="ai-tests-failing">AI Tests Failing</h3>
+
+<p><strong>Check</strong>:
+1. Groq API key valid
+2. Tavily API key valid
+3. Rate limits not exceeded
+4. Network connection</p>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<ul>
+<li><a href="Deployment" target="_blank">Deployment</a> - Deploy to production</li>
+<li><a href="Configuration" target="_blank">Configuration</a> - Environment setup</li>
+<li><a href="API-Reference" target="_blank">API Reference</a> - API documentation</li>
+</ul>
+        </div>
+        <div class="page-break"></div>
+        <div class="page-content">
+<h1 id="deployment">Deployment</h1>
+
+<p>Guide to deploying SeerHive to production.</p>
+
+<h2 id="overview">Overview</h2>
+
+<p>SeerHive consists of two main components:
+1. <strong>Smart Contracts</strong> - Deployed to BNB Chain
+2. <strong>Frontend Application</strong> - Deployed to Vercel</p>
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<ul>
+<li>Node.js 20.x or higher</li>
+<li>pnpm 10.x or higher</li>
+<li>BNB for gas fees (testnet or mainnet)</li>
+<li>Vercel account (for frontend)</li>
+<li>API keys (Particle, Pimlico, Groq, Tavily)</li>
+</ul>
+
+<h2 id="smart-contract-deployment">Smart Contract Deployment</h2>
+
+<h3 id="1-prepare-environment">1. Prepare Environment</h3>
+
+<pre><code class="language-bash">cd contracts
+cp .env.example .env
+</code></pre>
+
+<p>Edit <code>contracts/.env</code>:</p>
+
+<pre><code class="language-bash">PRIVATE_KEY=your_deployer_private_key
+BSC_TESTNET_RPC=https://bsc-testnet.publicnode.com
+BSCSCAN_API_KEY=your_bscscan_api_key
+</code></pre>
+
+<h3 id="2-compile-contracts">2. Compile Contracts</h3>
+
+<pre><code class="language-bash">pnpm build
+</code></pre>
+
+<p>Verify compilation:
+<pre><code class="language-bash">ls artifacts/contracts/PredictionMarket.sol/
+<h1 id="deployment">Should see PredictionMarket.json</h1>
+</code></pre></p>
+
+<h3 id="3-deploy-to-bnb-testnet">3. Deploy to BNB Testnet</h3>
+
+<pre><code class="language-bash">pnpm deploy:testnet
+</code></pre>
+
+<p><strong>Expected Output</strong>:
+<pre><code class="language-">Deploying PredictionMarket...
+PredictionMarket deployed to: 0xc6Dd26D3eE0F58fAb15Dc87bEe3A66896B6D4127
+</code></pre></p>
+
+<p><strong>Save the contract address</strong> - you'll need it for frontend configuration.</p>
+
+<h3 id="4-verify-contract">4. Verify Contract</h3>
+
+<pre><code class="language-bash">npx hardhat verify --network bscTestnet 0xYourContractAddress
+</code></pre>
+
+<p><strong>Expected Output</strong>:
+<pre><code class="language-">Successfully verified contract PredictionMarket on BSCScan
+https://testnet.bscscan.com/address/0x...#code
+</code></pre></p>
+
+<h3 id="5-deploy-to-bnb-mainnet">5. Deploy to BNB Mainnet</h3>
+
+<p><strong>⚠️ Only after thorough testing and audit</strong></p>
+
+<p>Update <code>contracts/.env</code>:
+<pre><code class="language-bash">PRIVATE_KEY=your_mainnet_deployer_key
+BSC_MAINNET_RPC=https://bsc-dataseed.binance.org
+</code></pre></p>
+
+<p>Update <code>hardhat.config.ts</code>:
+<pre><code class="language-typescript">networks: {
+  bscMainnet: {
+    url: process.env.BSC_MAINNET_RPC,
+    accounts: [process.env.PRIVATE_KEY!],
+    chainId: 56
+  }
+}
+</code></pre></p>
+
+<p>Deploy:
+<pre><code class="language-bash">npx hardhat run scripts/deploy.ts --network bscMainnet
+</code></pre></p>
+
+<h2 id="frontend-deployment">Frontend Deployment</h2>
+
+<h3 id="1-prepare-environment">1. Prepare Environment</h3>
+
+<pre><code class="language-bash">cd apps/web
+cp .env.example .env.production
+</code></pre>
+
+<p>Edit <code>apps/web/.env.production</code>:</p>
+
+<pre><code class="language-bash"># Mode
+NEXT_PUBLIC_DEMO=0
+
+<h1 id="deployment">Network (Testnet)</h1>
+NEXT_PUBLIC_CHAIN=bscTestnet
+NEXT_PUBLIC_CHAIN_ID=97
+NEXT_PUBLIC_RPC_URL=https://bsc-testnet.publicnode.com
+
+<h1 id="deployment">Or Mainnet</h1>
+<h1 id="deployment">NEXT_PUBLIC_CHAIN=bsc</h1>
+<h1 id="deployment">NEXT_PUBLIC_CHAIN_ID=56</h1>
+<h1 id="deployment">NEXT_PUBLIC_RPC_URL=https://bsc-dataseed.binance.org</h1>
+
+<h1 id="deployment">Contract (use your deployed address)</h1>
+NEXT_PUBLIC_CONTRACT_ADDRESS=0xYourDeployedContractAddress
+NEXT_PUBLIC_ENTRY_POINT=0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789
+
+<h1 id="deployment">Particle Network</h1>
+NEXT_PUBLIC_PARTICLE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_PARTICLE_CLIENT_KEY=your_client_key
+NEXT_PUBLIC_PARTICLE_APP_ID=your_app_id
+
+<h1 id="deployment">Paymasters (Server-side)</h1>
+PARTICLE_PAYMASTER_URL=https://paymaster.particle.network/chain/97
+PARTICLE_PROJECT_ID=your_project_id
+PARTICLE_CLIENT_KEY=your_client_key
+PIMLICO_URL=https://api.pimlico.io/v2/97/rpc?apikey=YOUR_KEY
+
+<h1 id="deployment">AI (Server-side)</h1>
+GROQ_API_KEY=gsk_your_groq_key
+TAVILY_API_KEY=tvly-your_tavily_key
+
+<h1 id="deployment">Faucet (Server-side)</h1>
+DEPLOYER_PRIVATE_KEY=your_deployer_key
+FAUCET_PRIVATE_KEY=your_faucet_key
+</code></pre>
+
+<h3 id="2-build-application">2. Build Application</h3>
+
+<pre><code class="language-bash">cd ../..  # Back to root
+pnpm build
+</code></pre>
+
+<p>Verify build:
+<pre><code class="language-bash">ls apps/web/.next/
+<h1 id="deployment">Should see build artifacts</h1>
+</code></pre></p>
+
+<h3 id="3-deploy-to-vercel">3. Deploy to Vercel</h3>
+
+<p>#### Option A: Vercel CLI</p>
+
+<p>Install Vercel CLI:
+<pre><code class="language-bash">npm i -g vercel
+</code></pre></p>
+
+<p>Deploy:
+<pre><code class="language-bash">cd apps/web
+vercel
+</code></pre></p>
+
+<ul>
+Follow prompts:
+<li>Link to existing project or create new</li>
+<li>Set environment variables</li>
+<li>Deploy</li>
+</ul>
+
+<p>#### Option B: GitHub Integration</p>
+
+<p>1. Push code to GitHub
+2. Go to <a href="https://vercel.com" target="_blank">vercel.com</a>
+3. Click "New Project"
+4. Import your GitHub repository
+5. Configure:
+   - Framework: Next.js
+   - Root Directory: <code>apps/web</code>
+   - Build Command: <code>cd ../.. && pnpm build --filter=web</code>
+   - Output Directory: <code>.next</code>
+6. Add environment variables (from <code>.env.production</code>)
+7. Deploy</p>
+
+<h3 id="4-configure-environment-variables">4. Configure Environment Variables</h3>
+
+<p>In Vercel dashboard:</p>
+
+<p><strong>Settings → Environment Variables</strong></p>
+
+<p>Add all variables from <code>.env.production</code>:</p>
+
+<p>| Key | Value | Environment |
+|-----|-------|-------------|
+| NEXT_PUBLIC_DEMO | 0 | Production |
+| NEXT_PUBLIC_CHAIN_ID | 97 | Production |
+| NEXT_PUBLIC_CONTRACT_ADDRESS | 0x... | Production |
+| GROQ_API_KEY | gsk_... | Production |
+| TAVILY_API_KEY | tvly-... | Production |
+| ... | ... | ... |</p>
+
+<p><strong>⚠️ Important</strong>: Server-side variables (without <code>NEXT_PUBLIC_</code>) are encrypted.</p>
+
+<h3 id="5-configure-custom-domain">5. Configure Custom Domain</h3>
+
+<p>In Vercel dashboard:</p>
+
+<p><strong>Settings → Domains</strong></p>
+
+<ul>
+Add your domain:
+<li><code>seerhive.com</code></li>
+<li><code>www.seerhive.com</code></li>
+</ul>
+
+<p>Update DNS records:
+<pre><code class="language-">Type: CNAME
+Name: @
+Value: cname.vercel-dns.com
+</code></pre></p>
+
+<h3 id="6-verify-deployment">6. Verify Deployment</h3>
+
+<p>Visit your deployed URL:
+<pre><code class="language-">https://seerhive.vercel.app
+</code></pre></p>
+
+<ul>
+Test:
+<li>✅ Homepage loads</li>
+<li>✅ Markets page works</li>
+<li>✅ Wallet connection works</li>
+<li>✅ Gasless transactions work</li>
+<li>✅ AI resolution works</li>
+</ul>
+
+<h2 id="post-deployment">Post-Deployment</h2>
+
+<h3 id="1-fund-paymaster-accounts">1. Fund Paymaster Accounts</h3>
+
+<p>Ensure paymasters have sufficient funds:</p>
+
+<ul>
+<strong>Particle Network</strong>:
+<li>Check balance in <a href="https://dashboard.particle.network" target="_blank">dashboard.particle.network</a></li>
+<li>Top up if needed</li>
+</ul>
+
+<ul>
+<strong>Pimlico</strong>:
+<li>Check balance in <a href="https://dashboard.pimlico.io" target="_blank">dashboard.pimlico.io</a></li>
+<li>Top up if needed</li>
+</ul>
+
+<h3 id="2-monitor-application">2. Monitor Application</h3>
+
+<p>Set up monitoring:</p>
+
+<ul>
+<strong>Vercel Analytics</strong>:
+<li>Enable in Vercel dashboard</li>
+<li>Track page views, performance</li>
+</ul>
+
+<p><strong>Error Tracking</strong> (Sentry):
+<pre><code class="language-bash">pnpm add @sentry/nextjs
+</code></pre></p>
+
+<p>Configure <code>sentry.config.js</code>:
+<pre><code class="language-javascript">Sentry.init({
+  dsn: 'your_sentry_dsn',
+  environment: 'production'
+});
+</code></pre></p>
+
+<ul>
+<strong>Uptime Monitoring</strong>:
+<li>Use <a href="https://uptimerobot.com" target="_blank">UptimeRobot</a></li>
+<li>Monitor <code>/api/health</code> endpoint</li>
+</ul>
+
+<h3 id="3-set-up-alerts">3. Set Up Alerts</h3>
+
+<ul>
+Configure alerts for:
+<li>Paymaster balance low</li>
+<li>API rate limits exceeded</li>
+<li>Contract errors</li>
+<li>High error rates</li>
+</ul>
+
+<h3 id="4-enable-rate-limiting">4. Enable Rate Limiting</h3>
+
+<p>Add rate limiting middleware:</p>
+
+<p><code>apps/web/src/middleware.ts</code>:
+<pre><code class="language-typescript">import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';</p>
+
+<p>const rateLimit = new Map();</p>
+
+<p>export function middleware(request: NextRequest) {
+  const ip = request.ip || 'unknown';
+  const now = Date.now();
+  const windowMs = 60 <em> 1000; // 1 minute
+  const max = 100; // 100 requests per minute</p>
+
+<p>if (!rateLimit.has(ip)) {
+    rateLimit.set(ip, []);
+  }</p>
+
+<p>const requests = rateLimit.get(ip).filter((time: number) => now - time < windowMs);
+  
+  if (requests.length >= max) {
+    return NextResponse.json(
+      { error: 'Too many requests' },
+      { status: 429 }
+    );
+  }</p>
+
+<p>requests.push(now);
+  rateLimit.set(ip, requests);</p>
+
+<p>return NextResponse.next();
+}</p>
+
+<p>export const config = {
+  matcher: '/api/:path</em>'
+};
+</code></pre></p>
+
+<h2 id="rollback-procedure">Rollback Procedure</h2>
+
+<p>If deployment fails:</p>
+
+<h3 id="vercel-rollback">Vercel Rollback</h3>
+
+<p>1. Go to Vercel dashboard
+2. Click "Deployments"
+3. Find previous working deployment
+4. Click "..." → "Promote to Production"</p>
+
+<h3 id="contract-rollback">Contract Rollback</h3>
+
+<p><strong>⚠️ Contracts are immutable - cannot rollback</strong></p>
+
+<p>Options:
+1. Deploy new contract with fixes
+2. Update frontend to use old contract
+3. Use proxy pattern (future)</p>
+
+<h2 id="maintenance">Maintenance</h2>
+
+<h3 id="update-dependencies">Update Dependencies</h3>
+
+<pre><code class="language-bash">pnpm update
+pnpm audit
+pnpm audit fix
+</code></pre>
+
+<h3 id="update-contracts">Update Contracts</h3>
+
+<p>1. Make changes to contracts
+2. Test thoroughly
+3. Deploy new contract
+4. Update frontend contract address
+5. Redeploy frontend</p>
+
+<h3 id="update-frontend">Update Frontend</h3>
+
+<pre><code class="language-bash">git pull
+pnpm install
+pnpm build
+vercel --prod
+</code></pre>
+
+<h2 id="security-checklist">Security Checklist</h2>
+
+<h3 id="before-mainnet-deployment">Before Mainnet Deployment</h3>
+
+<ul>
+<li>[ ] Smart contract audit completed</li>
+<li>[ ] All tests passing</li>
+<li>[ ] Security review done</li>
+<li>[ ] Rate limiting enabled</li>
+<li>[ ] Error tracking configured</li>
+<li>[ ] Monitoring set up</li>
+<li>[ ] Backup plan ready</li>
+<li>[ ] Team trained on incident response</li>
+</ul>
+
+<h3 id="environment-security">Environment Security</h3>
+
+<ul>
+<li>[ ] Private keys stored securely (not in code)</li>
+<li>[ ] API keys rotated regularly</li>
+<li>[ ] Server-side variables not exposed</li>
+<li>[ ] HTTPS enabled</li>
+<li>[ ] CORS configured properly</li>
+<li>[ ] Rate limiting active</li>
+</ul>
+
+<h2 id="cost-estimates">Cost Estimates</h2>
+
+<h3 id="monthly-costs-testnet">Monthly Costs (Testnet)</h3>
+
+<p>| Service | Cost |
+|---------|------|
+| Vercel (Hobby) | $0 |
+| Particle Paymaster | ~$100 |
+| Pimlico Paymaster | ~$50 |
+| Groq API | $0 (free tier) |
+| Tavily API | $0 (free tier) |
+| <strong>Total</strong> | <strong>~$150</strong> |</p>
+
+<h3 id="monthly-costs-mainnet">Monthly Costs (Mainnet)</h3>
+
+<p>| Service | Cost |
+|---------|------|
+| Vercel (Pro) | $20 |
+| Particle Paymaster | ~$500 |
+| Pimlico Paymaster | ~$300 |
+| Groq API | ~$50 |
+| Tavily API | ~$50 |
+| Monitoring | ~$30 |
+| <strong>Total</strong> | <strong>~$950</strong> |</p>
+
+<h2 id="scaling-considerations">Scaling Considerations</h2>
+
+<h3 id="horizontal-scaling">Horizontal Scaling</h3>
+
+<ul>
+Vercel automatically scales:
+<li>Serverless functions</li>
+<li>Edge network</li>
+<li>CDN caching</li>
+</ul>
+
+<h3 id="database-future">Database (Future)</h3>
+
+<ul>
+When adding database:
+<li>Use Vercel Postgres</li>
+<li>Or external (Supabase, PlanetScale)</li>
+<li>Enable connection pooling</li>
+</ul>
+
+<h3 id="caching">Caching</h3>
+
+<ul>
+Implement caching:
+<li>Redis for API responses</li>
+<li>CDN for static assets</li>
+<li>Browser caching headers</li>
+</ul>
+
+<h2 id="troubleshooting">Troubleshooting</h2>
+
+<h3 id="deployment-fails">Deployment Fails</h3>
+
+<p><strong>Check</strong>:
+1. Build logs in Vercel
+2. Environment variables set
+3. Dependencies installed
+4. Node version correct</p>
+
+<h3 id="contract-not-found">Contract Not Found</h3>
+
+<p><strong>Check</strong>:
+1. Contract address correct
+2. Network matches (testnet vs mainnet)
+3. Contract verified on BSCScan</p>
+
+<h3 id="gasless-transactions-failing">Gasless Transactions Failing</h3>
+
+<p><strong>Check</strong>:
+1. Paymaster accounts funded
+2. API keys valid
+3. Rate limits not exceeded</p>
+
+<h3 id="ai-resolution-failing">AI Resolution Failing</h3>
+
+<p><strong>Check</strong>:
+1. Groq API key valid
+2. Tavily API key valid
+3. Rate limits not exceeded</p>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<ul>
+<li><a href="Configuration" target="_blank">Configuration</a> - Environment setup</li>
+<li><a href="Testing" target="_blank">Testing</a> - Testing guide</li>
+<li><a href="API-Reference" target="_blank">API Reference</a> - API documentation</li>
+</ul>
+        </div>
+        <div class="page-break"></div>
+        <div class="page-content">
+<h1 id="contributing">Contributing</h1>
+
+<p>Thank you for your interest in contributing to SeerHive! This guide will help you get started.</p>
+
+<h2 id="ways-to-contribute">Ways to Contribute</h2>
+
+<ul>
+<li>🐛 Report bugs</li>
+<li>💡 Suggest features</li>
+<li>📝 Improve documentation</li>
+<li>🔧 Fix issues</li>
+<li>✨ Add new features</li>
+<li>🧪 Write tests</li>
+<li>🎨 Improve UI/UX</li>
+</ul>
+
+<h2 id="getting-started">Getting Started</h2>
+
+<h3 id="1-fork-repository">1. Fork Repository</h3>
+
+<pre><code class="language-bash"># Fork on GitHub, then clone
+git clone https://github.com/YOUR_USERNAME/seerhive.git
+cd seerhive
+</code></pre>
+
+<h3 id="2-install-dependencies">2. Install Dependencies</h3>
+
+<pre><code class="language-bash">pnpm install
+</code></pre>
+
+<h3 id="3-create-branch">3. Create Branch</h3>
+
+<pre><code class="language-bash">git checkout -b feature/your-feature-name
+<h1 id="contributing">or</h1>
+git checkout -b fix/your-bug-fix
+</code></pre>
+
+<h3 id="4-make-changes">4. Make Changes</h3>
+
+<p>Follow our <a href="#development-guidelines" target="_blank">Development Guidelines</a></p>
+
+<h3 id="5-test-changes">5. Test Changes</h3>
+
+<pre><code class="language-bash"># Run tests
+pnpm test
+
+<h1 id="contributing">Run linter</h1>
+pnpm lint
+
+<h1 id="contributing">Build project</h1>
+pnpm build
+</code></pre>
+
+<h3 id="6-commit-changes">6. Commit Changes</h3>
+
+<pre><code class="language-bash">git add .
+git commit -m "feat: add new feature"
+<h1 id="contributing">or</h1>
+git commit -m "fix: resolve bug"
+</code></pre>
+
+<p>Follow <a href="#commit-conventions" target="_blank">Conventional Commits</a></p>
+
+<h3 id="7-push-create-pr">7. Push & Create PR</h3>
+
+<pre><code class="language-bash">git push origin feature/your-feature-name
+</code></pre>
+
+<ul>
+Create Pull Request on GitHub with:
+<li>Clear description</li>
+<li>Related issue number</li>
+<li>Screenshots (if UI changes)</li>
+<li>Test results</li>
+</ul>
+
+<h2 id="development-guidelines">Development Guidelines</h2>
+
+<h3 id="code-style">Code Style</h3>
+
+<p>Follow existing patterns in the codebase:</p>
+
+<ul>
+<strong>TypeScript</strong>:
+<li>Strict mode enabled</li>
+<li>Explicit types preferred</li>
+<li>Avoid <code>any</code> except in error handling</li>
+</ul>
+
+<ul>
+<strong>React</strong>:
+<li>Functional components</li>
+<li>Hooks for state management</li>
+<li>Component variants for different providers</li>
+</ul>
+
+<ul>
+<strong>Naming</strong>:
+<li>Components: PascalCase (<code>TradeDialog.tsx</code>)</li>
+<li>Utilities: camelCase (<code>gasless.ts</code>)</li>
+<li>Constants: UPPER_SNAKE_CASE (<code>PREDICTION_MARKET_ABI</code>)</li>
+</ul>
+
+<h3 id="file-organization">File Organization</h3>
+
+<pre><code class="language-typescript">// 1. Imports (external, internal, types, assets)
+import { useState } from 'react';
+import { useStore } from '@/lib/store';
+import type { Market } from '@/types/market';
+import { X } from 'lucide-react';
+
+<p>// 2. Interface definitions
+interface Props {
+  market: Market;
+  onClose: () => void;
+}</p>
+
+<p>// 3. Component function
+export function Component({ market, onClose }: Props) {
+  // 4. State
+  const [loading, setLoading] = useState(false);
+  
+  // 5. Hooks
+  useEffect(() => { }, []);
+  
+  // 6. Handlers
+  const handleAction = () => { };
+  
+  // 7. JSX
+  return <div>...</div>;
+}
+</code></pre></p>
+
+<h3 id="testing-requirements">Testing Requirements</h3>
+
+<p>All contributions should include tests:</p>
+
+<p><strong>Smart Contracts</strong>:
+<pre><code class="language-typescript">it('Should create a market', async function () {
+  const tx = await market.createMarket('Test?', 86400);
+  await tx.wait();
+  
+  const data = await market.markets(0);
+  expect(data.question).to.equal('Test?');
+});
+</code></pre></p>
+
+<p><strong>API Routes</strong>:
+<pre><code class="language-bash">curl -X POST http://localhost:3000/api/your-endpoint \
+  -H "Content-Type: application/json" \
+  -d '{"test": "data"}'
+</code></pre></p>
+
+<ul>
+<strong>Frontend</strong>:
+<li>Manual testing in demo mode</li>
+<li>Manual testing in on-chain mode</li>
+<li>Screenshot of changes</li>
+</ul>
+
+<h3 id="documentation">Documentation</h3>
+
+<ul>
+Update documentation for:
+<li>New features</li>
+<li>API changes</li>
+<li>Configuration changes</li>
+<li>Breaking changes</li>
+</ul>
+
+<h2 id="commit-conventions">Commit Conventions</h2>
+
+<p>Use <a href="https://www.conventionalcommits.org/" target="_blank">Conventional Commits</a>:</p>
+
+<pre><code class="language-"><type>(<scope>): <description>
+
+<p>[optional body]</p>
+
+<p>[optional footer]
+</code></pre></p>
+
+<h3 id="types">Types</h3>
+
+<ul>
+<li><code>feat</code>: New feature</li>
+<li><code>fix</code>: Bug fix</li>
+<li><code>docs</code>: Documentation changes</li>
+<li><code>style</code>: Code style changes (formatting)</li>
+<li><code>refactor</code>: Code refactoring</li>
+<li><code>test</code>: Adding/updating tests</li>
+<li><code>chore</code>: Maintenance tasks</li>
+</ul>
+
+<h3 id="examples">Examples</h3>
+
+<pre><code class="language-bash">feat(gasless): add Pimlico paymaster fallback
+fix(ai): handle Tavily API timeout
+docs(wiki): add deployment guide
+style(ui): improve button spacing
+refactor(contracts): optimize gas usage
+test(api): add sponsor endpoint tests
+chore(deps): update dependencies
+</code></pre>
+
+<h3 id="scope">Scope</h3>
+
+<ul>
+<li><code>gasless</code>: Account abstraction</li>
+<li><code>ai</code>: AI resolution</li>
+<li><code>contracts</code>: Smart contracts</li>
+<li><code>ui</code>: User interface</li>
+<li><code>api</code>: API routes</li>
+<li><code>docs</code>: Documentation</li>
+<li><code>config</code>: Configuration</li>
+</ul>
+
+<h2 id="pull-request-guidelines">Pull Request Guidelines</h2>
+
+<h3 id="pr-title">PR Title</h3>
+
+<p>Use conventional commit format:
+<pre><code class="language-">feat(gasless): add Pimlico paymaster fallback
+</code></pre></p>
+
+<h3 id="pr-description">PR Description</h3>
+
+<p>Include:</p>
+
+<pre><code class="language-markdown">## Description
+Brief description of changes
+
+<h2 id="related-issue">Related Issue</h2>
+Fixes #123
+
+<h2 id="changes">Changes</h2>
+<li>Added Pimlico paymaster adapter</li>
+<li>Updated sponsor API to try Particle first</li>
+<li>Added fallback logic</li>
+
+<h2 id="testing">Testing</h2>
+<li>[x] Contract tests pass</li>
+<li>[x] API tests pass</li>
+<li>[x] Manual testing complete</li>
+
+<h2 id="screenshots">Screenshots</h2>
+(if applicable)
+</code></pre>
+
+<h3 id="pr-checklist">PR Checklist</h3>
+
+<ul>
+<li>[ ] Code follows style guidelines</li>
+<li>[ ] Tests added/updated</li>
+<li>[ ] Documentation updated</li>
+<li>[ ] Commit messages follow conventions</li>
+<li>[ ] No console errors</li>
+<li>[ ] Builds successfully</li>
+</ul>
+
+<h2 id="code-review-process">Code Review Process</h2>
+
+<p>1. <strong>Automated Checks</strong>: CI runs tests and linting
+2. <strong>Maintainer Review</strong>: Core team reviews code
+3. <strong>Feedback</strong>: Address review comments
+4. <strong>Approval</strong>: PR approved by maintainer
+5. <strong>Merge</strong>: Squash and merge to main</p>
+
+<h2 id="issue-guidelines">Issue Guidelines</h2>
+
+<h3 id="bug-reports">Bug Reports</h3>
+
+<p>Use bug report template:</p>
+
+<pre><code class="language-markdown"><strong>Describe the bug</strong>
+Clear description of the bug
+
+<p><strong>To Reproduce</strong>
+1. Go to '...'
+2. Click on '...'
+3. See error</p>
+
+<p><strong>Expected behavior</strong>
+What should happen</p>
+
+<p><strong>Screenshots</strong>
+If applicable</p>
+
+<ul>
+<strong>Environment</strong>
+<li>OS: [e.g. macOS]</li>
+<li>Browser: [e.g. Chrome]</li>
+<li>Version: [e.g. 1.0.0]</li>
+</ul>
+
+<p><strong>Additional context</strong>
+Any other information
+</code></pre></p>
+
+<h3 id="feature-requests">Feature Requests</h3>
+
+<p>Use feature request template:</p>
+
+<pre><code class="language-markdown"><strong>Is your feature request related to a problem?</strong>
+Description of problem
+
+<p><strong>Describe the solution</strong>
+How should it work?</p>
+
+<p><strong>Describe alternatives</strong>
+Other solutions considered</p>
+
+<p><strong>Additional context</strong>
+Any other information
+</code></pre></p>
+
+<h2 id="development-setup">Development Setup</h2>
+
+<h3 id="prerequisites">Prerequisites</h3>
+
+<ul>
+<li>Node.js 20.x</li>
+<li>pnpm 10.x</li>
+<li>Git</li>
+</ul>
+
+<h3 id="environment-setup">Environment Setup</h3>
+
+<pre><code class="language-bash"># Frontend
+cp apps/web/.env.example apps/web/.env.local
+<h1 id="contributing">Edit with your API keys</h1>
+
+<h1 id="contributing">Contracts</h1>
+cp contracts/.env.example contracts/.env
+<h1 id="contributing">Add your private key</h1>
+</code></pre>
+
+<h3 id="running-locally">Running Locally</h3>
+
+<pre><code class="language-bash"># Start all workspaces
+pnpm dev
+
+<h1 id="contributing">Or individually</h1>
+cd apps/web && pnpm dev
+cd contracts && pnpm test
+</code></pre>
+
+<h3 id="testing">Testing</h3>
+
+<pre><code class="language-bash"># All tests
+pnpm test
+
+<h1 id="contributing">Contract tests</h1>
+cd contracts && pnpm test
+
+<h1 id="contributing">API tests</h1>
+./scripts/test-sponsor.sh
+./scripts/test-ai-resolve.sh
+
+<h1 id="contributing">Gasless flow</h1>
+./scripts/smoke-gasless.sh
+</code></pre>
+
+<h2 id="areas-for-contribution">Areas for Contribution</h2>
+
+<h3 id="high-priority">High Priority</h3>
+
+<ul>
+<li>[ ] UMA Optimistic Oracle integration</li>
+<li>[ ] Challenge/dispute UI</li>
+<li>[ ] Mobile responsive improvements</li>
+<li>[ ] Performance optimization</li>
+<li>[ ] Security audit fixes</li>
+</ul>
+
+<h3 id="medium-priority">Medium Priority</h3>
+
+<ul>
+<li>[ ] Copy trading features</li>
+<li>[ ] Reputation system</li>
+<li>[ ] Advanced analytics</li>
+<li>[ ] Multi-language support</li>
+<li>[ ] Dark mode improvements</li>
+</ul>
+
+<h3 id="low-priority">Low Priority</h3>
+
+<ul>
+<li>[ ] Additional chart types</li>
+<li>[ ] Export data features</li>
+<li>[ ] Keyboard shortcuts</li>
+<li>[ ] Accessibility improvements</li>
+<li>[ ] Animation polish</li>
+</ul>
+
+<h3 id="good-first-issues">Good First Issues</h3>
+
+<ul>
+Look for issues labeled <code>good first issue</code>:
+<li>Documentation improvements</li>
+<li>UI polish</li>
+<li>Test coverage</li>
+<li>Bug fixes</li>
+</ul>
+
+<h2 id="community">Community</h2>
+
+<h3 id="communication">Communication</h3>
+
+<ul>
+<li><strong>GitHub Issues</strong>: Bug reports and feature requests</li>
+<li><strong>GitHub Discussions</strong>: General questions and ideas</li>
+<li><strong>Discord</strong>: Coming soon</li>
+<li><strong>Twitter</strong>: Coming soon</li>
+</ul>
+
+<h3 id="code-of-conduct">Code of Conduct</h3>
+
+<ul>
+Be respectful and inclusive:
+<li>Use welcoming language</li>
+<li>Respect differing viewpoints</li>
+<li>Accept constructive criticism</li>
+<li>Focus on what's best for community</li>
+</ul>
+
+<h2 id="recognition">Recognition</h2>
+
+<ul>
+Contributors will be:
+<li>Listed in CONTRIBUTORS.md</li>
+<li>Mentioned in release notes</li>
+<li>Credited in documentation</li>
+</ul>
+
+<h2 id="questions">Questions?</h2>
+
+<ul>
+<li>Read <a href="Home" target="_blank">Documentation</a></li>
+<li>Check <a href="FAQ" target="_blank">FAQ</a></li>
+<li>Open GitHub Discussion</li>
+<li>Contact maintainers</li>
+</ul>
+
+<h2 id="license">License</h2>
+
+<p>By contributing, you agree that your contributions will be licensed under the MIT License.</p>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<ul>
+<li><a href="Getting-Started" target="_blank">Getting Started</a> - Setup development environment</li>
+<li><a href="Architecture" target="_blank">Architecture</a> - Understand the codebase</li>
+<li><a href="Testing" target="_blank">Testing</a> - Learn testing practices</li>
+</ul>
+        </div>
+        <div class="page-break"></div>
+        <div class="page-content">
+<h1 id="faq">FAQ</h1>
+
+<p>Frequently asked questions about SeerHive.</p>
+
+<h2 id="general-questions">General Questions</h2>
+
+<h3 id="what-is-seerhive">What is SeerHive?</h3>
+
+<p>SeerHive is a decentralized prediction market platform on BNB Chain where users can bet on real-world events with AI-powered resolution and zero gas fees.</p>
+
+<h3 id="how-does-it-work">How does it work?</h3>
+
+<p>1. Create or browse prediction markets
+2. Buy YES or NO shares based on your prediction
+3. AI automatically resolves markets using real-time web data
+4. Winners claim proportional payouts from the pool</p>
+
+<h3 id="is-it-free-to-use">Is it free to use?</h3>
+
+<p>Yes! SeerHive uses ERC-4337 account abstraction to sponsor gas fees for users. You only need tokens to trade (BNB, tBUSD, etc.).</p>
+
+<h3 id="what-makes-seerhive-different">What makes SeerHive different?</h3>
+
+<ul>
+<li><strong>AI Resolution</strong>: Markets resolve in seconds vs 24-48h manual process</li>
+<li><strong>Zero Gas Fees</strong>: Trade without paying transaction costs</li>
+<li><strong>Real-time Data</strong>: Web scraping provides current event information</li>
+<li><strong>BNB Chain Native</strong>: Lower costs and faster finality</li>
+</ul>
+
+<h2 id="getting-started">Getting Started</h2>
+
+<h3 id="how-do-i-start-using-seerhive">How do I start using SeerHive?</h3>
+
+<p>1. Visit the platform
+2. Connect wallet (MetaMask, Particle Network)
+3. Get testnet tokens from faucet
+4. Start trading on markets</p>
+
+<h3 id="do-i-need-a-crypto-wallet">Do I need a crypto wallet?</h3>
+
+<ul>
+For on-chain mode, yes. But you can:
+<li>Use MetaMask (traditional wallet)</li>
+<li>Use Particle Network (social login with Google/Twitter)</li>
+<li>Try demo mode (no wallet required)</li>
+</ul>
+
+<h3 id="where-do-i-get-testnet-tokens">Where do I get testnet tokens?</h3>
+
+<ul>
+<li><strong>BNB</strong>: <a href="https://testnet.bnbchain.org/faucet-smart" target="_blank">BNB Testnet Faucet</a></li>
+<li><strong>tBUSD</strong>: <a href="/faucet" target="_blank">SeerHive Faucet</a> - 30 tBUSD every 24h</li>
+<li><strong>Other tokens</strong>: <a href="https://testnet.bnbchain.org/faucet-smart" target="_blank">BNB Testnet Faucet</a></li>
+</ul>
+
+<h3 id="what-is-demo-mode">What is demo mode?</h3>
+
+<p>Demo mode lets you test all features without wallet connection or blockchain interactions. Perfect for learning the platform.</p>
+
+<p>Enable: <code>NEXT_PUBLIC_DEMO=1</code></p>
+
+<h2 id="trading">Trading</h2>
+
+<h3 id="what-tokens-can-i-trade-with">What tokens can I trade with?</h3>
+
+<ul>
+<strong>BNB Testnet</strong>:
+<li>BNB (native token)</li>
+<li>tBUSD (testnet BUSD)</li>
+<li>tUSDT (testnet USDT)</li>
+<li>tUSDC (testnet USDC)</li>
+<li>tDAI (testnet DAI)</li>
+<li>tBTC (testnet BTC)</li>
+</ul>
+
+<h3 id="how-do-gasless-transactions-work">How do gasless transactions work?</h3>
+
+<p>SeerHive sponsors your transactions using ERC-4337 account abstraction. The platform pays gas fees so you don't have to.</p>
+
+<p><strong>Note</strong>: Gasless works for all ERC20 tokens. BNB requires small gas fee (~$0.001).</p>
+
+<h3 id="how-are-payouts-calculated">How are payouts calculated?</h3>
+
+<pre><code class="language-">Your Payout = (Your Winning Shares / Total Winning Shares) × Total Pool
+</code></pre>
+
+<ul>
+<strong>Example</strong>:
+<li>You own 100 YES shares</li>
+<li>Total YES shares: 1000</li>
+<li>Total pool: 2000 tokens</li>
+<li>Your payout: (100/1000) × 2000 = 200 tokens</li>
+</ul>
+
+<h3 id="can-i-sell-my-shares-before-resolution">Can I sell my shares before resolution?</h3>
+
+<p>Not yet. Currently, you can only claim winnings after market resolves. Secondary market trading is planned for future.</p>
+
+<h2 id="ai-resolution">AI Resolution</h2>
+
+<h3 id="how-does-ai-resolution-work">How does AI resolution work?</h3>
+
+<p>1. Market expires
+2. User triggers AI resolution
+3. Tavily AI searches web for real-time context
+4. Groq Llama 3.3 70B analyzes and determines outcome
+5. AI proposes resolution on-chain
+6. 24-hour challenge window begins</p>
+
+<h3 id="is-ai-resolution-accurate">Is AI resolution accurate?</h3>
+
+<p>AI provides confidence scores (0-100) with reasoning. For objective questions with verifiable data, accuracy is very high (95%+).</p>
+
+<h3 id="what-if-ai-is-wrong">What if AI is wrong?</h3>
+
+<p>Anyone can challenge the resolution within 24 hours by posting a dispute bond. DAO votes on disputes.</p>
+
+<h3 id="what-types-of-questions-work-best">What types of questions work best?</h3>
+
+<ul>
+<strong>Good</strong>:
+<li>"Will Bitcoin reach $100k by Dec 31, 2025?" (verifiable price data)</li>
+<li>"Will Trump win 2024 election?" (official results)</li>
+<li>"Will Ethereum ETF be approved in Q1 2025?" (regulatory announcement)</li>
+</ul>
+
+<ul>
+<strong>Bad</strong>:
+<li>"Will AI become sentient?" (subjective, no clear criteria)</li>
+<li>"Will world peace be achieved?" (ambiguous definition)</li>
+</ul>
+
+<h3 id="how-much-does-ai-resolution-cost">How much does AI resolution cost?</h3>
+
+<p>~$0.01 per resolution (Tavily search + Groq inference). Much cheaper than manual resolution ($10-50).</p>
+
+<h2 id="gasless-transactions">Gasless Transactions</h2>
+
+<h3 id="why-do-i-need-gas-for-bnb-but-not-erc20-tokens">Why do I need gas for BNB but not ERC20 tokens?</h3>
+
+<p>ERC-4337 paymasters can sponsor ERC20 token approvals and transfers. Native BNB transfers require gas from sender's account.</p>
+
+<h3 id="what-if-gasless-transaction-fails">What if gasless transaction fails?</h3>
+
+<p>The platform automatically falls back from Particle to Pimlico paymaster. If both fail, you'll see an error message.</p>
+
+<h3 id="can-i-use-my-own-gas-instead">Can I use my own gas instead?</h3>
+
+<p>Yes, toggle off "Use Gasless Transaction" in the UI to pay gas yourself.</p>
+
+<h3 id="how-many-gasless-transactions-can-i-make">How many gasless transactions can I make?</h3>
+
+<ul>
+No hard limit per user, but platform has rate limits:
+<li>50 gasless transactions per user per hour</li>
+<li>100 per IP per hour</li>
+</ul>
+
+<h2 id="technical-questions">Technical Questions</h2>
+
+<h3 id="what-blockchain-is-seerhive-on">What blockchain is SeerHive on?</h3>
+
+<p><strong>Testnet</strong>: BNB Testnet (Chain ID: 97)
+<strong>Mainnet</strong>: BNB Mainnet (Chain ID: 56) - Coming Soon</p>
+
+<h3 id="what-is-the-contract-address">What is the contract address?</h3>
+
+<p><strong>PredictionMarket</strong>: <code>0xc6Dd26D3eE0F58fAb15Dc87bEe3A66896B6D4127</code></p>
+
+<p>View on <a href="https://testnet.bscscan.com/address/0xc6Dd26D3eE0F58fAb15Dc87bEe3A66896B6D4127" target="_blank">BSCScan</a></p>
+
+<h3 id="is-the-contract-audited">Is the contract audited?</h3>
+
+<p>Not yet. Audit planned before mainnet deployment. Use testnet at your own risk.</p>
+
+<h3 id="can-i-run-my-own-instance">Can I run my own instance?</h3>
+
+<p>Yes! SeerHive is open source. See <a href="Getting-Started" target="_blank">Getting Started</a> guide.</p>
+
+<h3 id="what-apis-does-seerhive-use">What APIs does SeerHive use?</h3>
+
+<ul>
+<li><strong>Groq</strong>: LLM for AI reasoning</li>
+<li><strong>Tavily</strong>: Web search for real-time data</li>
+<li><strong>Particle Network</strong>: Paymaster for gasless transactions</li>
+<li><strong>Pimlico</strong>: Backup paymaster</li>
+</ul>
+
+<h2 id="troubleshooting">Troubleshooting</h2>
+
+<h3 id="transaction-failed-error">"Transaction failed" error</h3>
+
+<p><strong>Possible causes</strong>:
+1. Insufficient balance
+2. Market expired or resolved
+3. Network congestion
+4. Paymaster rate limit</p>
+
+<p><strong>Solutions</strong>:
+1. Check token balance
+2. Verify market status
+3. Wait and retry
+4. Try without gasless mode</p>
+
+<h3 id="wallet-connection-failed">"Wallet connection failed"</h3>
+
+<p><strong>Solutions</strong>:
+1. Ensure wallet is on BNB Testnet (Chain ID: 97)
+2. Refresh page and reconnect
+3. Try different wallet (MetaMask, Particle)
+4. Clear browser cache</p>
+
+<h3 id="contract-not-found">"Contract not found"</h3>
+
+<p><strong>Solutions</strong>:
+1. Verify you're on BNB Testnet
+2. Check contract address in config
+3. Ensure RPC URL is correct</p>
+
+<h3 id="gasless-transaction-rejected">"Gasless transaction rejected"</h3>
+
+<p><strong>Possible causes</strong>:
+1. Paymaster rate limit exceeded
+2. Paymaster out of funds
+3. Invalid UserOperation</p>
+
+<p><strong>Solutions</strong>:
+1. Wait 1 hour and retry
+2. Contact team to refill paymaster
+3. Try without gasless mode</p>
+
+<h3 id="ai-resolution-failed">"AI resolution failed"</h3>
+
+<p><strong>Possible causes</strong>:
+1. API rate limit exceeded
+2. Invalid API keys
+3. Network timeout</p>
+
+<p><strong>Solutions</strong>:
+1. Wait and retry
+2. Check API key configuration
+3. Contact support</p>
+
+<h2 id="security-privacy">Security & Privacy</h2>
+
+<h3 id="is-my-wallet-safe">Is my wallet safe?</h3>
+
+<p>Yes. SeerHive never asks for private keys. Wallet connection uses standard Web3 protocols (wagmi, Particle Network).</p>
+
+<h3 id="what-data-does-seerhive-collect">What data does SeerHive collect?</h3>
+
+<ul>
+<li>Wallet addresses (public)</li>
+<li>Transaction history (on-chain)</li>
+<li>Market interactions (on-chain)</li>
+</ul>
+
+<p>No personal information collected unless you use social login (Particle Network).</p>
+
+<h3 id="can-i-remain-anonymous">Can I remain anonymous?</h3>
+
+<p>Yes. Use MetaMask with anonymous wallet. No KYC required.</p>
+
+<h3 id="what-if-i-lose-my-private-key">What if I lose my private key?</h3>
+
+<p>If using MetaMask: You lose access to funds (standard crypto wallet risk)</p>
+
+<p>If using Particle Network: Social recovery available through your login method</p>
+
+<h2 id="roadmap-features">Roadmap & Features</h2>
+
+<h3 id="when-is-mainnet-launch">When is mainnet launch?</h3>
+
+<ul>
+Planned for Q2 2026 after:
+<li>Smart contract audit</li>
+<li>Beta testing completion</li>
+<li>Feature polish</li>
+</ul>
+
+<h3 id="what-features-are-coming">What features are coming?</h3>
+
+<ul>
+<strong>Q1 2026</strong>:
+<li>UMA Optimistic Oracle integration</li>
+<li>Challenge/dispute UI</li>
+<li>Copy trading</li>
+<li>Reputation system</li>
+</ul>
+
+<ul>
+<strong>Q2 2026</strong>:
+<li>Mobile PWA</li>
+<li>Advanced AI (multiple data sources)</li>
+<li>DAO governance</li>
+<li>Liquidity pools</li>
+</ul>
+
+<h3 id="can-i-contribute">Can I contribute?</h3>
+
+<p>Yes! SeerHive is open source. See <a href="Contributing" target="_blank">Contributing</a> guide.</p>
+
+<h3 id="how-can-i-provide-feedback">How can I provide feedback?</h3>
+
+<ul>
+<li>GitHub Issues: <a href="https://github.com/abeachmad/seerhive/issues" target="_blank">github.com/abeachmad/seerhive/issues</a></li>
+<li>Discord: [Coming Soon]</li>
+<li>Twitter: [Coming Soon]</li>
+</ul>
+
+<h2 id="economics">Economics</h2>
+
+<h3 id="how-does-seerhive-make-money">How does SeerHive make money?</h3>
+
+<p><strong>Current</strong>: Platform is free (subsidized)</p>
+
+<ul>
+<strong>Future</strong>:
+<li>Trading fees (1-2%)</li>
+<li>Premium features</li>
+<li>API access fees</li>
+</ul>
+
+<h3 id="what-are-the-costs">What are the costs?</h3>
+
+<p><strong>For Users</strong>: $0 (gasless transactions)</p>
+
+<ul>
+<strong>For Platform</strong>:
+<li>Paymaster: ~$0.10 per transaction</li>
+<li>AI Resolution: ~$0.01 per market</li>
+<li>Infrastructure: ~$150/month (testnet)</li>
+</ul>
+
+<h3 id="is-there-a-token">Is there a token?</h3>
+
+<ul>
+Not yet. Token planned for:
+<li>Governance voting</li>
+<li>Staking for dispute resolution</li>
+<li>Fee discounts</li>
+</ul>
+
+<h2 id="support">Support</h2>
+
+<h3 id="how-do-i-get-help">How do I get help?</h3>
+
+<p>1. Check this FAQ
+2. Read <a href="Home" target="_blank">Documentation</a>
+3. Open GitHub Issue
+4. Contact team (Discord/Twitter coming soon)</p>
+
+<h3 id="how-do-i-report-a-bug">How do I report a bug?</h3>
+
+<p>Open issue on GitHub: <a href="https://github.com/abeachmad/seerhive/issues" target="_blank">github.com/abeachmad/seerhive/issues</a></p>
+
+<ul>
+Include:
+<li>Description of bug</li>
+<li>Steps to reproduce</li>
+<li>Expected vs actual behavior</li>
+<li>Screenshots (if applicable)</li>
+</ul>
+
+<h3 id="how-do-i-request-a-feature">How do I request a feature?</h3>
+
+<ul>
+Open feature request on GitHub with:
+<li>Use case description</li>
+<li>Why it's valuable</li>
+<li>Proposed implementation (optional)</li>
+</ul>
+
+<h2 id="legal">Legal</h2>
+
+<h3 id="is-prediction-market-legal">Is prediction market legal?</h3>
+
+<ul>
+Depends on jurisdiction. SeerHive is:
+<li>Decentralized (no central authority)</li>
+<li>Testnet only (no real money)</li>
+<li>Educational/experimental</li>
+</ul>
+
+<p><strong>Consult local laws before using with real funds.</strong></p>
+
+<h3 id="what-is-the-license">What is the license?</h3>
+
+<p>MIT License - see <a href="https://github.com/abeachmad/seerhive/blob/main/LICENSE" target="_blank">LICENSE</a></p>
+
+<h3 id="terms-of-service">Terms of Service?</h3>
+
+<p>Coming soon for mainnet launch.</p>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<ul>
+<li><a href="Getting-Started" target="_blank">Getting Started</a> - Start using SeerHive</li>
+<li><a href="Architecture" target="_blank">Architecture</a> - Understand the system</li>
+<li><a href="API-Reference" target="_blank">API Reference</a> - Explore APIs</li>
+</ul>
+        </div>
+    </div>
+</body>
+</html>

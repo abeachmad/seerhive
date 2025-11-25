@@ -19,6 +19,7 @@ export function Navbar() {
     { href: '/', label: 'Home' },
     { href: '/dashboard', label: 'Dashboard' },
     { href: '/markets', label: 'Markets' },
+    { href: '/history', label: 'History' },
     { href: '/faucet', label: 'Faucet' },
     { href: '/events', label: 'Events' },
     { href: '/copytrading', label: 'Copy Trading' },

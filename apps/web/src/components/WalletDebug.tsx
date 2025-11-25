@@ -9,7 +9,7 @@ export function WalletDebug() {
   const smartAccount = useSmartAccount();
   const [smartAccountAddress, setSmartAccountAddress] = useState<string>('');
   const [mounted, setMounted] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(true);
 
   useEffect(() => {
     setMounted(true);

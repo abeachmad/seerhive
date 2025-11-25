@@ -5,6 +5,7 @@ import { createPublicClient, http } from 'viem';
 import { bscTestnet } from 'viem/chains';
 import { PREDICTION_MARKET_ADDRESS, PREDICTION_MARKET_ABI } from '@/lib/contracts';
 import { useAccount, useSmartAccount } from '@particle-network/connectkit';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface ShareBalance {
   marketId: string;
@@ -18,6 +19,8 @@ export function SharesBalance() {
   const [shares, setShares] = useState<ShareBalance[]>([]);
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [markets, setMarkets] = useState<any[]>([]);
+  const [expanded, setExpanded] = useState(false);
 
   const publicClient = createPublicClient({
     chain: bscTestnet,
@@ -33,6 +36,7 @@ export function SharesBalance() {
     setLoading(true);
     try {
       const shareBalances: ShareBalance[] = [];
+      const marketData: any[] = [];
       
       // Get total market count first
       const marketCount = await publicClient.readContract({
@@ -46,7 +50,7 @@ export function SharesBalance() {
       // Check shares for all existing markets
       for (let marketId = 0; marketId < Number(marketCount); marketId++) {
         try {
-          const [yesShares, noShares] = await Promise.all([
+          const [yesShares, noShares, marketInfo] = await Promise.all([
             publicClient.readContract({
               address: PREDICTION_MARKET_ADDRESS as `0x${string}`,
               abi: PREDICTION_MARKET_ABI,
@@ -59,6 +63,12 @@ export function SharesBalance() {
               functionName: 'noShares',
               args: [BigInt(marketId), checkAddress as `0x${string}`],
             }),
+            publicClient.readContract({
+              address: PREDICTION_MARKET_ADDRESS as `0x${string}`,
+              abi: PREDICTION_MARKET_ABI,
+              functionName: 'markets',
+              args: [BigInt(marketId)],
+            }),
           ]);
 
           const yesAmount = yesShares.toString();
@@ -70,6 +80,7 @@ export function SharesBalance() {
               yesShares: yesAmount,
               noShares: noAmount,
             });
+            marketData.push({ id: marketId, question: marketInfo[0] });
           }
         } catch (error) {
           console.log(`Market ${marketId} not found or error:`, error);
@@ -77,6 +88,7 @@ export function SharesBalance() {
       }
       
       setShares(shareBalances);
+      setMarkets(marketData);
       console.log('📊 SHARES: User share balances:', shareBalances);
     } catch (error) {
       console.error('Failed to fetch shares:', error);
@@ -94,6 +106,15 @@ export function SharesBalance() {
       fetchShares();
     }
   }, [address, mounted]);
+  
+  useEffect(() => {
+    if (expanded) {
+      const timer = setTimeout(() => setExpanded(false), 60000);
+      return () => clearTimeout(timer);
+    }
+  }, [expanded]);
+  
+  const displayedShares = expanded ? shares : shares.slice(0, 6);
 
   if (!mounted) {
     return (
@@ -131,28 +152,47 @@ export function SharesBalance() {
       ) : shares.length === 0 ? (
         <p className="text-slate-400">No shares found</p>
       ) : (
-        <div className="space-y-2">
-          {shares.map((share) => (
-            <div key={share.marketId} className="bg-slate-700 rounded p-3">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-white font-medium">Market #{share.marketId}</span>
-              </div>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="text-green-400">YES Shares:</span>
-                  <div className="text-white font-mono">
-                    {(parseInt(share.yesShares) / 1e18).toFixed(4)}
+        <div>
+          <div className="grid grid-cols-3 gap-3">
+            {displayedShares.map((share) => {
+              const market = markets.find(m => m.id.toString() === share.marketId);
+              return (
+                <div key={share.marketId} className="bg-slate-700 rounded p-3">
+                  <div className="text-white font-medium text-sm mb-2 truncate">
+                    {market?.question || 'Unknown Market'} <span className="text-slate-400">(#{share.marketId})</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <div>
+                      <span className="text-green-400">YES:</span>
+                      <span className="text-white font-mono ml-1">{(parseInt(share.yesShares) / 1e18).toFixed(2)}</span>
+                    </div>
+                    <div>
+                      <span className="text-red-400">NO:</span>
+                      <span className="text-white font-mono ml-1">{(parseInt(share.noShares) / 1e18).toFixed(2)}</span>
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <span className="text-red-400">NO Shares:</span>
-                  <div className="text-white font-mono">
-                    {(parseInt(share.noShares) / 1e18).toFixed(4)}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+              );
+            })}
+          </div>
+          {shares.length > 6 && (
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className="w-full mt-3 py-2 bg-slate-700 hover:bg-slate-600 rounded flex items-center justify-center gap-2 text-slate-300 text-sm transition-colors"
+            >
+              {expanded ? (
+                <>
+                  <ChevronUp className="w-4 h-4" />
+                  Show Less
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="w-4 h-4" />
+                  Show All ({shares.length})
+                </>
+              )}
+            </button>
+          )}
         </div>
       )}
       

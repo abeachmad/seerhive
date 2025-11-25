@@ -8,6 +8,7 @@ import { encodeFunctionData } from 'viem';
 import { PREDICTION_MARKET_ADDRESS, PREDICTION_MARKET_ABI } from '@/lib/contracts';
 import { isDemo } from '@/lib/demoFlags';
 import { X, Zap } from 'lucide-react';
+import { Switch } from './ui/switch';
 
 interface CreateMarketDialogProps {
   onClose: () => void;
@@ -209,19 +210,12 @@ export function CreateMarketDialog({ onClose }: CreateMarketDialogProps) {
           </div>
 
           {gaslessAvailable && !demo && (
-            <div className="mb-4">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={useGasless}
-                  onChange={(e) => setUseGasless(e.target.checked)}
-                  className="w-4 h-4"
-                />
-                <span className="text-sm text-slate-300">
-                  <Zap className="w-4 h-4 inline text-yellow-400 mr-1" />
-                  Use Gasless Transaction (FREE)
-                </span>
-              </label>
+            <div className="flex items-center justify-between p-3 bg-slate-900/50 rounded-lg border border-slate-700">
+              <div className="flex items-center gap-2">
+                <Zap className="w-4 h-4 text-yellow-400" />
+                <span className="text-sm text-slate-300">Gasless Transaction (FREE)</span>
+              </div>
+              <Switch checked={useGasless} onCheckedChange={setUseGasless} />
             </div>
           )}
 

@@ -13,6 +13,7 @@ import { isDemo } from '@/lib/demoFlags';
 import { GaslessService } from '@/lib/gasless';
 import { X, TrendingUp, TrendingDown, Zap } from 'lucide-react';
 import { TransactionNotification } from './TransactionNotification';
+import { Switch } from './ui/switch';
 
 interface TradeDialogProps {
   market: any;
@@ -466,24 +467,24 @@ export function TradeDialog({ market, onClose }: TradeDialogProps) {
 
         {gaslessAvailable && !demo && (
           <div className="mb-4">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
+            <div className="flex items-center justify-between p-3 bg-slate-900/50 rounded-lg border border-slate-700">
+              <div className="flex items-center gap-2">
+                <Zap className="w-4 h-4 text-yellow-400" />
+                <span className="text-sm text-slate-300">
+                  Gasless Transaction
+                  {SUPPORTED_TOKENS[selectedToken]?.isNative && (
+                    <span className="text-xs text-yellow-400 ml-2">(Not available for BNB)</span>
+                  )}
+                </span>
+              </div>
+              <Switch
                 checked={useGasless}
-                onChange={(e) => setUseGasless(e.target.checked)}
+                onCheckedChange={setUseGasless}
                 disabled={SUPPORTED_TOKENS[selectedToken]?.isNative}
-                className="w-4 h-4"
               />
-              <span className="text-sm text-slate-300">
-                <Zap className="w-4 h-4 inline text-yellow-400 mr-1" />
-                Use Gasless Transaction
-                {SUPPORTED_TOKENS[selectedToken]?.isNative && (
-                  <span className="text-xs text-yellow-400 ml-2">(Not available for BNB)</span>
-                )}
-              </span>
-            </label>
+            </div>
             {useGasless && smartAccountAddress && (
-              <div className="mt-2 ml-6 p-2 bg-green-500/10 border border-green-500/30 rounded text-xs">
+              <div className="mt-2 p-2 bg-green-500/10 border border-green-500/30 rounded text-xs">
                 <p className="text-green-400 font-medium">⚡ Gas Fee: FREE (Sponsored by Paymaster)</p>
                 <p className="text-blue-300 mt-1">Payment: {amount || '10'} {SUPPORTED_TOKENS[selectedToken].symbol}</p>
                 {feeQuote && (
